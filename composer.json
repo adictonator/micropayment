@@ -1,0 +1,15 @@
+{
+	"name": "MicroPayment IO",
+	"description": "Use micropayments to protect articles, audio/video players, download urls or use it as a WooCommerce payment gateway.",
+	"version": "1.0",
+	"autoload": {
+		"psr-4": {
+			"MicroPay\\": "app/",
+			"MPEngine\\": "framework/Engine/"
+		},
+		"files": [
+			"framework/Helpers/constants.php",
+			"framework/Helpers/helpers.php"
+		]
+	}
+}
