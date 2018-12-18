@@ -3,7 +3,7 @@ namespace MPEngine\Support\Blueprints;
 
 defined( 'ABSPATH' ) or die( 'Not allowed!' );
 
-interface Hookable
+interface HookableInterface
 {
 	public function hook();
 }

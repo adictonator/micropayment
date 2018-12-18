@@ -4,10 +4,10 @@ namespace MicroPay\Controllers\Dash;
 defined( 'ABSPATH' ) or die( 'Not allowed!' );
 
 use MPEngine\Support\ServiceProvider;
-use MPEngine\Support\Blueprints\Hookable;
+use MPEngine\Support\Blueprints\HookableInterface;
 use MicroPay\Controllers\Dash\Menus\BaseMenuController;
 
-class DashMenusController implements Hookable
+class DashMenusController implements HookableInterface
 {
 	protected $menus = [
 		Menus\MicroPayMenuController::class,
@@ -17,7 +17,7 @@ class DashMenusController implements Hookable
 	{
 		foreach ( $this->menus as $menu ) :
 			if ( is_subclass_of( $menu, BaseMenuController::class ) ) ( new $menu )->load();
-		endforeach;	
+		endforeach;
 	}
 
 	public function hook()

@@ -3,13 +3,13 @@ namespace MicroPay\Controllers\Dash\Menus;
 
 defined( 'ABSPATH' ) or die( 'Not allowed!' );
 
-class MicroPayMenuController extends BaseMenuController 
+class MicroPayMenuController extends BaseMenuController
 {
 	public $title = 'MicroPay';
 
 	public function __construct()
 	{
-		parent::__construct($this->assets(), 'main');
+		parent::__construct( $this->assets(), 'main' );
 	}
 
 	public function assets()
@@ -22,6 +22,6 @@ class MicroPayMenuController extends BaseMenuController
 
 	public function view()
 	{
-		$this->setView('dash.micropay.index');
+		$this->setView( 'dash.micropay.index' );
 	}
 }

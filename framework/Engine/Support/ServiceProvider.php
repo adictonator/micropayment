@@ -3,7 +3,7 @@ namespace MPEngine\Support;
 
 defined( 'ABSPATH' ) or die( 'Not allowed!' );
 
-use MPEngine\Support\Blueprints\Hookable;
+use MPEngine\Support\Blueprints\HookableInterface;
 
 class ServiceProvider
 {
@@ -12,6 +12,7 @@ class ServiceProvider
 	public static function load()
 	{
 		self::$providers = [
+			Wizards\WizardsController::class,
 			\MicroPay\Controllers\Dash\DashMenusController::class,
 		];
 
@@ -21,7 +22,7 @@ class ServiceProvider
 	public static function register()
 	{
 		foreach ( self::$providers as $provider ) :
-			if ( is_subclass_of( $provider, Hookable::class ) ) ( new $provider )->hook();
+			if ( is_subclass_of( $provider, HookableInterface::class ) ) ( new $provider )->hook();
 		endforeach;
 	}
 

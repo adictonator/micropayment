@@ -38,7 +38,7 @@ trait ViewsTrait
 		}
 	}
 
-	public function setAssets($assets)
+	public function setAssets( $assets )
 	{
 		$this->assets = $assets;
 	}
