@@ -3,25 +3,26 @@ namespace MPEngine\Support\Wizards;
 
 defined( 'ABSPATH' ) or die( 'Not allowed!' );
 
+use MPEngine\Support\Blueprints\WizardsInterface;
 use MPEngine\Support\Blueprints\HookableInterface;
 
 class WizardsController implements HookableInterface
 {
+	private static $activeWizard;
+
 	protected $wizards = [
-		'setup' => SetupWizardController::class,
+		SetupWizardController::class,
 	];
 
 	public function initWizards()
 	{
-		switch ( $_GET['page'] ) :
-			case MP_PLUGIN_SLUG . '-setup':
-				$this->wizards['setup']::loadView();
-				break;
-		endswitch;
+		foreach ( $this->wizards as $wizard ) :
+			if ( class_exists( $wizard ) && is_subclass_of( $wizard, WizardsInterface::class ) ) $wizard::register();
+		endforeach;
 	}
 
 	public function hook()
 	{
-		add_action( 'init', [$this, 'initWizards'] );
+		$this->initWizards();
 	}
 }

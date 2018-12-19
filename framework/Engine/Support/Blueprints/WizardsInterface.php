@@ -8,4 +8,6 @@ interface WizardsInterface
 	public function view();
 
 	public static function loadView();
+
+	public static function register();
 }
