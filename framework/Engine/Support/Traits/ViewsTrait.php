@@ -19,14 +19,14 @@ trait ViewsTrait
 		$filePath = $this->resolveViewPath( $path );
 
 		if ( null !== $filePath ) :
-			include_once $filePath;
+			include $filePath;
 		endif;
 	}
 
 	public function resolveViewPath( string $path )
 	{
 		$filePath = mp_path_resolver( $path, 'view' );
-		
+
 		try {
 			if ( ! file_exists( $filePath ) ) :
 				throw new ViewErrorException( $filePath );

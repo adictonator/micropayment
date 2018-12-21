@@ -14,6 +14,7 @@ class ServiceProvider
 		self::$providers = [
 			Wizards\WizardsController::class,
 			\MicroPay\Controllers\Dash\DashMenusController::class,
+			\MicroPay\Controllers\Shortcodes\ShortcodesController::class,
 		];
 
 		return new self;

@@ -3,7 +3,6 @@ namespace MicroPay\Controllers\Dash;
 
 defined( 'ABSPATH' ) or die( 'Not allowed!' );
 
-use MPEngine\Support\ServiceProvider;
 use MPEngine\Support\Blueprints\HookableInterface;
 use MicroPay\Controllers\Dash\Menus\BaseMenuController;
 
