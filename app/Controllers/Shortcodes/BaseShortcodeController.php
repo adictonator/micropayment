@@ -4,20 +4,25 @@ namespace MicroPay\Controllers\Shortcodes;
 defined( 'ABSPATH' ) or die( 'Not allowed!' );
 
 use MPEngine\Support\Traits\ViewsTrait;
+use MPEngine\Support\Exceptions\ShortcodeException;
 
 abstract class BaseShortcodeController
 {
 	use ViewsTrait;
 
-	private static $wall = false;
+	private static $wall = true;
 
-	protected static $content;
+	protected static $viewMessage;
 
-	protected static $contentPrice;
+	protected static $shortcodeContents;
 
-	private static $validAttributes = [
+	private static $requiredAttributes = [
 		'price',
 	];
+
+	const VIEW_ERROR_MESSAGE = 'Some attributes are missing!';
+
+	const VIEW_WALL_MESSAGE = 'Pay Money to Unlock!';
 
 	abstract static function function( $attr, $content = '' );
 
@@ -28,6 +33,7 @@ abstract class BaseShortcodeController
 
 	protected static function wall()
 	{
+		self::$viewMessage = self::VIEW_WALL_MESSAGE;
 		return self::getWallContent();
 	}
 
@@ -54,28 +60,36 @@ abstract class BaseShortcodeController
 
 	protected static function processShortcodeContent( $content, $attrs )
 	{
-		self::$content = $content;
-		self::$contentPrice = $attrs['price'];
+		self::$shortcodeContents = (object) [
+			'content' => $content,
+			'attrs' => (object) $attrs,
+		];
 
 		return self::checkWallStatus();
 	}
 
 	private static function shortcodeContent()
 	{
-		return static::$content;
+		return static::$shortcodeContents->content;
 	}
 
-	protected static function validateAttributes( array $attrs )
+	protected static function validateAttributes( $content, $attrs )
 	{
-		if ( empty( $attrs ) ) throw new \Exception('Price attribute is required!');
+		$attrs = ! is_array( $attrs ) ? [] : $attrs;
 
-		foreach ( $attrs as $attr => $value ) :
-			if ( ! in_array( $attr, self::$validAttributes ) ) :
-				throw new \Exception('Price attribute is required!');
-				break;
+		foreach ( self::$requiredAttributes as $attr ) :
+			if ( ! array_key_exists( $attr, $attrs ) ) :
+				return self::incompleteShortcode();
 			endif;
 		endforeach;
 
-		shortcode_atts( ['price' => $attrs['price']], $attrs, static::$name );
+		return self::processShortcodeContent( $content, $attrs );
+	}
+
+	private static function incompleteShortcode()
+	{
+		self::$viewMessage = self::VIEW_ERROR_MESSAGE;
+
+		return self::getWallContent();
 	}
 }

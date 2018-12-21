@@ -1,3 +1,3 @@
 <div class="mp-wall">
-PAY MONEY <?php echo static::$contentPrice; ?>
+<?php echo static::$viewMessage; ?>
 </div>

@@ -9,10 +9,7 @@ class MicroPayShortcodeController extends BaseShortcodeController
 
 	public static function function( $attrs, $content = '' )
 	{
-		static::validateAttributes( $attrs );
-		// $attrs  =
-
-		return parent::processShortcodeContent( $content, $attrs );
+		return parent::validateAttributes( $content, $attrs );
 	}
 
 	public function view()
