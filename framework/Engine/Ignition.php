@@ -3,8 +3,6 @@ namespace MPEngine;
 
 defined( 'ABSPATH' ) or die( 'Not allowed!' );
 
-use MPEngine\Support\ServiceProvider;
-
 final class Ignition
 {
 	private static $_instance;
@@ -20,6 +18,6 @@ final class Ignition
 	public static function ignite()
 	{
 		self::__instance();
-		ServiceProvider::boot();
+		\ServiceProvider::boot();
 	}
 }

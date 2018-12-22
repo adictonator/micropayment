@@ -14,7 +14,7 @@ class ShortcodesController implements HookableInterface
 	public function init()
 	{
 		foreach ( $this->shortcodes as $shortcode ) :
-			if ( is_subclass_of( $shortcode, BaseShortcodeController::class ) ) $shortcode::load();
+			if ( is_subclass_of( $shortcode, BaseShortcodeController::class ) ) ( new $shortcode )->load();
 		endforeach;
 	}
 

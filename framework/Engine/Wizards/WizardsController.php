@@ -1,5 +1,5 @@
 <?php
-namespace MPEngine\Support\Wizards;
+namespace MPEngine\Wizards;
 
 defined( 'ABSPATH' ) or die( 'Not allowed!' );
 

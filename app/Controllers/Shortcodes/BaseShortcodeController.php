@@ -10,13 +10,13 @@ abstract class BaseShortcodeController
 {
 	use ViewsTrait;
 
-	private static $wall = true;
+	private $wall = true;
 
-	protected static $viewMessage;
+	protected $viewMessage;
 
-	protected static $shortcodeContents;
+	protected $shortcodeContents;
 
-	private static $requiredAttributes = [
+	private $requiredAttributes = [
 		'price',
 	];
 
@@ -24,72 +24,84 @@ abstract class BaseShortcodeController
 
 	const VIEW_WALL_MESSAGE = 'Pay Money to Unlock!';
 
-	abstract static function function( $attr, $content = '' );
+	abstract function function( $attr, $content = '' );
 
-	public static function load()
+	public function load()
 	{
-		add_shortcode( static::$name, [static::class, 'function'] );
+		add_shortcode( $this->name, [$this, 'function'] );
 	}
 
-	protected static function wall()
+	protected function validateAttributes( $content, $attrs )
 	{
-		self::$viewMessage = self::VIEW_WALL_MESSAGE;
-		return self::getWallContent();
+		$attrs = ! is_array( $attrs ) ? [] : $attrs;
+
+		foreach ( $this->requiredAttributes as $attr ) :
+			if ( ! array_key_exists( $attr, $attrs ) ) :
+				return $this->incompleteShortcode();
+			endif;
+		endforeach;
+
+		return $this->processShortcodeContent( $content, $attrs );
 	}
 
-	protected static function hasWall()
+	private function wall()
 	{
-		return self::$wall;
+		$this->viewMessage = self::VIEW_WALL_MESSAGE;
+		return $this->getWallContent();
 	}
 
-	private static function getWallContent()
+	private function hasWall()
+	{
+		//billingfox checks here
+
+		return $this->wall;
+	}
+
+	private function getWallContent()
 	{
 		ob_start();
-		static::loadView();
+		$this->setView( 'shortcode.wall' );
 		$wallContent = ob_get_contents();
 		ob_end_clean();
 
 		return $wallContent;
 	}
 
-	protected static function checkWallStatus()
+	private function getErrorContent()
 	{
-		if ( self::hasWall() ) return self::wall();
-		else return self::shortcodeContent();
+		ob_start();
+		$this->setView( 'shortcode.error' );
+		$errorContent = ob_get_contents();
+		ob_end_clean();
+
+		return $errorContent;
 	}
 
-	protected static function processShortcodeContent( $content, $attrs )
+	private function processShortcodeContent( $content, $attrs )
 	{
-		self::$shortcodeContents = (object) [
+		$this->shortcodeContents = (object) [
 			'content' => $content,
 			'attrs' => (object) $attrs,
 		];
 
-		return self::checkWallStatus();
+		return $this->checkWallStatus();
 	}
 
-	private static function shortcodeContent()
+	private function checkWallStatus()
 	{
-		return static::$shortcodeContents->content;
+		if ( $this->hasWall() ) return $this->wall();
+		else return $this->shortcodeContent();
 	}
 
-	protected static function validateAttributes( $content, $attrs )
+	private function shortcodeContent()
 	{
-		$attrs = ! is_array( $attrs ) ? [] : $attrs;
-
-		foreach ( self::$requiredAttributes as $attr ) :
-			if ( ! array_key_exists( $attr, $attrs ) ) :
-				return self::incompleteShortcode();
-			endif;
-		endforeach;
-
-		return self::processShortcodeContent( $content, $attrs );
+		return $this->shortcodeContents->content;
 	}
 
-	private static function incompleteShortcode()
+	private function incompleteShortcode()
 	{
-		self::$viewMessage = self::VIEW_ERROR_MESSAGE;
+		$this->viewMessage = self::VIEW_ERROR_MESSAGE;
 
-		return self::getWallContent();
+		return $this->getErrorContent();
 	}
 }

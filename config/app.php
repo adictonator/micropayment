@@ -1,6 +1,4 @@
 <?php
-namespace MPEngine\Support;
-
 defined( 'ABSPATH' ) or die( 'Not allowed!' );
 
 use MPEngine\Support\Blueprints\HookableInterface;
@@ -12,9 +10,10 @@ class ServiceProvider
 	public static function load()
 	{
 		self::$providers = [
-			Wizards\WizardsController::class,
-			\MicroPay\Controllers\Dash\DashMenusController::class,
-			\MicroPay\Controllers\Shortcodes\ShortcodesController::class,
+			MPEngine\Wizards\WizardsController::class,
+			MPEngine\Core\CoreDependenciesController::class,
+			MicroPay\Controllers\Dash\DashMenusController::class,
+			MicroPay\Controllers\Shortcodes\ShortcodesController::class,
 		];
 
 		return new self;

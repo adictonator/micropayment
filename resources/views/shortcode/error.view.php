@@ -1,3 +1,3 @@
-<div class="mp-wall">
+<div class="mp-error">
 <?php echo $this->viewMessage; ?>
 </div>
