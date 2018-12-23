@@ -1,0 +1,72 @@
+/** General Styling Rules **/
+.mp-flex {
+	display: flex;
+}
+
+.mp-flex.mp-flex-jc-sb {
+	justify-content: space-between;
+}
+
+/** Admin styling **/
+.mp-admin-blocks-wrap {
+	padding: 20px 50px;
+}
+.mp-admin-block {
+    width: 300px;
+    background: linear-gradient(60deg,#ab47bc,#8e24aa);
+    padding: 20px 50px;
+    border-radius: 4px;
+	box-shadow: 1px 1px 20px -8px #000;
+	transition: all 0.3s linear;
+}
+.mp-admin-block:hover {
+	box-shadow: 1px 1px 20px -3px #000;
+}
+.mp-admin-block:hover .mp-admin-block__title {
+	color: #FFF;
+}
+.mp-admin-block:hover .mp-admin-block__title:after {
+	width: 150px;
+	color: #fff;
+}
+.mp-admin-block__title {
+	font-size: 2em;
+	line-height: 1em;
+	color: #e8e8e8;
+	user-select: none;
+	position: relative;
+	transition: all 0.3s linear;
+}
+.mp-admin-block__title:after {
+    left: 0;
+    content: '';
+    width: 100px;
+    bottom: -10px;
+    display: block;
+    position: absolute;
+	border-radius: 10px;
+	transition: all 0.3s linear;
+    border-bottom: 3px solid #e8e8e8;
+}
+.mp-admin-block__link {
+	text-decoration: none;
+    font-size: 1.5em;
+    text-transform: uppercase;
+	color: rgba(255, 235, 59, 0.77);
+}
+.mp-admin-block__link:hover {
+	color: rgba(255, 235, 59, 1);
+}
+
+.mp-block {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.mp-block__error {
+	background: firebrick;
+	color: #FFF;
+	padding: 10px 20px;
+	border: 2px dashed #FFF;
+}

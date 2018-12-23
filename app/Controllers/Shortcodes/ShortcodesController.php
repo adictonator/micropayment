@@ -7,13 +7,15 @@ use MPEngine\Support\Blueprints\HookableInterface;
 
 class ShortcodesController implements HookableInterface
 {
-	protected $shortcodes = [
+	public static $shortcodes = [
 		MicroPayShortcodeController::class,
+		ProfileShortcodeController::class,
+		TransactionsShortcodeController::class,
 	];
 
 	public function init()
 	{
-		foreach ( $this->shortcodes as $shortcode ) :
+		foreach ( self::$shortcodes as $shortcode ) :
 			if ( is_subclass_of( $shortcode, BaseShortcodeController::class ) ) ( new $shortcode )->load();
 		endforeach;
 	}

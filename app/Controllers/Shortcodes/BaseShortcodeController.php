@@ -28,7 +28,7 @@ abstract class BaseShortcodeController
 
 	public function load()
 	{
-		add_shortcode( $this->name, [$this, 'function'] );
+		add_shortcode( static::$name, [$this, 'function'] );
 	}
 
 	protected function validateAttributes( $content, $attrs )

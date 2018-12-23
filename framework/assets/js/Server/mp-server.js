@@ -1,26 +1,38 @@
+const wp = window.wp || {}
+
 window.mpServer = class MicroPayServerEnvironment {
 	constructor() {
 		this.app = 'MicroPayment IO'
 		this.endPoints = {
 			ajax: wp.ajax.settings.url,
-			live: 'live.billingfox.com',
-			test: 'test.billingfox.com',
+			live: 'https://live.billingfox.com',
+			test: 'https://test.billingfox.com',
 		}
 		this.url = null
 		this.cacheData = null
 	}
 
-	send(type, method) {
+	api(type, method) {
 		this.url = this.endPoints[ type ]
 		this.method = method
 
-		return true
+		return this
 	}
 
-	process() {
-		fetch(this.url, {
+	send() {
+		fetch(this.url + '/api/ping', {
+			headers: new Headers({
+				'Authorization': 'Bearer 7ojvgRnvvwbZYSSJy2XKRwJmPiXexXtbkjbAxg3a8zJD',
+			}),
 			method: this.method,
 			body: this.cacheData
-		}).then(r => console.log('xsd', r))
+		})
+			.then(r => r.json())
+			.then(x => {
+				if ( x.status === 'success' ) {
+					alert('-x.message')
+				}
+			})
+			.catch(e => alert('Oops: ' + e))
 	}
 }

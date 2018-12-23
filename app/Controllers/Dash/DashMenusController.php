@@ -10,6 +10,7 @@ class DashMenusController implements HookableInterface
 {
 	protected $menus = [
 		Menus\MicroPayMenuController::class,
+		Menus\SettingsMenuController::class,
 	];
 
 	public function init()

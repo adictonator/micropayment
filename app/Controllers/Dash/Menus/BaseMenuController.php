@@ -65,7 +65,7 @@ abstract class BaseMenuController
 		$this->menuType = $menuType;
 		$this->useMainMenu = $useMainMenu;
 		$this->slug = $this->menuType == 'main' ? $this->slug : (
-			$this->useMainMenu ? $this->slug : $this->menuSlug( $this->title )
+			$this->useMainMenu ? $this->slug : mp_menu_slug( $this->title )
 		);
 		$this->setAssets( $assets );
 		method_exists( $this, 'model' ) ? $this->model() : false;
@@ -77,7 +77,7 @@ abstract class BaseMenuController
 	 * @return void
 	 */
 	abstract protected function view();
-	
+
 	/**
 	 * Loads assets for the current WP menu/submenu.
 	 *
@@ -112,7 +112,7 @@ abstract class BaseMenuController
 	{
 		add_submenu_page(
 			MP_PLUGIN_SLUG,
-			$this->menuTitle($this->title),
+			mp_menu_title( $this->title ),
 			$this->title,
 			$this->accessLevel,
 			$this->slug,

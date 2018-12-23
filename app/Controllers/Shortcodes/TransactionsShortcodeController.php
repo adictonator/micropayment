@@ -3,14 +3,15 @@ namespace MicroPay\Controllers\Shortcodes;
 
 defined( 'ABSPATH' ) or die( 'Not allowed!' );
 
-class MicroPayShortcodeController extends BaseShortcodeController
+class TransactionsShortcodeController extends BaseShortcodeController
 {
-	public static $name = 'micropay';
+	public static $name = 'micropay_transactions';
 
-	public static $description = 'Restricts website content';
+	public static $description = 'List Transactions of logged in User';
 
 	public static $args = [
-		'price:req',
+		'email',
+		'credits'
 	];
 
 	public function function( $attrs, $content = '' )

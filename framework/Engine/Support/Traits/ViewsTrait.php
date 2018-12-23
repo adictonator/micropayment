@@ -14,8 +14,10 @@ trait ViewsTrait
 	 */
 	protected $assets = [];
 
-	public function setView( string $path )
+	public function setView( string $path, $data = null )
 	{
+		if ( null !== $data ) extract( $data );
+
 		$filePath = $this->resolveViewPath( $path );
 
 		if ( null !== $filePath ) :
