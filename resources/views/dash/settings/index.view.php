@@ -1,4 +1,4 @@
-<h1><?php echo $this->title; ?></h1>
+<h1><?php echo static::$title; ?></h1>
 <hr />
 
 <div class="mp-wrap">

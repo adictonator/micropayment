@@ -8,14 +8,17 @@ use MicroPay\Controllers\Dash\Menus\BaseMenuController;
 
 class DashMenusController implements HookableInterface
 {
-	protected $menus = [
+	public static $menus = [
 		Menus\MicroPayMenuController::class,
+		Menus\OverviewMenuController::class,
 		Menus\SettingsMenuController::class,
+		Menus\APISettingsMenuController::class,
+		Menus\WCSettingsMenuController::class,
 	];
 
 	public function init()
 	{
-		foreach ( $this->menus as $menu ) :
+		foreach ( self::$menus as $menu ) :
 			if ( is_subclass_of( $menu, BaseMenuController::class ) ) ( new $menu )->load();
 		endforeach;
 	}

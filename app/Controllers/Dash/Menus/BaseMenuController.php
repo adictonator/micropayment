@@ -56,7 +56,6 @@ abstract class BaseMenuController
 	/**
 	 *
 	 * @param array $assets
-	 * @param string $title
 	 * @param string $menuType
 	 * @param boolean $useMainMenu
 	 */
@@ -65,7 +64,7 @@ abstract class BaseMenuController
 		$this->menuType = $menuType;
 		$this->useMainMenu = $useMainMenu;
 		$this->slug = $this->menuType == 'main' ? $this->slug : (
-			$this->useMainMenu ? $this->slug : mp_menu_slug( $this->title )
+			$this->useMainMenu ? $this->slug : mp_menu_slug( static::$title )
 		);
 		$this->setAssets( $assets );
 		method_exists( $this, 'model' ) ? $this->model() : false;
@@ -94,7 +93,7 @@ abstract class BaseMenuController
 	protected function mainMenu()
 	{
 		add_menu_page(
-			'',
+			static::$title,
 			MP_PLUGIN_LONG_NAME,
 			$this->accessLevel,
 			$this->slug,
@@ -112,8 +111,8 @@ abstract class BaseMenuController
 	{
 		add_submenu_page(
 			MP_PLUGIN_SLUG,
-			mp_menu_title( $this->title ),
-			$this->title,
+			mp_menu_title( static::$title ),
+			static::$title,
 			$this->accessLevel,
 			$this->slug,
 			[$this, 'menuFunction']

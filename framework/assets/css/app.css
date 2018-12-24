@@ -1,4 +1,9 @@
 /** General Styling Rules **/
+input[type=checkbox], input[type=radio] {
+    box-sizing: border-box;
+    padding: 0;
+}
+
 .mp-flex {
 	display: flex;
 }
@@ -8,6 +13,87 @@
 }
 
 /** Admin styling **/
+.mp-checkbox-wrap * {
+    box-sizing: border-box;
+}
+.mp-checkbox-wrap {
+    position: relative;
+    display: inline-block;
+    margin-right: 1em;
+    white-space: nowrap;
+    line-height: 1;
+}
+.mp-checkbox-wrap .mp-checkbox-toggler {
+	position: relative;
+}
+.mp-checkbox-wrap .mp-checkbox-toggler:before {
+    content: '';
+    border: 1px solid #bdc3c7;
+    border-radius: 60px;
+    width: 4em;
+    box-sizing: unset;
+    height: calc(1.5em + 2px);
+    position: absolute;
+    top: 0;
+    top: calc((0% - (100% - 1em)) - 16%);
+    z-index: 0;
+	transition: all .5s ease;
+}
+.mp-checkbox-wrap .mp-checkbox-toggler label {
+    text-indent: 5em;
+	position: initial;
+	display: inline-block;
+	font-weight: 400;
+	margin: 0;
+	text-indent: 5em;
+	min-width: calc(1em + 2px);
+}
+.mp-checkbox-wrap input {
+	position: absolute;
+    left: 0;
+    top: 0;
+	min-width: 2em;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    opacity: 0;
+    margin: 0;
+    padding: 0;
+	cursor: pointer;
+}
+.mp-checkbox-wrap .mp-checkbox-toggler label:before {
+    border-color: #bdc3c7;
+}
+.mp-checkbox-wrap .mp-checkbox-toggler label:after, .mp-checkbox-wrap .mp-checkbox-toggler label:before {
+    content: '';
+    width: calc(1.5em + 2px);
+    height: calc(1.5em + 2px);
+    display: block;
+    box-sizing: border-box;
+    border: 1px solid transparent;
+    z-index: 0;
+    position: absolute;
+    top: calc((0% - (100% - 1em)) - 10.4%);
+	background-color: transparent;
+    border-radius: 100%;
+    left: 0;
+	transform: scale(.8);
+	transition: all .5s ease;
+}
+.mp-checkbox-wrap input:checked ~ .mp-checkbox-toggler label:after {
+    background-color: #fff;
+    left: 2.4em;
+}
+.mp-checkbox-wrap .mp-checkbox-toggler label:after {
+    background-color: #bdc3c7;
+}
+
+.mp-checkbox-wrap input:checked ~ .mp-checkbox-toggler:before {
+	transition: all 0.5s ease 0.2s;
+	border-color: #8e24aa;
+	background-color: #8e24aa;
+}
+
 .mp-admin-blocks-wrap {
 	padding: 20px 50px;
 }

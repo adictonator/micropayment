@@ -3,11 +3,9 @@ namespace MicroPay\Controllers\Dash\Menus;
 
 defined( 'ABSPATH' ) or die( 'Not allowed!' );
 
-use MicroPay\Controllers\Shortcodes\ShortcodesController;
-
-class SettingsMenuController extends BaseMenuController
+class WCSettingsMenuController extends BaseMenuController
 {
-	public static $title = 'General Settings';
+	public static $title = 'WooCommerce Settings';
 
 	public function __construct()
 	{
@@ -24,8 +22,6 @@ class SettingsMenuController extends BaseMenuController
 
 	public function view()
 	{
-		$shortcodes = ShortcodesController::$shortcodes;
-
-		$this->setView( 'dash.settings.index', compact( 'shortcodes' ) );
+		$this->setView( 'dash.wc.index' );
 	}
 }

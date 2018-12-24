@@ -15,9 +15,7 @@ define( 'MP_FW_URL', MP_ROOT_URL . 'framework' . '/' );
 define( 'MP_FW_ASSETS_URL', MP_FW_URL . 'assets' . '/' );
 define( 'MP_FW_ASSETS_DIR', MP_FW_DIR . 'assets' . DS );
 
-
-
-/** Files and extensions. */
+/** Files extensions. */
 define( 'MP_VIEWS_EXT', '.view.php' );
 define( 'MP_INCLD_EXT', '.inc.php' );
 define( 'MP_FILE_TYPES', [
@@ -33,6 +31,7 @@ define( 'MP_PLUGIN_SLUG', 'micropay' );
 define( 'MP_PLUGIN_SHORT_NAME', 'MicroPay' );
 define( 'MP_PLUGIN_LONG_NAME', 'MicroPayment IO' );
 define( 'MP_PLUGIN_MENU_TITLE', MP_PLUGIN_LONG_NAME . ' &mdash; ' );
+define( 'MP_GENERAL_SETTINGS_KEY', MP_PLUGIN_SLUG . '_settings' );
 
 /** API constants. */
 define( 'LIVE_EP', 'live.billingfox.com' );

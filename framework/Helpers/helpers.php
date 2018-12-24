@@ -54,3 +54,17 @@ if ( ! function_exists( 'mp_menu_title' ) ) {
 		return MP_PLUGIN_MENU_TITLE . $title;
 	}
 }
+
+if ( ! function_exists( 'mp_form_post' ) ) {
+	function mp_form_post()
+	{
+		return admin_url( 'admin-post.php?action=mp_post' );
+	}
+}
+
+if ( ! function_exists( 'mp_form_action_fields' ) ) {
+	function mp_form_action_fields()
+	{
+		// will return nonce and action fields
+	}
+}
