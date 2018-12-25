@@ -28,24 +28,3 @@
 	endforeach; ?>
 
 </div>
-
-<?php
-
-$data = [
-	'api' => [
-		'mode' => [
-			'lable' => 'API Mode',
-			'value' => 'test'
-		],
-		'debug' => [
-			'label' => 'API Debug Mode',
-			'value' => 'enabled'
-		]
-	],
-	'general' => [
-
-	]
-
-];
-
-?>

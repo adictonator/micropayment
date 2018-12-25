@@ -113,7 +113,7 @@ input[type=checkbox], input[type=radio] {
 }
 .mp-admin-block:hover .mp-admin-block__title:after {
 	width: 150px;
-	color: #fff;
+	border-color: #FFF;
 }
 .mp-admin-block__title {
 	font-size: 2em;

@@ -8,8 +8,6 @@ use MPEngine\Support\Blueprints\HookableInterface;
 
 class WizardsController implements HookableInterface
 {
-	private static $activeWizard;
-
 	protected $wizards = [
 		SetupWizardController::class,
 	];
