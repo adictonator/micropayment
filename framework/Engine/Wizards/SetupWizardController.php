@@ -12,6 +12,11 @@ class SetupWizardController implements WizardsInterface
 
 	const WIZARD_SLUG = MP_PLUGIN_SLUG . '-setup';
 
+	protected $assets = [
+		'css' => ['bootstrap.min.css', 'app.css'],
+		'js' => ['app.js'],
+	];
+
 	public function view()
 	{
 		$this->setView( 'installer.setupWiz' );
@@ -42,14 +47,13 @@ class SetupWizardController implements WizardsInterface
 
         if ( ! empty( $_GET['page'] ) && $_GET['page'] === self::WIZARD_SLUG ) {
 			add_action( 'admin_menu', [__CLASS__, 'tempWizardMenu'] );
-
-			self::loadView();
+			add_action( 'admin_init', [__CLASS__, 'loadView'] );
         }
 	}
 
 	public static function tempWizardMenu()
     {
-        add_dashboard_page( '', '', 'manage_options', self::WIZARD_SLUG, '' );
+		add_dashboard_page( '', '', 'manage_options', self::WIZARD_SLUG, '' );
 	}
 
 	public static function activated()

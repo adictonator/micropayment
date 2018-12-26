@@ -7,20 +7,17 @@ use MPEngine\Support\Exceptions\ViewErrorException;
 
 trait ViewsTrait
 {
-	/**
-	 * Assets array for the current class.
-	 *
-	 * @var array
-	 */
-	protected $assets = [];
+	private $path;
 
 	public function setView( string $path, $data = null )
 	{
 		if ( null !== $data ) extract( $data );
 
-		$filePath = $this->resolveViewPath( $path );
+		$this->path = $path;
+		$filePath = $this->resolveViewPath( $this->path );
 
 		if ( null !== $filePath ) :
+			$this->enqueueAssets();
 			include $filePath;
 		endif;
 	}
@@ -28,6 +25,7 @@ trait ViewsTrait
 	public function resolveViewPath( string $path )
 	{
 		$filePath = mp_path_resolver( $path, 'view' );
+		$filePath = MP_VIEWS_DIR . $filePath . MP_VIEWS_EXT;
 
 		try {
 			if ( ! file_exists( $filePath ) ) :
@@ -38,6 +36,32 @@ trait ViewsTrait
 		} catch ( ViewErrorException $e ) {
 			echo $e->msg();
 		}
+	}
+
+	/**
+	 * Undocumented function
+	 * @todo Heavy improvements needed.
+	 * @return void
+	 */
+	public function enqueueAssets()
+	{
+		if ( isset( $this->assets['css'] ) ) :
+			foreach ( $this->assets['css'] as $key => $asset ) :
+				$filePath = mp_path_resolver( $this->path, 'asset' );
+				$assetPath  = MP_VIEWS_URL . $filePath . 'assets/css/' . $asset;
+
+				wp_enqueue_style( 'mp-' . $key, $assetPath, [], MP_VER );
+			endforeach;
+		endif;
+
+		if ( isset( $this->assets['js'] ) ) :
+			foreach ( $this->assets['js'] as $key => $asset ) :
+				$filePath = mp_path_resolver( $this->path, 'asset' );
+				$assetPath  = MP_VIEWS_URL . $filePath . 'assets/js/' . $asset;
+
+				wp_enqueue_script( 'mp-' . $key, $assetPath, ['jquery'] );
+			endforeach;
+		endif;
 	}
 
 	public function setAssets( $assets )

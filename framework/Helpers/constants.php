@@ -9,7 +9,7 @@ define( 'MP_DB_VER', MP_VER );
 define( 'MP_ROOT_DIR', plugin_dir_path( MP_ROOT ) );
 define( 'MP_ROOT_URL', plugin_dir_url( MP_ROOT ) );
 define( 'MP_VIEWS_DIR', MP_ROOT_DIR . 'resources' . DS . 'views' . DS );
-define( 'MP_VIEWS_URL', MP_ROOT_URL . 'resources' . DS . 'views' . DS );
+define( 'MP_VIEWS_URL', MP_ROOT_URL . 'resources' . '/' . 'views' . '/' );
 define( 'MP_FW_DIR', MP_ROOT_DIR . 'framework' . DS );
 define( 'MP_FW_URL', MP_ROOT_URL . 'framework' . '/' );
 define( 'MP_FW_ASSETS_URL', MP_FW_URL . 'assets' . '/' );

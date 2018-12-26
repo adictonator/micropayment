@@ -10,9 +10,12 @@ if ( ! function_exists('mp_path_resolver') ) {
 			$pathArr = explode( '/', $path );
 		endif;
 
-		$ext = MP_FILE_TYPES[ $fileType ];
-		$fileName = end( $pathArr );
-		return $fullPath = MP_VIEWS_DIR . $path . $ext;
+		if ( $fileType !== 'view' ) :
+			array_pop( $pathArr );
+			$path = implode( '/', $pathArr ) . '/';
+		endif;
+
+		return $path;
 	}
 }
 
@@ -66,5 +69,19 @@ if ( ! function_exists( 'mp_form_action_fields' ) ) {
 	function mp_form_action_fields()
 	{
 		// will return nonce and action fields
+	}
+}
+
+if ( ! function_exists( 'mp_view_asset' ) ) {
+	/**
+	 * Echos asset path.
+	 *
+	 * @todo Improve this or maybe remove it?
+	 * @param string $assetPath
+	 * @return void
+	 */
+	function mp_view_asset( string $assetPath )
+	{
+		echo MP_VIEWS_URL . $assetPath;
 	}
 }
