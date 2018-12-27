@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400');
+
 html {
 	box-sizing: border-box;
 	line-height: 1.15;
@@ -5,6 +7,7 @@ html {
 }
 body {
 	margin: 0;
+	font-family: 'Roboto', sans-serif;
 }
 main {
 	display: block;
@@ -150,6 +153,7 @@ template {
 .mp-setup-wrap {
 	display: flex;
 	justify-content: center;
+	flex-direction: column;
 	align-items: center;
 	background: lightcyan;
 	min-height: 100vh;
@@ -157,8 +161,6 @@ template {
 	background: #8360c3;
 	background: -webkit-linear-gradient(to left, #2ebf91, #8360c3);
 	background: linear-gradient(to left, #2ebf91, #8360c3);
-
-
 }
 .mp-setup {
 	width: 800px;
@@ -167,15 +169,18 @@ template {
 	border-radius: 5px;
 	box-shadow: 0px 30px 50px -25px rgba(0, 0, 0, 0.16);
 }
-
+.mp-setup h1 {
+	font-weight: 300;
+}
 /* Steps */
 .mp-setup__steps {
+	width: 800px;
 	list-style: none;
 	display: flex;
 	justify-content: space-between;
 	position: relative;
 	align-items: center;
-	top: -80px;
+	top: -50px;
 	margin: 0;
 	padding: 0;
 	overflow: hidden;
@@ -186,14 +191,16 @@ template {
 	position: relative;
 	z-index: 2;
 	text-transform: uppercase;
-	letter-spacing: -1px;
 	color: #000;
 	align-items: center;
 	background: #FFF;
 	padding: 5px 10px;
 	border-radius: 5px;
 	box-shadow: 1px 1px 1px #CCC;
-	font-weight: 600;
+	font-weight: 400;
+	min-width: 100px;
+	justify-content: center;
+	user-select: none;
 }
 .mp-setup__steps li.active {
 	color: #FFF;
@@ -202,8 +209,8 @@ template {
 }
 .mp-setup__steps li:not(:last-child):after {
 	content: '';
-    min-width: 150%;
-    height: 5px;
+    min-width: 100%;
+    height: 2px;
     background: rgba(0,0,0, 0.4);
     position: absolute;
 	display: block;
@@ -211,4 +218,24 @@ template {
 }
 .mp-setup__steps li.active:after {
 	background: linear-gradient(60deg,#ab47bc,#8e24aa);
+}
+.mp-setup__action {
+	display: flex;
+	justify-content: center;
+	margin: 40px 0 20px;
+}
+.mp-setup-button {
+    border: 0;
+    padding: 15px 35px;
+    text-transform: uppercase;
+    border-radius: 5px;
+    background: linear-gradient(60deg,#ab47bc,#8e24aa);
+    color: #FFF;
+    outline: 0;
+	box-shadow: 1px 1px 20px -5px rgba(0, 0, 0, 0.83);
+	cursor: pointer;
+	transition: all 0.25s linear;
+}
+.mp-setup-button:hover {
+	box-shadow: 1px 5px 20px -5px rgba(0, 0, 0, 0.8);
 }

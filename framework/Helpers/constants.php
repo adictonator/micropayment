@@ -33,6 +33,9 @@ define( 'MP_PLUGIN_LONG_NAME', 'MicroPayment IO' );
 define( 'MP_PLUGIN_MENU_TITLE', MP_PLUGIN_LONG_NAME . ' &mdash; ' );
 define( 'MP_GENERAL_SETTINGS_KEY', MP_PLUGIN_SLUG . '_settings' );
 
+/** Form constants. */
+define( 'MP_FORM_NONCE', MP_PLUGIN_SLUG . '_nonce' );
+
 /** API constants. */
 define( 'LIVE_EP', 'live.billingfox.com' );
 define( 'TEST_EP', 'test.billingfox.com' );

@@ -10,8 +10,9 @@ class ServiceProvider
 	public static function load()
 	{
 		self::$providers = [
-			MPEngine\Wizards\WizardsController::class,
 			MPEngine\Core\CoreDependenciesController::class,
+			MPEngine\Core\RouterController::class,
+			MPEngine\Wizards\WizardsController::class,
 			MPEngine\WooCommerce\PaymentGatewaysController::class,
 			MicroPay\Controllers\Dash\DashMenusController::class,
 			MicroPay\Controllers\Shortcodes\ShortcodesController::class,

@@ -65,10 +65,20 @@ if ( ! function_exists( 'mp_form_post' ) ) {
 	}
 }
 
-if ( ! function_exists( 'mp_form_action_fields' ) ) {
-	function mp_form_action_fields()
+if ( ! function_exists( 'mp_form_fields' ) ) {
+	function mp_form_fields( $callType, $action, $controller )
 	{
-		// will return nonce and action fields
+		$controllerName = is_string( $controller ) ? $controller : get_class( $controller );
+		$formMethod = $callType === 'ajax' ? 'listenAJAX' : 'listenPOST';
+
+		if ( method_exists( $controller, $action ) ) :
+			$nonce = wp_create_nonce( $action );
+			$fields = "<input type='hidden' value='$nonce' name='". MP_FORM_NONCE ."'>
+			<input type='hidden' value='$action' name='mpAction'>
+			<input type='hidden' value='$formMethod' name='action'>
+			<input type='hidden' value='". str_replace( '\\', ':', $controllerName ) ."' name='mpController'>";
+			echo $fields;
+		endif;
 	}
 }
 
@@ -83,5 +93,31 @@ if ( ! function_exists( 'mp_view_asset' ) ) {
 	function mp_view_asset( string $assetPath )
 	{
 		echo MP_VIEWS_URL . $assetPath;
+	}
+}
+
+if ( ! function_exists( 'mp_filter_form_data' ) ) {
+	/**
+	 * Unsets unwanted indexes/variables from the data array.
+	 *
+	 * @param array $array
+	 * @return array $array
+	 */
+	function mp_filter_form_data( $array )
+	{
+		unset(
+			$array[ MP_FORM_NONCE ],
+			$array['action'],
+			$array['mpAction'],
+			$array['mpController'],
+			$array['_wp_http_referer']
+		);
+		$array = array_map( function( $array ) {
+			if ( $array === false && $array === '' ) {
+				$array = null;
+			}
+			return $array;
+		}, $array );
+		return $array;
 	}
 }

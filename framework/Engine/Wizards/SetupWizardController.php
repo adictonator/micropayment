@@ -58,6 +58,18 @@ class SetupWizardController implements WizardsInterface
 
 	public static function activated()
     {
-        set_transient(MP_PLUGIN_SLUG, 1, 30);
-    }
+        set_transient( MP_PLUGIN_SLUG, 1, 30 );
+	}
+
+	public function setup()
+	{
+		$data = mp_filter_form_data( $_POST );
+		$generalSettings = get_option( MP_GENERAL_SETTINGS_KEY, [] );
+
+		echo "<pre>";
+		print_r($data);
+		echo "</pre>";
+
+		$generalSettings[ $data['key'] ] = $data['values'];
+	}
 }

@@ -3,13 +3,22 @@ const wp = window.wp || {}
 window.mpServer = class MicroPayServerEnvironment {
 	constructor() {
 		this.app = 'MicroPayment IO'
-		this.endPoints = {
-			ajax: wp.ajax.settings.url,
-			live: 'https://live.billingfox.com',
-			test: 'https://test.billingfox.com',
-		}
+		this.ajax = wp.ajax.settings.url,
 		this.url = null
 		this.cacheData = null
+	}
+
+	_setup( data ) {
+		this._setupAPI( data ).then(r => console.log('ee', r))
+	}
+
+	async _setupAPI( data ) {
+		const resp = await fetch(this.ajax, {
+			method: 'POST',
+			credentials: 'same-origin',
+			body: data
+		});
+		return await resp.json();
 	}
 
 	api(type, method) {
@@ -20,7 +29,7 @@ window.mpServer = class MicroPayServerEnvironment {
 	}
 
 	send() {
-		fetch(this.url + '/api/ping', {
+		fetch(this.url, {
 			headers: new Headers({
 				'Authorization': 'Bearer 7ojvgRnvvwbZYSSJy2XKRwJmPiXexXtbkjbAxg3a8zJD',
 			}),
