@@ -13,7 +13,7 @@ class SetupWizardController implements WizardsInterface
 	const WIZARD_SLUG = MP_PLUGIN_SLUG . '-setup';
 
 	protected $assets = [
-		'css' => ['bootstrap.min.css', 'app.css'],
+		'css' => ['app.css'],
 		'js' => ['app.js'],
 	];
 
@@ -58,6 +58,9 @@ class SetupWizardController implements WizardsInterface
 
 	public static function activated()
     {
+		$generalSettings = get_option( MP_GENERAL_SETTINGS_KEY, [] );
+
+		if ( empty( $generalSettings ) ) self::initGeneralSettings();
         set_transient( MP_PLUGIN_SLUG, 1, 30 );
 	}
 
@@ -65,11 +68,35 @@ class SetupWizardController implements WizardsInterface
 	{
 		$data = mp_filter_form_data( $_POST );
 		$generalSettings = get_option( MP_GENERAL_SETTINGS_KEY, [] );
+		$key = $data['key'];
 
-		echo "<pre>";
-		print_r($data);
-		echo "</pre>";
+		foreach ( $data[ $key ] as $dKey => $val ) :
+			$generalSettings[ $key ][ $dKey ]['value'] = $val;
+		endforeach;
 
-		$generalSettings[ $data['key'] ] = $data['values'];
+	}
+
+	private function initGeneralSettings()
+	{
+		$generalSettings = [
+			'api' => [
+				'mode' => [
+					'label' => __( 'API Test Mode' ),
+					'value' => 'yes',
+				],
+				'debug' => [
+					'label' => __( 'Debugging Mode' ),
+					'value' => 'no',
+				],
+			],
+			'woo' => [
+
+			],
+			'general' => [
+
+			],
+		];
+
+		update_option( MP_GENERAL_SETTINGS_KEY, $generalSettings );
 	}
 }

@@ -3,13 +3,9 @@ namespace MicroPay\Controllers\Dash\Menus;
 
 defined( 'ABSPATH' ) or die( 'Not allowed!' );
 
-use MicroPay\Controllers\Dash\DashMenusController;
-
 class OverviewMenuController extends BaseMenuController
 {
-	public static $title = 'Overview';
-
-	public static $isMainMenu = true;
+	const TITLE = 'Overview';
 
 	public function __construct()
 	{
@@ -26,7 +22,11 @@ class OverviewMenuController extends BaseMenuController
 
 	public function view()
 	{
-		$menus = DashMenusController::$menus;
+		$menus = [
+			'general' => SettingsMenuController::TITLE,
+			'api' 	  => APISettingsMenuController::TITLE,
+			'woo' 	  => WCSettingsMenuController::TITLE,
+		];
 		$menuData = get_option( MP_GENERAL_SETTINGS_KEY, [] );
 
 		$this->setView( 'dash.overview.index', compact( 'menus', 'menuData' ) );

@@ -222,7 +222,7 @@ template {
 .mp-setup__action {
 	display: flex;
 	justify-content: center;
-	margin: 40px 0 20px;
+	margin: 20px 0;
 }
 .mp-setup-button {
     border: 0;
@@ -235,7 +235,25 @@ template {
 	box-shadow: 1px 1px 20px -5px rgba(0, 0, 0, 0.83);
 	cursor: pointer;
 	transition: all 0.25s linear;
+	margin: 10px 0;
+}
+.mp-setup-button.mp-setup-button--secondary {
+	padding: 10px 25px;
+	background: #136a8a;
+	background: linear-gradient(to right, #267871, #136a8a);
+	box-shadow: 1px 1px 15px -3px rgba(0, 0, 0, 0.83);
 }
 .mp-setup-button:hover {
 	box-shadow: 1px 5px 20px -5px rgba(0, 0, 0, 0.8);
+}
+.mp-setup-input {
+	width: 100%;
+	padding: 5px;
+	border-radius: 5px;
+	border: 1px solid rgba(0,0,0,0.5);
+	line-height: 30px;
+	outline: 0;
+    font-weight: 300;
+	color: #3e3e3e;
+	margin-bottom: 10px;
 }

@@ -7,9 +7,7 @@ use MicroPay\Controllers\Dash\DashMenusController;
 
 class MicroPayMenuController extends BaseMenuController
 {
-	public static $title = '';
-
-	public static $isMainMenu = true;
+	const TITLE = '';
 
 	public function __construct()
 	{

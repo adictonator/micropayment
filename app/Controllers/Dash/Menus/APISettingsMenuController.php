@@ -5,7 +5,7 @@ defined( 'ABSPATH' ) or die( 'Not allowed!' );
 
 class APISettingsMenuController extends BaseMenuController
 {
-	public static $title = 'BillingFox API Settings';
+	const TITLE = 'BillingFox API Settings';
 
 	public function __construct()
 	{

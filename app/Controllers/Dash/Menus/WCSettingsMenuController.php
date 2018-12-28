@@ -5,7 +5,7 @@ defined( 'ABSPATH' ) or die( 'Not allowed!' );
 
 class WCSettingsMenuController extends BaseMenuController
 {
-	public static $title = 'WooCommerce Settings';
+	const TITLE = 'WooCommerce Settings';
 
 	public function __construct()
 	{

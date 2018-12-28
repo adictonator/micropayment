@@ -7,7 +7,7 @@ use MicroPay\Controllers\Shortcodes\ShortcodesController;
 
 class SettingsMenuController extends BaseMenuController
 {
-	public static $title = 'General Settings';
+	const TITLE = 'General Settings';
 
 	public function __construct()
 	{
