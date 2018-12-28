@@ -74,6 +74,7 @@ class SetupWizardController implements WizardsInterface
 			$generalSettings[ $key ][ $dKey ]['value'] = $val;
 		endforeach;
 
+		update_option( MP_GENERAL_SETTINGS_KEY, $generalSettings );
 	}
 
 	private function initGeneralSettings()

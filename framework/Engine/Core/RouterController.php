@@ -16,7 +16,7 @@ class RouterController implements HookableInterface
 	private function validate( $formData )
 	{
 		if ( isset( $formData[ MP_FORM_NONCE ] )
-			&& wp_verify_nonce( $formData[ MP_FORM_NONCE ], $formData['mpAction'] ) ) return true;
+			&& wp_verify_nonce( $formData[ MP_FORM_NONCE ], MP_FORM_NONCE ) ) return true;
 		return false;
 	}
 

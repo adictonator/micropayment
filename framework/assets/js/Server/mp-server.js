@@ -3,7 +3,8 @@ const wp = window.wp || {}
 window.mpServer = class MicroPayServerEnvironment {
 	constructor() {
 		this.app = 'MicroPayment IO'
-		this.ajax = wp.ajax.settings.url,
+		this.ajax = mp_helpers.url,
+		this.api = 'https://test.billingfox.com/api/ping'
 		this.url = null
 		this.cacheData = null
 	}
@@ -19,6 +20,17 @@ window.mpServer = class MicroPayServerEnvironment {
 			body: data
 		});
 		return await resp.json();
+	}
+
+	async _validateAPI( apiKey ) {
+		const resp = await fetch(this.api, {
+			method: 'GET',
+			headers: new Headers({
+				'Authorization': 'Bearer ' + apiKey
+			}),
+		})
+
+		return await resp.json()
 	}
 
 	api(type, method) {

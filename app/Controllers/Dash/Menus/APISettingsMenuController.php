@@ -28,25 +28,5 @@ class APISettingsMenuController extends BaseMenuController
 	protected function update()
 	{
 		$menuData = get_option( MP_GENERAL_SETTINGS_KEY, [] );
-
-		// $menuData[ mp_menu_slug( self::$title ) ] = [
-		// 	key( $_POST ) => [
-		// 		'label' => 'API Mode',
-		// 		'value' => $_POST['value'],
-		// 	]
-		// ];
-
-		// $menuData = [
-		// 	'micropay-billingfox-api-settings' => [
-		// 		'mode' => [
-		// 			'label' => 'API Mode',
-		// 			'value' => 'test'
-		// 		],
-		// 		'debug' => [
-		// 			'label' => 'API Debug Mode',
-		// 			'value' => 'enabled'
-		// 		]
-		// 	]
-		// ];
 	}
 }

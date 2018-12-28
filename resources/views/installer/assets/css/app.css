@@ -201,8 +201,9 @@ template {
 	min-width: 100px;
 	justify-content: center;
 	user-select: none;
+	cursor: pointer;
 }
-.mp-setup__steps li.active {
+.mp-setup__steps li.step {
 	color: #FFF;
 	background: linear-gradient(60deg,#ab47bc,#8e24aa);
 	box-shadow: 1px 1px 1px #8e24aa;
@@ -216,13 +217,26 @@ template {
 	display: block;
 	left: 100%;
 }
-.mp-setup__steps li.active:after {
+.mp-setup__steps li.step:after {
 	background: linear-gradient(60deg,#ab47bc,#8e24aa);
 }
 .mp-setup__action {
 	display: flex;
 	justify-content: center;
 	margin: 20px 0;
+}
+.mp-setup-group {
+	display: flex;
+	align-items: center;
+	margin: 20px 0;
+	min-height: 50px;
+    justify-content: center;
+}
+.mp-setup-group label {
+	margin-top: 2px !important;
+}
+.mp-setup-group.mp-setup-group--hidden {
+	display: none;
 }
 .mp-setup-button {
     border: 0;
@@ -235,9 +249,9 @@ template {
 	box-shadow: 1px 1px 20px -5px rgba(0, 0, 0, 0.83);
 	cursor: pointer;
 	transition: all 0.25s linear;
-	margin: 10px 0;
 }
 .mp-setup-button.mp-setup-button--secondary {
+	margin-left: 20px;
 	padding: 10px 25px;
 	background: #136a8a;
 	background: linear-gradient(to right, #267871, #136a8a);
@@ -255,5 +269,5 @@ template {
 	outline: 0;
     font-weight: 300;
 	color: #3e3e3e;
-	margin-bottom: 10px;
+	box-sizing: border-box;
 }
