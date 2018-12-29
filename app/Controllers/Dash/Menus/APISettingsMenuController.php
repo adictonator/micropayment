@@ -22,11 +22,17 @@ class APISettingsMenuController extends BaseMenuController
 
 	public function view()
 	{
-		$this->setView( 'dash.api.index' );
+		$generalSettings = get_option( MP_GENERAL_SETTINGS_KEY, [] );
+		$apiSettings = $generalSettings['api'];
+
+		$this->setView( 'dash.api.index', compact( 'apiSettings' ) );
 	}
 
 	protected function update()
 	{
+		echo "<pre>";
+		print_r($_POST);
+		echo "</pre>";
 		$menuData = get_option( MP_GENERAL_SETTINGS_KEY, [] );
 	}
 }

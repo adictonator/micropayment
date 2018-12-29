@@ -40,7 +40,7 @@ window.mpServer = class MicroPayServerEnvironment {
 		return this
 	}
 
-	send() {
+	send( data ) {
 		fetch(this.url, {
 			headers: new Headers({
 				'Authorization': 'Bearer 7ojvgRnvvwbZYSSJy2XKRwJmPiXexXtbkjbAxg3a8zJD',
