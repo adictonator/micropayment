@@ -1,6 +1,4 @@
 jQuery(function($) {
-	const mp = new window.mpServer
-
 	$('body').on('click', 'button[data-mp-setup-btn]', function(e) {
 		e.preventDefault()
 		let step = $('div[data-mp-step]:visible').next('div[data-mp-step]').data('mp-step')

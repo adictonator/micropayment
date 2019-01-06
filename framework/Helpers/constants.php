@@ -39,4 +39,5 @@ define( 'MP_FORM_NONCE', MP_PLUGIN_SLUG . '_nonce' );
 /** API constants. */
 define( 'LIVE_EP', 'live.billingfox.com' );
 define( 'TEST_EP', 'test.billingfox.com' );
+define( 'BF_UID', 'billing_fox_user_id' );
 

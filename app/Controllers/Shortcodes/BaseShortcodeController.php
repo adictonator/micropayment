@@ -3,6 +3,7 @@ namespace MicroPay\Controllers\Shortcodes;
 
 defined( 'ABSPATH' ) or die( 'Not allowed!' );
 
+use MPEngine\BillingFox\BillingFoxAPI;
 use MPEngine\Support\Traits\ViewsTrait;
 use MPEngine\Support\Exceptions\ShortcodeException;
 
@@ -15,10 +16,6 @@ abstract class BaseShortcodeController
 	protected $viewMessage;
 
 	protected $shortcodeContents;
-
-	private $requiredAttributes = [
-		'price',
-	];
 
 	const VIEW_ERROR_MESSAGE = 'Some attributes are missing!';
 
@@ -35,11 +32,13 @@ abstract class BaseShortcodeController
 	{
 		$attrs = ! is_array( $attrs ) ? [] : $attrs;
 
-		foreach ( $this->requiredAttributes as $attr ) :
-			if ( ! array_key_exists( $attr, $attrs ) ) :
-				return $this->incompleteShortcode();
-			endif;
-		endforeach;
+		if ( ! empty( static::$args ) ) :
+			foreach ( static::$args as $arg ) :
+				if ( strpos( $arg, ':req' ) !== false && ! array_key_exists( str_replace( ':req', '', $arg ), $attrs ) ) :
+					return $this->incompleteShortcode();
+				endif;
+			endforeach;
+		endif;
 
 		return $this->processShortcodeContent( $content, $attrs );
 	}
@@ -52,7 +51,15 @@ abstract class BaseShortcodeController
 
 	private function hasWall()
 	{
-		//billingfox checks here
+		// $authUser = static::isAuthUser();
+		// if ( ! $authUser ) throw new \Exception('Login pls') ;
+		// maybe show the wall simply and upon clicking on the CREDIT button, it
+		// will check if it need the user login or not.
+
+		// echo "<pre>";
+		// print_r($authUser);
+		// echo "</pre>";
+		// $wall = ( new BillingFoxAPI )->init()->needWall();
 
 		return $this->wall;
 	}

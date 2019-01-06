@@ -23,16 +23,18 @@
 					<?php mp_form_fields( 'ajax', 'setup', $this ); ?>
 					<div class="mp-setup__content" data-mp-step="intro">
 						<h1>Welcome</h1>
-						<h3>Lorem, ipsum dolor.</h3>
+						<h3>And Thanks For installing Micropayment.io</h3>
 
-						<p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quos illum ea iusto nihil, provident corrupti autem sapiente molestiae tempora adipisci, suscipit cumque facere, ex excepturi sit debitis? Cum, sed autem!</p>
+						<p>Micropayment.io is an account credits service built to make microtransactions on the Wordpress platform simple, and seamless. Protect articles, audio & video players, and use virtual credits in your WooCommerce store if you like.</p>
+						<p>What does a BillingFox cost? <strong>1 Credit = $0.01</strong></p>
+						<p>So let’s get started!</p>
 					</div>
 
 					<div class="mp-setup__content" data-mp-step="api" style="display: none">
 						<h1>BillingFox API Settings</h1>
 
 						<div class="mp-setup-group">
-							<input type="text" class="mp-setup-input" name="apiKey" placeholder="Enter your BillingFox API Key">
+							<input type="text" class="mp-setup-input" name="api[key]" placeholder="Enter your BillingFox API Key">
 							<button type="button" class="mp-setup-button mp-setup-button--secondary" data-mp-validate-api>Validate</button>
 						</div>
 
@@ -55,14 +57,14 @@
 					<div class="mp-setup__content" data-mp-step="woo" style="display: none">
 						<h1>WooCommerce Settings</h1>
 
-						<p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quos illum ea iusto nihil, provident corrupti autem sapiente molestiae tempora adipisci, suscipit cumque facere, ex excepturi sit debitis? Cum, sed autem!</p>
+						<p>WooCommerce setup</p>
 					</div>
 
 					<div class="mp-setup__content" data-mp-step="done" style="display: none">
 						<h1>DONE</h1>
-						<h3>Lorem, ipsum dolor.</h3>
+						<h3>Ready to create your first metered post!</h3>
 
-						<p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quos illum ea iusto nihil, provident corrupti autem sapiente molestiae tempora adipisci, suscipit cumque facere, ex excepturi sit debitis? Cum, sed autem!</p>
+						<p>Let's get started!</p>
 					</div>
 
 					<div class="mp-setup__action">
@@ -71,6 +73,8 @@
 					</div>
 				</form>
 			</div>
+
+			<a href="<?php echo admin_url( '?page=' . MP_PLUGIN_SLUG ); ?>" class="mp-setup__skip">Not right now</a>
 		</div>
 
 		<?php do_action( 'admin_print_scripts' ); ?>

@@ -58,7 +58,7 @@ class SetupWizardController implements WizardsInterface
 
 	public static function activated()
     {
-		$generalSettings = get_option( MP_GENERAL_SETTINGS_KEY, [] );
+		$generalSettings = self::getGeneralSettings();
 
 		if ( empty( $generalSettings ) ) self::initGeneralSettings();
         set_transient( MP_PLUGIN_SLUG, 1, 30 );
@@ -67,11 +67,16 @@ class SetupWizardController implements WizardsInterface
 	public function setup()
 	{
 		$data = mp_filter_form_data( $_POST );
-		$generalSettings = get_option( MP_GENERAL_SETTINGS_KEY, [] );
-		$key = $data['key'];
+		$generalSettings = self::getGeneralSettings();
 
-		foreach ( $data[ $key ] as $dKey => $val ) :
-			$generalSettings[ $key ][ $dKey ]['value'] = $val;
+		foreach ( $data as $key => $vals ) :
+			if ( is_array( $vals ) ) :
+				foreach ( $vals as $dKey => $val ) :
+
+					$generalSettings->$key->$dKey->value = $val;
+
+				endforeach;
+			endif;
 		endforeach;
 
 		update_option( MP_GENERAL_SETTINGS_KEY, $generalSettings );
@@ -79,25 +84,34 @@ class SetupWizardController implements WizardsInterface
 
 	private function initGeneralSettings()
 	{
-		$generalSettings = [
-			'api' => [
-				'mode' => [
+		$generalSettings = ( object ) [
+			'api' => ( object ) [
+				'mode' => ( object ) [
 					'label' => __( 'API Test Mode' ),
 					'value' => 'yes',
 				],
-				'debug' => [
+				'debug' => ( object ) [
 					'label' => __( 'Debugging Mode' ),
 					'value' => 'no',
 				],
+				'key' => ( object ) [
+					'label' => __( 'BillingFox API Key' ),
+					'value' => null,
+				]
 			],
-			'woo' => [
+			'woo' => ( object ) [
 
 			],
-			'general' => [
+			'general' => ( object ) [
 
 			],
 		];
 
 		update_option( MP_GENERAL_SETTINGS_KEY, $generalSettings );
+	}
+
+	private static function getGeneralSettings()
+	{
+		return get_option( MP_GENERAL_SETTINGS_KEY, [] );
 	}
 }

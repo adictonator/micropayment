@@ -23,16 +23,27 @@ class APISettingsMenuController extends BaseMenuController
 	public function view()
 	{
 		$generalSettings = get_option( MP_GENERAL_SETTINGS_KEY, [] );
-		$apiSettings = $generalSettings['api'];
+		$apiSettings = $generalSettings->api;
 
 		$this->setView( 'dash.api.index', compact( 'apiSettings' ) );
 	}
 
-	protected function update()
+	public function update()
 	{
-		echo "<pre>";
-		print_r($_POST);
-		echo "</pre>";
-		$menuData = get_option( MP_GENERAL_SETTINGS_KEY, [] );
+		$data = mp_filter_form_data( $_POST );
+		$menuData = get_option( MP_GENERAL_SETTINGS_KEY, false );
+
+		if ( ! $menuData ) throw new \Exception('Malformed data!');
+
+		foreach ( $menuData->api as $dKey => $val ) :
+			$menuData->api->$dKey->value = $data[ $dKey ];
+		endforeach;
+
+		update_option( MP_GENERAL_SETTINGS_KEY, $menuData );
+
+		$return['type'] = 'success';
+		$return['msg'] = 'API Settings saved successfully!';
+
+		echo json_encode( $return );
 	}
 }

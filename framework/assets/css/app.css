@@ -134,6 +134,18 @@ input[type=checkbox], input[type=radio] {
 	transition: all 0.3s linear;
     border-bottom: 3px solid #e8e8e8;
 }
+.mp-admin-block__content li {
+	color: #fff;
+    font-size: 14px;
+	line-height: 2;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+.mp-admin-block__content li strong {
+	text-transform: capitalize;
+	color: #ffd700;
+}
 .mp-admin-block__link {
 	text-decoration: none;
     font-size: 1.5em;
@@ -155,4 +167,19 @@ input[type=checkbox], input[type=radio] {
 	color: #FFF;
 	padding: 10px 20px;
 	border: 2px dashed #FFF;
+}
+
+/** Auth popup **/
+.mp-auth-popup {
+	top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    display: none;
+    z-index: 10001;
+	position: fixed;
+    min-width: 100vw;
+    align-items: center;
+    justify-content: center;
+    background: rgba(88, 88, 88, 0.42);
 }

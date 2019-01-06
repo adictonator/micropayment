@@ -7,10 +7,10 @@
 			<h3 class="mp-admin-block__title"><?php echo $menuTitle; ?></h3>
 			<div class="mp-admin-block__content">
 
-				<?php if ( isset( $menuData[ $key ] ) && ! empty( $menuData[ $key ] ) && is_array( $menuData[ $key ] ) ) : ?>
+				<?php if ( isset( $menuData->$key ) && ! empty( $menuData->$key ) && is_object( $menuData->$key ) ) : ?>
 				<ul>
-				<?php foreach ( $menuData[ $key ] as $dataKey => $data ) : ?>
-					<li><?php echo $data['label']; ?> <strong><?php echo $data['value'] ; ?></strong></li>
+				<?php foreach ( $menuData->$key as $dataKey => $data ) : ?>
+					<li><?php echo $data->label; ?> <strong title="<?php echo $data->value ?: 'No' ; ?>"><?php echo $data->value ?: 'No' ; ?></strong></li>
 				<?php endforeach; ?>
 				</ul>
 				<?php endif; ?>
