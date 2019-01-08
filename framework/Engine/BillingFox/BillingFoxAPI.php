@@ -1,10 +1,12 @@
 <?php
 namespace MPEngine\BillingFox;
 
+defined( 'ABSPATH' ) or die( 'Not allowed!' );
+
 use MPEngine\Support\Traits\ViewsTrait;
 use MPEngine\Support\Exceptions\BillingFoxAPIException;
 
-class BillingFoxAPI
+class BillingFoxAPI extends BillingFoxUserController
 {
 	use ViewsTrait;
 
@@ -37,10 +39,11 @@ class BillingFoxAPI
 	{
 		$postData = mp_filter_form_data( $_POST );
 
-		if ( $this->isAuthUser() ) :
+		if ( ! BillingFoxUserController::isAuthUser() ) :
 			return $this->processUnlocking();
 		else:
-			return $this->handleGuestUser();
+			return BillingFoxUserController::register( wp_get_current_user() );
+			// return $this->handleGuestUser();
 			// login/signup popup
 		endif;
 
@@ -62,17 +65,6 @@ class BillingFoxAPI
 		echo json_encode( $return );
 	}
 
-	private function isAuthUser()
-	{
-		if ( is_user_logged_in() ) :
-			$user = wp_get_current_user();
-
-			return get_user_meta( $user->ID, BF_UID, true );
-		endif;
-
-		return;
-	}
-
 	private function processUnlocking()
 	{
 		echo "<pre>";
@@ -80,7 +72,7 @@ class BillingFoxAPI
 		echo "</pre>";
 	}
 
-	private function postRequest( $path, $payload = [] )
+	protected function postRequest( $path, $payload = [] )
     {
         $this->logger('POST '.$this->url.$path.' '.json_encode($payload));
 
@@ -112,6 +104,7 @@ class BillingFoxAPI
 
 	private function prepareResult( $result )
     {
+		echo ';asdasd';
         if ( is_wp_error( $result ) ) {
             $this->logger('WP-ERROR: (%s) %s', [$result->get_error_message(), $result->get_error_code()]);
             $e = new BillingFoxAPIException($result->get_error_message());
@@ -155,6 +148,10 @@ class BillingFoxAPI
             throw $e;
         }
 
+		echo "<pre>";
+		echo 'dsad';
+		print_r($body);
+		echo "</pre>";
         return $body;
 	}
 
