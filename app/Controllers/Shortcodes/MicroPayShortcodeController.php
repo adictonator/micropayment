@@ -22,17 +22,4 @@ class MicroPayShortcodeController extends BaseShortcodeController
 	{
 		return $this->validateAttributes( $content, $attrs );
 	}
-
-	protected static function isAuthuser()
-	{
-		$authUser = wp_get_current_user();
-		$bfUser = get_user_meta( 'billingfox_user', true );
-
-		if ( ! $bfUser ) :
-			// register user as billing fox user using '/identify' end
-			return;
-		endif;
-
-		return $bfUser;
-	}
 }

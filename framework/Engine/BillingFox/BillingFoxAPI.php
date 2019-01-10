@@ -24,7 +24,7 @@ class BillingFoxAPI extends BillingFoxUserController
 		if ( ! $credentials ) return;
 
 		$this->key = $credentials->api->key->value;
-		$this->url = 'https://' . ($credentials->api->mode->value == 'yes' ? 'test' : 'live') . '.billingfox.com';
+		$this->url = 'https://' . ($credentials->api->mode->value == 'yes' ? 'test' : 'live') . '.billingfox.com/api';
 		$this->debug = $credentials->api->debug->value;
 
 		return $this;
@@ -39,10 +39,10 @@ class BillingFoxAPI extends BillingFoxUserController
 	{
 		$postData = mp_filter_form_data( $_POST );
 
-		if ( ! BillingFoxUserController::isAuthUser() ) :
+		if ( $this->isAuthUser() ) :
 			return $this->processUnlocking();
 		else:
-			return BillingFoxUserController::register( wp_get_current_user() );
+			return $this->register( wp_get_current_user() );
 			// return $this->handleGuestUser();
 			// login/signup popup
 		endif;
@@ -88,7 +88,7 @@ class BillingFoxAPI extends BillingFoxUserController
         return $this->prepareResult( $result );
 	}
 
-	private function getRequest($path)
+	protected function getRequest($path)
     {
         $this->logger( 'GET ' . "$this->url/$path" );
 
@@ -104,7 +104,6 @@ class BillingFoxAPI extends BillingFoxUserController
 
 	private function prepareResult( $result )
     {
-		echo ';asdasd';
         if ( is_wp_error( $result ) ) {
             $this->logger('WP-ERROR: (%s) %s', [$result->get_error_message(), $result->get_error_code()]);
             $e = new BillingFoxAPIException($result->get_error_message());
@@ -112,18 +111,18 @@ class BillingFoxAPI extends BillingFoxUserController
             throw $e;
         }
 
-        $body = @json_decode($result['body'], true);
+		$body = json_decode( $result['body'], true );
 
-        if (empty($body)) {
-            $this->logger('ERROR: failed to decode response');
+        if ( empty( $body ) ) {
+            $this->logger( 'ERROR: failed to decode response' );
 
             $e = new BillingFoxAPIException(
                 'failed to decode response'
-            );
+			);
 
-            $e->setResponse($result);
+            // $e->setResponse($result);
 
-            throw $e;
+            // throw $e;
         }
 
         if ($result['response']['code'] > 299) {
@@ -146,27 +145,19 @@ class BillingFoxAPI extends BillingFoxUserController
             $e->setResponse($result);
 
             throw $e;
-        }
+		}
 
-		echo "<pre>";
-		echo 'dsad';
-		print_r($body);
-		echo "</pre>";
         return $body;
 	}
 
-	private function getUniqueId($length = 13)
-    {
-        if (function_exists("random_bytes")) {
-            $bytes = random_bytes(ceil($length / 2));
-        } elseif (function_exists("openssl_random_pseudo_bytes")) {
-            $bytes = openssl_random_pseudo_bytes(ceil($length / 2));
-        } else {
-            return uniqid();
-        }
-        return substr(bin2hex($bytes), 0, $length);
-	}
-
+	/**
+	 * Logger for API calls.
+	 *
+	 * @param string $message
+	 * @param array $args
+	 * @todo maybe separate it to a different class?
+	 * @return void
+	 */
 	private function logger( $message, $args = [] )
     {
         if ( ! $this->debug ) return;

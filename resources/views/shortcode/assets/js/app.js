@@ -1,3 +1,4 @@
+/* global jQuery, mp */
 jQuery(function($) {
 	$('[data-mp-btn="unlock"]').on('click', function(e) {
 		const form = $(this).closest('form')
