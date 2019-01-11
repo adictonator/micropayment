@@ -4,11 +4,12 @@ namespace MPEngine\Wizards;
 defined( 'ABSPATH' ) or die( 'Not allowed!' );
 
 use MPEngine\Support\Traits\ViewsTrait;
+use MPEngine\Support\Traits\SettingsTrait;
 use MPEngine\Support\Blueprints\WizardsInterface;
 
 class SetupWizardController implements WizardsInterface
 {
-	use ViewsTrait;
+	use ViewsTrait, SettingsTrait;
 
 	const WIZARD_SLUG = MP_PLUGIN_SLUG . '-setup';
 
@@ -58,16 +59,16 @@ class SetupWizardController implements WizardsInterface
 
 	public static function activated()
     {
-		$generalSettings = self::getGeneralSettings();
+		$generalSettings = self::getSettings();
 
-		if ( empty( $generalSettings ) ) self::initGeneralSettings();
+		if ( empty( $generalSettings ) ) self::initSettings();
         set_transient( MP_PLUGIN_SLUG, 1, 30 );
 	}
 
 	public function setup()
 	{
 		$data = mp_filter_form_data( $_POST );
-		$generalSettings = self::getGeneralSettings();
+		$generalSettings = is_object( $this->getSettings() ) ? $this->getSettings() : $this->initSettings();
 
 		foreach ( $data as $key => $vals ) :
 			if ( is_array( $vals ) ) :
@@ -79,39 +80,6 @@ class SetupWizardController implements WizardsInterface
 			endif;
 		endforeach;
 
-		update_option( MP_GENERAL_SETTINGS_KEY, $generalSettings );
-	}
-
-	private function initGeneralSettings()
-	{
-		$generalSettings = ( object ) [
-			'api' => ( object ) [
-				'mode' => ( object ) [
-					'label' => __( 'API Test Mode' ),
-					'value' => 'yes',
-				],
-				'debug' => ( object ) [
-					'label' => __( 'Debugging Mode' ),
-					'value' => 'no',
-				],
-				'key' => ( object ) [
-					'label' => __( 'BillingFox API Key' ),
-					'value' => null,
-				]
-			],
-			'woo' => ( object ) [
-
-			],
-			'general' => ( object ) [
-
-			],
-		];
-
-		update_option( MP_GENERAL_SETTINGS_KEY, $generalSettings );
-	}
-
-	private static function getGeneralSettings()
-	{
-		return get_option( MP_GENERAL_SETTINGS_KEY, [] );
+		$this->setSettings( $generalSettings );
 	}
 }

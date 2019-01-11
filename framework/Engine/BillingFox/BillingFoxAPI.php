@@ -35,26 +35,36 @@ class BillingFoxAPI extends BillingFoxUserController
 		$this->getRequest( 'identify' );
 	}
 
-	public function unlock()
+	public function validate( $wallData )
 	{
-		$postData = mp_filter_form_data( $_POST );
-
+		echo "<pre>";
+		echo __CLASS__;
+		var_dump($wallData);
+		echo "</pre>";
 		if ( $this->isAuthUser() ) :
-			return $this->processUnlocking();
+			return $this->processUnlocking( $wallData );
 		else:
-			return $this->register( wp_get_current_user() );
-			// return $this->handleGuestUser();
-			// login/signup popup
+			return $this->handleCurrentUser();
 		endif;
-
-		// $this->spendAPI( 'spend', array_filter([
-        //     'user' => $postData['id'],
-        //     'amount' => (float) $postData['amount'],
-        //     'description' => $postData['description'],
-        // ]));
 	}
 
-	private function handleGuestUser()
+	// public function unlock()
+	// {
+	// 	$postData = mp_filter_form_data( $_POST );
+
+	// 	$wallData = get_post_meta( $postData['pid'], MP_POST_WALL_KEY, true );
+
+	// 	/** Don't do anything. */
+	// 	if ( ! $wallData ) return;
+
+	// 	if ( $this->isAuthUser() ) :
+	// 		return $this->processUnlocking();
+	// 	else:
+	// 		return $this->handleCurrentUser();
+	// 	endif;
+	// }
+
+	private function handleCurrentUser()
 	{
 		/** @todo after this, create functions for actually logging in user and checking for bf meta key again and/or registering them for bf and then setting their key for an account and then process the spend */
 		ob_start();
@@ -67,9 +77,11 @@ class BillingFoxAPI extends BillingFoxUserController
 
 	private function processUnlocking()
 	{
-		echo "<pre>";
-		print_r('sadom');
-		echo "</pre>";
+		$this->postRequest( 'spend', array_filter([
+		'user' => $postData['id'],
+		'amount' => (float) $postData['amount'],
+		'description' => $postData['description'],
+		]));
 	}
 
 	protected function postRequest( $path, $payload = [] )

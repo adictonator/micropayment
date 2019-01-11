@@ -3,7 +3,7 @@
 
 <div class="mp-wrap">
 	<form action="<?php echo mp_form_post(); ?>" method="POST">
-		<?php echo mp_form_fields('ajax', 'update', $this); ?>
+		<?php mp_form_fields('ajax', 'update', $this); ?>
 
 		<table class="widefat striped">
 			<tbody>

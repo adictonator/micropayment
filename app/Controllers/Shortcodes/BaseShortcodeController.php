@@ -86,7 +86,7 @@ abstract class BaseShortcodeController
 
 	private function processShortcodeContent( $content, $attrs )
 	{
-		$this->shortcodeContents = (object) [
+		$_SESSION[ MP_SESSION_KEY ][ static::KEY ] = $this->shortcodeContents = (object) [
 			'content' => $content,
 			'attrs' => (object) $attrs,
 		];
@@ -97,10 +97,10 @@ abstract class BaseShortcodeController
 	private function checkWallStatus()
 	{
 		if ( $this->hasWall() ) return $this->wall();
-		else return $this->shortcodeContent();
+		else return $this->getShortcodeContent();
 	}
 
-	private function shortcodeContent()
+	private function getShortcodeContent()
 	{
 		return $this->shortcodeContents->content;
 	}
@@ -110,5 +110,10 @@ abstract class BaseShortcodeController
 		$this->viewMessage = self::VIEW_ERROR_MESSAGE;
 
 		return $this->getErrorContent();
+	}
+
+	protected function loadSession( $sessionKey )
+	{
+		return $_SESSION[ MP_SESSION_KEY ][ $sessionKey ];
 	}
 }

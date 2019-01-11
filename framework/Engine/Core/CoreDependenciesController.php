@@ -19,8 +19,14 @@ class CoreDependenciesController implements HookableInterface
 		 ] );
 	}
 
+	public function initSession()
+	{
+		if ( ! session_id() ) session_start();
+	}
+
 	public function hook()
 	{
+		add_action( 'init', [$this, 'initSession'] );
 		add_action( 'wp_enqueue_scripts', [$this, 'loadCoreAssets'] );
 		add_action( 'admin_enqueue_scripts', [$this, 'loadCoreAssets'] );
 		add_action( 'admin_init', [$this, 'loadCoreAssets'] );

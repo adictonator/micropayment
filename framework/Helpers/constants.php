@@ -32,6 +32,8 @@ define( 'MP_PLUGIN_SHORT_NAME', 'MicroPay' );
 define( 'MP_PLUGIN_LONG_NAME', 'MicroPayment IO' );
 define( 'MP_PLUGIN_MENU_TITLE', MP_PLUGIN_LONG_NAME . ' &mdash; ' );
 define( 'MP_GENERAL_SETTINGS_KEY', MP_PLUGIN_SLUG . '_settings' );
+define( 'MP_POST_WALL_KEY', '__mp-post-wall' );
+define( 'MP_SESSION_KEY', MP_PLUGIN_SLUG . '_session' );
 
 /** Form constants. */
 define( 'MP_FORM_NONCE', MP_PLUGIN_SLUG . '_nonce' );

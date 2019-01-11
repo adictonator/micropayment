@@ -3,8 +3,12 @@ namespace MicroPay\Controllers\Dash\Menus;
 
 defined( 'ABSPATH' ) or die( 'Not allowed!' );
 
+use MPEngine\Support\Traits\SettingsTrait;
+
 class APISettingsMenuController extends BaseMenuController
 {
+	use SettingsTrait;
+
 	const TITLE = 'BillingFox API Settings';
 
 	public function __construct()
@@ -22,16 +26,21 @@ class APISettingsMenuController extends BaseMenuController
 
 	public function view()
 	{
-		$generalSettings = get_option( MP_GENERAL_SETTINGS_KEY, [] );
-		$apiSettings = $generalSettings->api;
+		$generalSettings = $this->getSettings();
 
-		$this->setView( 'dash.api.index', compact( 'apiSettings' ) );
+		if ( true === $this->validateSettings( $generalSettings ) ) :
+			$apiSettings = $generalSettings->api;
+
+			$this->setView( 'dash.api.index', compact( 'apiSettings' ) );
+		else:
+			$this->setView( 'error.settings' );
+		endif;
 	}
 
 	public function update()
 	{
 		$data = mp_filter_form_data( $_POST );
-		$menuData = get_option( MP_GENERAL_SETTINGS_KEY, false );
+		$menuData = $this->getSettings();
 
 		if ( ! $menuData ) throw new \Exception('Malformed data!');
 
@@ -39,11 +48,12 @@ class APISettingsMenuController extends BaseMenuController
 			$menuData->api->$dKey->value = $data[ $dKey ];
 		endforeach;
 
-		update_option( MP_GENERAL_SETTINGS_KEY, $menuData );
+		if ( $this->setSettings( $menuData ) ) :
+			$return['type'] = 'success';
+			$return['msg'] = 'API Settings saved successfully!';
 
-		$return['type'] = 'success';
-		$return['msg'] = 'API Settings saved successfully!';
+			echo json_encode( $return );
+		endif;
 
-		echo json_encode( $return );
 	}
 }

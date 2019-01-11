@@ -5,6 +5,15 @@ defined( 'ABSPATH' ) or die( 'Not allowed!' );
 /** @todo complete reworking */
 abstract class BillingFoxUserController
 {
+	public function login()
+	{
+		$postData = mp_filter_form_data( $_POST );
+		echo "<pre>";
+		echo 'losda';
+		print_r($postData);
+		echo "</pre>";
+	}
+
 	/**
 	 * Registers a WP user to BillingFox.
 	 *
