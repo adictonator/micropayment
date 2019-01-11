@@ -121,3 +121,17 @@ if ( ! function_exists( 'mp_filter_form_data' ) ) {
 		return $array;
 	}
 }
+
+if ( ! function_exists( 'mp_set_session' ) ) {
+	function mp_set_session( string $sessionKey, $data )
+	{
+		return $_SESSION[ MP_SESSION_KEY ][ $sessionKey ] = $data;
+	}
+}
+
+if ( ! function_exists( 'mp_get_session' ) ) {
+	function mp_get_session( string $sessionKey )
+	{
+		return $_SESSION[ MP_SESSION_KEY ][ $sessionKey ];
+	}
+}

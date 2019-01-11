@@ -30,12 +30,9 @@ class MicroPayShortcodeController extends BaseShortcodeController
 	public function unlock()
 	{
 		$postData = mp_filter_form_data( $_POST );
+		$wallData = mp_get_session( self::KEY );
 
-		$wallData = get_post_meta( $postData['pid'], MP_POST_WALL_KEY, true );
-
-		if ( ! $wallData ) $wallData = $this->loadSession( self::KEY );
-
-		$api = new  BillingFoxAPI;
-		$api->validate( $wallData );
+		$api = new BillingFoxAPI;
+		$api->validate( $wallData, $billingFoxUser );
 	}
 }

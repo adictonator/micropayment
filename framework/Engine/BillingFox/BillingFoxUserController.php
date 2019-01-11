@@ -14,6 +14,26 @@ abstract class BillingFoxUserController
 		echo "</pre>";
 	}
 
+	public function getSpends()
+	{
+		$user = mp_get_session( 'bfUser' );
+
+		if ( $user ) :
+			$params = build_query(array_filter([
+				'user' => $user['user']['key'],
+				'gte' => $gte?$gte->format('Y-m-d'):null,
+				'lte' => $lte?$lte->format('Y-m-d'):null,
+			]));
+			$result = $this->getRequest( 'spend?'. $params );
+		endif;
+		echo "<pre>";
+		print_r($result);
+		echo "</pre>";
+		if ( $result && $result['status'] === 'success' ) return $result;
+		return;
+
+	}
+
 	/**
 	 * Registers a WP user to BillingFox.
 	 *
@@ -38,9 +58,19 @@ abstract class BillingFoxUserController
 	{
 		if ( is_user_logged_in() ) :
 			$user = wp_get_current_user();
-			return get_user_meta( $user->ID, BF_UID, true );
+			$bfUserID = get_user_meta( $user->ID, BF_UID, true );
+
+			if ( $bfUserID ) return $this->validateIndentity( $bfUserID );
+			else return;
 		endif;
 
+		return;
+	}
+
+	private function validateIndentity( string $bfUserID )
+	{
+		$result = $this->getRequest( 'identify?user=' . $bfUserID );
+		if ( $result && $result['status'] === 'success' ) return mp_set_session( 'bfUser', $result );
 		return;
 	}
 
@@ -65,6 +95,6 @@ abstract class BillingFoxUserController
 	 */
 	private function setBillingFoxUser( string $id, string $email )
 	{
-		return static::init()->postRequest( 'identify', ['user' => $id, 'email' => $email] );
+		return $this->postRequest( 'identify', ['user' => $id, 'email' => $email] );
 	}
 }

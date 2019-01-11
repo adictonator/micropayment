@@ -4,11 +4,12 @@ namespace MPEngine\BillingFox;
 defined( 'ABSPATH' ) or die( 'Not allowed!' );
 
 use MPEngine\Support\Traits\ViewsTrait;
+use MPEngine\Support\Traits\SettingsTrait;
 use MPEngine\Support\Exceptions\BillingFoxAPIException;
 
 class BillingFoxAPI extends BillingFoxUserController
 {
-	use ViewsTrait;
+	use ViewsTrait, SettingsTrait;
 
 	private $key;
 
@@ -16,18 +17,15 @@ class BillingFoxAPI extends BillingFoxUserController
 
 	private $debug;
 
-	public function init()
+	public function __construct()
 	{
-		$credentials = get_option( MP_GENERAL_SETTINGS_KEY );
+		$credentials = $this->getSettings();
 
-		/** @todo create an exception for this. since creds are expected at this point */
-		if ( ! $credentials ) return;
+		if ( ! $this->validateSettings( $credentials ) ) throw new BillingFoxAPIException( 'Malformed data!' );
 
 		$this->key = $credentials->api->key->value;
 		$this->url = 'https://' . ($credentials->api->mode->value == 'yes' ? 'test' : 'live') . '.billingfox.com/api';
 		$this->debug = $credentials->api->debug->value;
-
-		return $this;
 	}
 
 	public function needWall()
@@ -35,14 +33,14 @@ class BillingFoxAPI extends BillingFoxUserController
 		$this->getRequest( 'identify' );
 	}
 
-	public function validate( $wallData )
+	public function validate( $wallData, $billingFoxUser )
 	{
-		echo "<pre>";
-		echo __CLASS__;
-		var_dump($wallData);
-		echo "</pre>";
 		if ( $this->isAuthUser() ) :
-			return $this->processUnlocking( $wallData );
+			echo "<pre>";
+			print_r($this->getSpends());
+			echo "</pre>";
+			die();
+			return $this->processUnlocking( $wallData, $billingFoxUser );
 		else:
 			return $this->handleCurrentUser();
 		endif;
@@ -75,18 +73,18 @@ class BillingFoxAPI extends BillingFoxUserController
 		echo json_encode( $return );
 	}
 
-	private function processUnlocking()
+	private function processUnlocking( $wallData, $billingFoxUser )
 	{
 		$this->postRequest( 'spend', array_filter([
-		'user' => $postData['id'],
-		'amount' => (float) $postData['amount'],
-		'description' => $postData['description'],
+			'user' => $billingFoxUser['user']['key'],
+			'amount' => (float) $wallData->attrs->price,
+			'description' => 'desc test',
 		]));
 	}
 
 	protected function postRequest( $path, $payload = [] )
     {
-        $this->logger('POST '.$this->url.$path.' '.json_encode($payload));
+		$this->logger('POST '.$this->url.$path.' '.json_encode($payload));
 
 		$result = wp_remote_post( "$this->url/$path", [
 				'headers' => [
