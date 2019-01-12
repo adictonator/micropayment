@@ -15,6 +15,7 @@ class ServiceProvider
 			MPEngine\Wizards\WizardsController::class,
 			MPEngine\WooCommerce\PaymentGatewaysController::class,
 			MicroPay\Controllers\Dash\DashMenusController::class,
+			MicroPay\Controllers\MetaBoxesController::class,
 			MicroPay\Controllers\Shortcodes\ShortcodesController::class,
 		];
 

@@ -33,6 +33,6 @@ class MicroPayShortcodeController extends BaseShortcodeController
 		$wallData = mp_get_session( self::KEY );
 
 		$api = new BillingFoxAPI;
-		$api->validate( $wallData, $billingFoxUser );
+		$api->validate( $wallData );
 	}
 }

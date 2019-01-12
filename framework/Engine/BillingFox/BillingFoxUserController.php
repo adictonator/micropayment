@@ -60,14 +60,15 @@ abstract class BillingFoxUserController
 			$user = wp_get_current_user();
 			$bfUserID = get_user_meta( $user->ID, BF_UID, true );
 
-			if ( $bfUserID ) return $this->validateIndentity( $bfUserID );
+			if ( $bfUserID ) return $this->validateIdentity( $bfUserID );
+			/** Not a BillingFox member. */
 			else return;
 		endif;
 
 		return;
 	}
 
-	private function validateIndentity( string $bfUserID )
+	private function validateIdentity( string $bfUserID )
 	{
 		$result = $this->getRequest( 'identify?user=' . $bfUserID );
 		if ( $result && $result['status'] === 'success' ) return mp_set_session( 'bfUser', $result );

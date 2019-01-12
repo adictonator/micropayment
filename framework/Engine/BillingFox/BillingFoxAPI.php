@@ -33,7 +33,7 @@ class BillingFoxAPI extends BillingFoxUserController
 		$this->getRequest( 'identify' );
 	}
 
-	public function validate( $wallData, $billingFoxUser )
+	public function validate( $wallData )
 	{
 		if ( $this->isAuthUser() ) :
 			echo "<pre>";
