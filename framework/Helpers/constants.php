@@ -27,7 +27,7 @@ define( 'MP_FILE_TYPES', [
 
 /** Plugin constants. */
 define( 'MP_PLUGIN_NAME', 'MicroPayment' );
-define( 'MP_PLUGIN_SLUG', 'micropay' );
+define( 'MP_PLUGIN_SLUG', 'micropayment' );
 define( 'MP_PLUGIN_SHORT_NAME', 'MicroPay' );
 define( 'MP_PLUGIN_LONG_NAME', 'MicroPayment IO' );
 define( 'MP_PLUGIN_MENU_TITLE', MP_PLUGIN_LONG_NAME . ' &mdash; ' );

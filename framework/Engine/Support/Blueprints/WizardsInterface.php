@@ -9,5 +9,5 @@ interface WizardsInterface
 
 	public static function loadView();
 
-	public static function register();
+	public function register();
 }

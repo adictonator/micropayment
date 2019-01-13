@@ -15,7 +15,7 @@ class WizardsController implements HookableInterface
 	public function initWizards()
 	{
 		foreach ( $this->wizards as $wizard ) :
-			if ( class_exists( $wizard ) && is_subclass_of( $wizard, WizardsInterface::class ) ) $wizard::register();
+			if ( class_exists( $wizard ) && is_subclass_of( $wizard, WizardsInterface::class ) ) ( new $wizard )->register();
 		endforeach;
 	}
 

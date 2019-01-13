@@ -41,9 +41,9 @@ class SetupWizardController implements WizardsInterface
         exit;
 	}
 
-	public static function register()
+	public function register()
     {
-		register_activation_hook( MP_ROOT, [__CLASS__, 'activated'] );
+		register_activation_hook( MP_ROOT, [$this, 'activated'] );
 		add_action( 'admin_init', [__CLASS__, 'checkRedirect'] );
 
         if ( ! empty( $_GET['page'] ) && $_GET['page'] === self::WIZARD_SLUG ) {
@@ -57,11 +57,11 @@ class SetupWizardController implements WizardsInterface
 		add_dashboard_page( '', '', 'manage_options', self::WIZARD_SLUG, '' );
 	}
 
-	public static function activated()
+	public function activated()
     {
-		$generalSettings = self::getSettings();
+		$generalSettings = $this->getSettings();
 
-		if ( empty( $generalSettings ) ) self::initSettings();
+		if ( empty( $generalSettings ) ) $this->initSettings();
         set_transient( MP_PLUGIN_SLUG, 1, 30 );
 	}
 

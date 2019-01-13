@@ -15,7 +15,7 @@ class WCSettingsMenuController extends BaseMenuController
 	public function assets()
 	{
 		return [
-			'css' => ['app.css'],
+			'css' => [],
 			'js' => [],
 		];
 	}

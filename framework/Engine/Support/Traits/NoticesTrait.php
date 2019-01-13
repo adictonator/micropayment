@@ -11,16 +11,13 @@ trait NoticesTrait
 
 	private $dismissible = ' is-dismissible';
 
-	public function __construct()
-	{
-		add_action( 'admin_notices', [$this, 'getNotice'] );
-	}
-
 	public function setNotice( string $type, string $msg )
 	{
 		$this->class = 'notice-' . $type;
 		$this->msg = $msg;
 		$this->dismissible = $type === 'error' ? false : $this->dismissible;
+
+		add_action( 'admin_notices', [$this, 'getNotice'] );
 	}
 
 	public function getNotice()
