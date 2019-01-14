@@ -6,9 +6,9 @@ defined( 'ABSPATH' ) or die( 'Not allowed!' );
 /**
  * Common functions to get/set general settings of the plugin.
  *
- * @author Aditya Bhaskar Sharma <adityabhaskarsharma@gmail.com>
+ * @author Adictonator <adityabhaskarsharma@gmail.com>
  * @package MicroPayment
- * @since 1.0
+ * @since 1.0.0
  */
 trait SettingsTrait
 {

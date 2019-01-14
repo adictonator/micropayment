@@ -6,112 +6,75 @@ class MPPaymentGateway extends \WC_Payment_Gateway
 	public function __construct()
 	{
 		$this->id                 = MP_PLUGIN_SLUG . '_gateway';
-        $this->icon               = plugins_url('resources/img/billingfox.png', BILLING_FOX_PLUGIN_FILE);
+        $this->icon               = MP_FW_ASSETS_URL . '/images/billingfox.png';
         $this->has_fields         = false;
-        $this->method_title       = __( 'ladvda', BILLING_FOX_TRANSLATE );
-        $this->method_description = __( 'Metered billing for busy developers. Requires users to be logged in.', BILLING_FOX_TRANSLATE );
+        $this->method_title       = __( 'BillingFox' );
+        $this->method_description = __( 'Metered billing for busy developers. Requires users to be logged in.' );
 
         $this->supports = [];
 
         $this->init_settings();
 
-        // Define user set variables
         $this->title        = $this->get_option( 'title' );
         $this->description  = $this->get_option( 'description' );
-        $this->custom_exchange_currencies = $this->get_option('custom_exchange_currencies', 'EUR,USD');
+        $this->custom_exchange_currencies = $this->get_option( 'custom_exchange_currencies', ['EUR', 'USD'] );
 
         $this->init_form_fields();
 
-        // Actions
-        add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, [$this, 'process_admin_options']);
+        add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, [$this, 'process_admin_options'] );
 	}
-
-	public function getBalance()
-    {
-        $exchangeRate = $this->getExchangeRateFor(get_woocommerce_currency());
-        $required = $this->normalizer->normalizeCoins(WC()->cart->get_total('raw') / $exchangeRate);
-        $available = 0;
-        $link = '';
-        $target = '_blank';
-
-        if (is_user_logged_in()) {
-            $id = $this->normalizer->normalizeUser(wp_get_current_user());
-
-            try {
-                $data = $this->api->getIdentity($id);
-
-                $available = (float)$data['balances']['current'];
-                list($link, $target) = $this->getRechargeLink($data['link']);
-            } catch (BillingFox_Api_Exception $e) {
-                // failed to query -> show recharge then :)
-            }
-        }
-
-        return [
-            'available' => $available,
-            'required' => $required,
-            'recharge' => $link,
-            'target' => $target,
-        ];
-    }
 
     public function init_form_fields()
     {
+		$availableCurrencies = get_woocommerce_currencies();
+
         $fields = [
             'enabled' => [
-                'title'   => __( 'Enable/Disable', BILLING_FOX_TRANSLATE ),
+                'title'   => __( 'Enable/Disable' ),
                 'type'    => 'checkbox',
-                'label'   => __( 'Enable BillingFox Payment', BILLING_FOX_TRANSLATE ),
+                'label'   => __( 'Enable BillingFox Payment' ),
                 'default' => 'yes'
             ],
             'title' => [
-                'title'       => __( 'Title', BILLING_FOX_TRANSLATE ),
+                'title'       => __( 'Title' ),
                 'type'        => 'text',
-                'description' => __( 'This controls the title for the payment method the customer sees during checkout.', BILLING_FOX_TRANSLATE ),
-                'default'     => __( 'BillingFox', BILLING_FOX_TRANSLATE ),
+                'description' => __( 'This controls the title for the payment method the customer sees during checkout.' ),
+                'default'     => __( 'BillingFox' ),
                 'desc_tip'    => true,
             ],
             'description' => [
-                'title'       => __( 'Description', BILLING_FOX_TRANSLATE ),
+                'title'       => __( 'Description' ),
                 'type'        => 'textarea',
-                'description' => __( 'Payment method description that the customer will see on your checkout.', BILLING_FOX_TRANSLATE ),
-                'default'     => __( 'Credits will be taken from your Account.', BILLING_FOX_TRANSLATE ),
+                'description' => __( 'Payment method description that the customer will see on your checkout.' ),
+                'default'     => __( 'Credits will be taken from your Account.' ),
                 'desc_tip'    => true,
             ],
             'custom_exchange_currencies' => [
-                'title'       => __( 'Currencies with custom coin value (default is 0.01 per Credit)', BILLING_FOX_TRANSLATE ),
-                'type'        => 'textarea',
-                'description' => __( 'Currency codes that deviate from 1 Credit = 0.01.', BILLING_FOX_TRANSLATE ),
-                'default'     => "USD,EUR",
+                'title'       => __( 'Currencies with custom coin value (default is 0.01 per Credit)' ),
+                'type'        => 'multiselect',
+				'description' => __( 'Currency codes that deviate from 1 Credit = 0.01.' ),
+				'class'		  => 'mp-has-select2',
+                'options'     => $availableCurrencies,
                 'desc_tip'    => true,
             ],
-        ];
+		];
 
-		$available_currencies = get_woocommerce_currencies();
+		$currencies = is_array( $this->custom_exchange_currencies ) ? $this->custom_exchange_currencies : [];
 
-        foreach (preg_split('![ \.,\n\r]!', $this->custom_exchange_currencies) as $currency) {
-            if (empty($currency)) {
-                continue;
-            }
+		foreach ( $currencies as $currency ) :
+            if ( empty( $availableCurrencies[ $currency ] ) ) continue;
 
-            $currency = trim($currency);
-
-            if (empty($available_currencies[$currency])) {
-                // ok, this currency does not exist for woocommerce - skip it!
-                continue;
-            }
-
-            $fields['custom_exchange_rate_'.strtolower($currency)] = [
-                'title'       => __( '1 Credit in '.$available_currencies[$currency], BILLING_FOX_TRANSLATE ).' ('.$currency.')',
+            $fields['custom_exchange_rate_' . strtolower( $currency ) ] = [
+                'title'       => __( '1 Credit in ' . $availableCurrencies[ $currency ] ) . ' (' . $currency . ') ',
                 'type'        => 'number',
-                'description' => __( 'Currency codes that deviate from 1 Credit = 0.01.', BILLING_FOX_TRANSLATE ),
-                'default'     => "0.01",
+                'description' => __( 'Currency codes that deviate from 1 Credit = 0.01.' ),
+                'default'     => '0.01',
                 'desc_tip'    => true,
                 'custom_attributes' => [
                     'step' => '0.01',
                 ],
             ];
-        }
+        endforeach;
 
         $this->form_fields = apply_filters( 'billingfox_form_fields', $fields );
     }
@@ -167,39 +130,17 @@ class MPPaymentGateway extends \WC_Payment_Gateway
         ];
     }
 
-    protected function getRechargeLink($link)
+	/**
+	 * Return custom exchange currency value.
+	 *
+	 * @param float $currency
+	 * @return float
+	 */
+    protected function getExchangeRateFor( $currency )
     {
-        $slug = get_option(BillingFox_Admin_Setting::SETTING_WOOCOMMERCE_CATEGORY_SLUG, false);
+        $exchange = (float) $this->get_option( 'custom_exchange_rate_'.strtolower( $currency ) );
 
-        $plugin = BillingFox_Plugin::getInstance();
-
-        /** @var BillingFox_WooCommerce_Loader $wc_loader */
-        $wc_loader = $plugin->get(BillingFox_WooCommerce_Loader::class);
-
-        $target = '_blank';
-
-        if ($wc_loader->exists() && $slug && ($link = $wc_loader->getCategoryLink($slug))) {
-            $target = 'self';
-        }
-
-        return [
-            $link,
-            $target,
-        ];
-    }
-
-    /**
-     * @param string $currency
-     *
-     * @return float
-     */
-    protected function getExchangeRateFor($currency)
-    {
-        $exchange = (float)$this->get_option('custom_exchange_rate_'.strtolower($currency));
-
-        if ($exchange <= 0) {
-            return 0.01;
-        }
+        if ( $exchange <= 0 ) return 0.01;
 
         return $exchange;
     }

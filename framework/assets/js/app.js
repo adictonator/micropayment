@@ -1,3 +1,4 @@
+/* global jQuery, mp */
 jQuery(function($) {
 	$('[data-mp-form-btn]').on('click', function(e) {
 		const form = $(this).closest('form')
@@ -9,5 +10,13 @@ jQuery(function($) {
 			}
 		})
 		e.preventDefault()
+	})
+
+	/**
+	 * Assigns select2 to specified select fields.
+	 *
+	 */
+	$('.mp-has-select2').select2({
+		tags: true
 	})
 })

@@ -9,14 +9,24 @@ class WooProductType implements HookableInterface
 {
 	public function hook()
 	{
-		add_action( 'product_type_selector', [$this, 'billingFoxProductType'] );
+		add_action( 'product_type_selector', [$this, 'setBillingFoxProductType'] );
+		add_action( 'woocommerce_init', [$this, 'getBillingFoxProductType'] );
         add_filter( 'woocommerce_product_data_tabs', [$this, 'billingFoxProductTypeTabs'] );
         add_action( 'woocommerce_product_data_panels', [$this, 'billingFoxProductTypeOptions'] );
 		add_action( 'woocommerce_process_product_meta', [$this, 'billingFoxProductTypeUpdate'] );
-		// add_action('woocommerce_init', [$this, 'requireFiles']);
 	}
 
-	public function billingFoxProductType( $types )
+	/**
+	 * Requiring the file since namespace can't be used.
+	 *
+	 * @return object WC_Product_BillingFox
+	 */
+	public function getBillingFoxProductType()
+	{
+		require_once 'WC_Product_BillingFox.php';
+	}
+
+	public function setBillingFoxProductType( $types )
 	{
 		$types['billingfox'] = __( 'BillingFox' );
 
@@ -45,7 +55,7 @@ class WooProductType implements HookableInterface
 
     public function billingFoxProductTypeUpdate( $productID )
     {
-        if( ! empty( $_POST['billingfox'] ) ) update_post_meta( $productID, 'billingfox_product', esc_attr( $_POST['billingfox'] ) );
+        if ( ! empty( $_POST['billingfox'] ) ) update_post_meta( $productID, 'billingfox', esc_attr( $_POST['billingfox'] ) );
     }
 
     public function billingFoxProductTypeTabs( $tabs )
