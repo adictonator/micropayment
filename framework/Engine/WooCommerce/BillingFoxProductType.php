@@ -5,7 +5,7 @@ defined( 'ABSPATH' ) or die( 'Not allowed!' );
 
 use MPEngine\Support\Blueprints\HookableInterface;
 
-class WooProductType implements HookableInterface
+class BillingFoxProductType implements HookableInterface
 {
 	public function hook()
 	{
@@ -14,6 +14,47 @@ class WooProductType implements HookableInterface
         add_filter( 'woocommerce_product_data_tabs', [$this, 'billingFoxProductTypeTabs'] );
         add_action( 'woocommerce_product_data_panels', [$this, 'billingFoxProductTypeOptions'] );
 		add_action( 'woocommerce_process_product_meta', [$this, 'billingFoxProductTypeUpdate'] );
+		add_action( 'woocommerce_available_payment_gateways', [$this, 'billingFoxLimitGateway'] );
+		add_action( 'woocommerce_billingfox_add_to_cart', [$this, 'addToCart'], 30 );
+	}
+
+	/**
+	 * "Add to Cart" form for custom product type.
+	 *
+	 * @return void
+	 */
+	public function addToCart()
+	{
+		wc_get_template( 'single-product/add-to-cart/simple.php' );
+	}
+
+	/**
+	 * Removes custom gateway when custom product type is in cart.
+	 *
+	 * @todo needs some working.
+	 * @param array $gateways
+	 * @return array $gateways
+	 */
+	public function billingFoxLimitGateway( array $gateways )
+	{
+		if ( isset( $gateways['billingfox'] ) && $this->disableGateway() ) unset( $gateways['billingfox'] );
+
+		return $gateways;
+	}
+
+	/**
+	 * Checks if custom product is in the cart.
+	 *
+	 * @return boolean
+	 */
+	public function disableGateway()
+	{
+		if ( ! is_user_logged_in() ) return true;
+        if ( ! WC()->cart ) return false;
+
+        foreach ( WC()->cart->get_cart() as $item ) if ( $item['data'] instanceof WC_Product_BillingFox ) return true;
+
+        return false;
 	}
 
 	/**
@@ -55,7 +96,11 @@ class WooProductType implements HookableInterface
 
     public function billingFoxProductTypeUpdate( $productID )
     {
-        if ( ! empty( $_POST['billingfox'] ) ) update_post_meta( $productID, 'billingfox', esc_attr( $_POST['billingfox'] ) );
+        if ( ! empty( $_POST['billingfox'] ) ) {
+			update_post_meta( $productID, 'billingfox', esc_attr( $_POST['billingfox'] ) );
+			update_post_meta( $productID, '_price', esc_attr( $_POST['billingfox'] ) );
+			// update_post_meta( $productID, '_regular_price', esc_attr( $_POST['billingfox'] ) );
+		}
     }
 
     public function billingFoxProductTypeTabs( $tabs )

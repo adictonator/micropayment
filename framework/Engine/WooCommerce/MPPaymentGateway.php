@@ -15,7 +15,7 @@ class MPPaymentGateway extends \WC_Payment_Gateway
 
         $this->init_settings();
 
-        $this->title        = $this->get_option( 'title' );
+        $this->title        = $this->get_option( 'title', 'BillingFox' );
         $this->description  = $this->get_option( 'description' );
         $this->custom_exchange_currencies = $this->get_option( 'custom_exchange_currencies', ['EUR', 'USD'] );
 
