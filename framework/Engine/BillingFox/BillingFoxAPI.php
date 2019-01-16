@@ -30,16 +30,28 @@ class BillingFoxAPI extends BillingFoxUserController
 
 	public function needWall()
 	{
-		$this->getRequest( 'identify' );
+		if ( $this->isAuthUser() ) $spends = $this->getSpends();
+
+		if ( isset( $spends ) && ! empty( $spends['spends'] ) ) :
+			$postID = get_the_ID();
+
+			foreach ( $spends['spends'] as $spend ) :
+				$uID = $spend['description'];
+				$saveUID = get_post_meta( $postID, MP_SHORTCODE_UID . $uID, true );
+
+				if ( isset( $saveUID ) && $saveUID === $uID ) return false;
+
+			endforeach;
+		endif;
+
+		return true;
 	}
 
 	public function validate( $wallData )
 	{
 		if ( $this->isAuthUser() ) :
-			echo "<pre>";
-			print_r($this->getSpends());
-			echo "</pre>";
-			die();
+			$billingFoxUser = mp_get_session( 'bfUser' );
+
 			return $this->processUnlocking( $wallData, $billingFoxUser );
 		else:
 			return $this->handleCurrentUser();
@@ -48,9 +60,7 @@ class BillingFoxAPI extends BillingFoxUserController
 
 	// public function unlock()
 	// {
-	// 	$postData = mp_filter_form_data( $_POST );
-
-	// 	$wallData = get_post_meta( $postData['pid'], MP_POST_WALL_KEY, true );
+	// 	$wallData = get_post_meta( $_POST['pid'], MP_POST_WALL_KEY, true );
 
 	// 	/** Don't do anything. */
 	// 	if ( ! $wallData ) return;
@@ -78,8 +88,12 @@ class BillingFoxAPI extends BillingFoxUserController
 		$this->postRequest( 'spend', array_filter([
 			'user' => $billingFoxUser['user']['key'],
 			'amount' => (float) $wallData->attrs->price,
-			'description' => 'desc test',
+			'description' => $wallData->attrs->uid,
 		]));
+
+		echo "<pre>";
+		print_r($this->getSpends());
+		echo "</pre>";
 	}
 
 	protected function postRequest( $path, $payload = [] )
@@ -139,22 +153,25 @@ class BillingFoxAPI extends BillingFoxUserController
             $this->logger('ERROR: (%s) %s', [$result['response']['code'], $body['message']]);
 
             if ($result['response']['code'] == 402) {
-                $e = new BillingFox_Api_InsufficientCoins(
+                $e = new BillingFoxAPIException(
                     $body['message'],
                     $result['response']['code']
                 );
 
-                $e->setInvoiceLink($body['link']);
+               // $e->setResponse($body['link']);
             } else {
                 $e = new BillingFoxAPIException(
                     $body['message'],
                     $result['response']['code']
                 );
-            }
+			}
 
-            $e->setResponse($result);
+			echo "<pre>";
+			print_r($e);
+			echo "</pre>";
+            // $e->setResponse($result);
 
-            throw $e;
+            // throw $e;
 		}
 
         return $body;

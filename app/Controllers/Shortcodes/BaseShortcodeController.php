@@ -51,15 +51,9 @@ abstract class BaseShortcodeController
 
 	private function hasWall()
 	{
-		// $authUser = static::isAuthUser();
-		// if ( ! $authUser ) throw new \Exception('Login pls') ;
-		// maybe show the wall simply and upon clicking on the CREDIT button, it
-		// will check if it need the user login or not.
+		$api = new BillingFoxAPI;
 
-		// echo "<pre>";
-		// print_r($authUser);
-		// echo "</pre>";
-		// $wall = ( new BillingFoxAPI )->init()->needWall();
+		$this->wall = $api->needWall();
 
 		return $this->wall;
 	}

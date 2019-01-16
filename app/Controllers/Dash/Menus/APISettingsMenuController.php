@@ -39,13 +39,12 @@ class APISettingsMenuController extends BaseMenuController
 
 	public function update()
 	{
-		$data = mp_filter_form_data( $_POST );
 		$menuData = $this->getSettings();
 
 		if ( ! $menuData ) throw new \Exception('Malformed data!');
 
 		foreach ( $menuData->api as $dKey => $val ) :
-			$menuData->api->$dKey->value = $data[ $dKey ];
+			$menuData->api->$dKey->value = $_POST[ $dKey ];
 		endforeach;
 
 		if ( $this->setSettings( $menuData ) ) :

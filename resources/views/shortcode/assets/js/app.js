@@ -28,4 +28,9 @@ jQuery(function($) {
 		})
 		e.preventDefault()
 	})
+
+	$(document).on('click', 'li[data-mp-auth-form]', function() {
+		const formID = $(this).attr('data-mp-auth-form')
+		$('div[data-mp-auth-form=' + formID + ']').show().siblings().hide()
+	})
 })

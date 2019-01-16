@@ -24,6 +24,7 @@ class RouterController implements HookableInterface
 	{
 		$controller = str_replace( ':', '\\', $actionData['mpController'] );
 		$method = $actionData['mpAction'];
+		$_POST = mp_filter_form_data( $actionData );
 
 		if ( class_exists( $controller ) ) :
 			$controllerClass = new $controller;

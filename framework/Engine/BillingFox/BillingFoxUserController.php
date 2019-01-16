@@ -2,16 +2,25 @@
 namespace MPEngine\BillingFox;
 
 defined( 'ABSPATH' ) or die( 'Not allowed!' );
+
+use MPEngine\Support\Traits\ResponseTrait;
+
 /** @todo complete reworking */
 abstract class BillingFoxUserController
 {
+	use ResponseTrait;
+
 	public function login()
 	{
-		$postData = mp_filter_form_data( $_POST );
-		echo "<pre>";
-		echo 'losda';
-		print_r($postData);
-		echo "</pre>";
+		$user = wp_signon([
+			'user_login' => $_POST['mp_user'],
+			'user_password' => $_POST['mp_password'],
+		]);
+		if ( is_wp_error( $user ) ) $this->setResponse( 'error', $user->get_error_message() );
+
+		if ( ! $this->isAuthUser() ) $this->setResponse( 'error', 'Register nigga!' );
+
+		return $this->response();
 	}
 
 	public function getSpends()
@@ -26,12 +35,9 @@ abstract class BillingFoxUserController
 			]));
 			$result = $this->getRequest( 'spend?'. $params );
 		endif;
-		echo "<pre>";
-		print_r($result);
-		echo "</pre>";
+
 		if ( $result && $result['status'] === 'success' ) return $result;
 		return;
-
 	}
 
 	/**
@@ -40,7 +46,7 @@ abstract class BillingFoxUserController
 	 * @param \WP_User $user
 	 * @return void
 	 */
-	protected function register( \WP_User $user )
+	public function register( \WP_User $user )
 	{
 		if ( $user->ID > 0 ) $bfUserID = $this->generateBillingFoxUserID( $user->ID );
 
@@ -58,7 +64,7 @@ abstract class BillingFoxUserController
 	{
 		if ( is_user_logged_in() ) :
 			$user = wp_get_current_user();
-			$bfUserID = get_user_meta( $user->ID, BF_UID, true );
+			$bfUserID = $this->getUserBfID( $user->ID );
 
 			if ( $bfUserID ) return $this->validateIdentity( $bfUserID );
 			/** Not a BillingFox member. */
@@ -66,6 +72,11 @@ abstract class BillingFoxUserController
 		endif;
 
 		return;
+	}
+
+	private function getUserBfID( int $userID )
+	{
+		return get_user_meta( $userID, BF_UID, true );
 	}
 
 	private function validateIdentity( string $bfUserID )

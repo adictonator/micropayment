@@ -12,11 +12,13 @@ jQuery(function($) {
 		e.preventDefault()
 	})
 
-	/**
-	 * Assigns select2 to specified select fields.
-	 *
-	 */
-	$('.mp-has-select2').select2({
-		tags: true
-	})
+	if (typeof jQuery.fn.select2 === 'function') {
+		/**
+		 * Assigns select2 to specified select fields.
+		 *
+		 */
+		$('.mp-has-select2').select2({
+			tags: true
+		})
+	}
 })

@@ -24,12 +24,22 @@ class MicroPayShortcodeController extends BaseShortcodeController
 
 	public function function( $attrs, $content = '' )
 	{
+		$uID = $this->uniqueShortcodeID( $content, $attrs );
+		$attrs['uid'] = $uID;
+
 		return $this->validateAttributes( $content, $attrs );
+	}
+
+	private function uniqueShortcodeID( $content, $attrs )
+	{
+		$uID = md5( $content );
+		update_post_meta( get_the_ID(), MP_SHORTCODE_UID . $uID , $uID );
+
+		return $uID;
 	}
 
 	public function unlock()
 	{
-		$postData = mp_filter_form_data( $_POST );
 		$wallData = mp_get_session( self::KEY );
 
 		$api = new BillingFoxAPI;

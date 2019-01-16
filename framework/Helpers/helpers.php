@@ -5,7 +5,7 @@ if ( ! function_exists('mp_path_resolver') ) {
 	{
 		if ( strpos( $path, '.' ) !== false ) :
 			$pathArr = explode( '.', $path );
-			$path = str_replace( '.', DS, $path );
+			$path = str_replace( '.', MP_DS, $path );
 		else:
 			$pathArr = explode( '/', $path );
 		endif;
@@ -98,7 +98,7 @@ if ( ! function_exists( 'mp_view_asset' ) ) {
 
 if ( ! function_exists( 'mp_filter_form_data' ) ) {
 	/**
-	 * Unsets unwanted indexes/variables from the data array.
+	 * Unset unwanted indexes/variables from the data array.
 	 *
 	 * @param array $array
 	 * @return array $array

@@ -67,18 +67,11 @@ class SetupWizardController implements WizardsInterface
 
 	public function setup()
 	{
-		$data = mp_filter_form_data( $_POST );
 		$generalSettings = is_object( $this->getSettings() ) ? $this->getSettings() : $this->initSettings();
 
-		foreach ( $data as $key => $vals ) :
-			if ( is_array( $vals ) ) :
-				foreach ( $vals as $dKey => $val ) :
-
-					$generalSettings->$key->$dKey->value = $val;
-
-				endforeach;
-			endif;
-		endforeach;
+		foreach ( $_POST as $key => $vals )
+			if ( is_array( $vals ) )
+				foreach ( $vals as $dKey => $val ) $generalSettings->$key->$dKey->value = $val;
 
 		$this->setSettings( $generalSettings );
 	}
