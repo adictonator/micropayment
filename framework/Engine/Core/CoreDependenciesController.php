@@ -13,7 +13,7 @@ class CoreDependenciesController implements HookableInterface
 		wp_enqueue_script( 'mp-js-app', MP_FW_ASSETS_URL .'js/app.js', ['jquery'], MP_VER );
 		wp_enqueue_style( 'mp-css', MP_FW_ASSETS_URL .'css/app.css');
 		wp_localize_script( 'mp-js', 'mp_helpers', [
-			'url' => admin_url( 'admin-ajax.php' ),
+			'url' => admin_url( 'admin-ajax.php' ) . '?action=listenAJAX',
 			'nonce_key' => MP_FORM_NONCE,
 			'nonce' => wp_create_nonce( MP_FORM_NONCE ),
 		 ] );

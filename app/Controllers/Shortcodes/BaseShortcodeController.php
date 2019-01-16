@@ -34,7 +34,7 @@ abstract class BaseShortcodeController
 
 		if ( ! empty( static::$args ) ) :
 			foreach ( static::$args as $arg ) :
-				if ( strpos( $arg, ':req' ) !== false && ! array_key_exists( str_replace( ':req', '', $arg ), $attrs ) ) :
+				if ( strpos( $arg, ':req' ) !== false && ( ! array_key_exists( str_replace( ':req', '', $arg ), $attrs ) || is_null( $attrs[ str_replace( ':req', '', $arg ) ] ) ) ) :
 					return $this->incompleteShortcode();
 				endif;
 			endforeach;
@@ -49,11 +49,11 @@ abstract class BaseShortcodeController
 		return $this->getWallContent();
 	}
 
-	private function hasWall()
+	public function hasWall()
 	{
 		$api = new BillingFoxAPI;
 
-		$this->wall = $api->needWall();
+		// $this->wall = $api->needWall();
 
 		return $this->wall;
 	}

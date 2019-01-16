@@ -28,7 +28,8 @@ class RouterController implements HookableInterface
 
 		if ( class_exists( $controller ) ) :
 			$controllerClass = new $controller;
-			if ( method_exists( $controllerClass, $method ) ) $controllerClass->$method();
+			$parentClass = get_parent_class( $controllerClass );
+			if ( method_exists( $controllerClass, $method ) || method_exists( $parentClass, $method ) ) $controllerClass->$method();
 		endif;
 	}
 

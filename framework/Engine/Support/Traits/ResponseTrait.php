@@ -18,8 +18,13 @@ trait ResponseTrait
 		return $this->toJSON();
 	}
 
+	public function toObj( $jsonString )
+	{
+		return ( object ) json_decode( $jsonString, true );
+	}
+
 	private function toJSON()
 	{
-		echo json_encode( $this->responseObj );
+		return json_encode( $this->responseObj );
 	}
 }

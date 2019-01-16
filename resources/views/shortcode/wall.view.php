@@ -9,3 +9,7 @@
 </div>
 
 <div class="mp-auth-popup"></div>
+
+<script>
+mp.hasWall()
+</script>

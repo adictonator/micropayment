@@ -28,6 +28,15 @@ class BillingFoxAPI extends BillingFoxUserController
 		$this->debug = $credentials->api->debug->value;
 	}
 
+	public function getAPICred()
+	{
+		echo json_encode( [
+			'key' => $this->key,
+			'url' => $this->url,
+			'debug' => $this->debug,
+		] );
+	}
+
 	public function needWall()
 	{
 		if ( $this->isAuthUser() ) $spends = $this->getSpends();
@@ -49,7 +58,7 @@ class BillingFoxAPI extends BillingFoxUserController
 
 	public function validate( $wallData )
 	{
-		if ( $this->isAuthUser() ) :
+		if ( $this->toObj( $this->isAuthUser() )->type === 'success' ) :
 			$billingFoxUser = mp_get_session( 'bfUser' );
 
 			return $this->processUnlocking( $wallData, $billingFoxUser );
@@ -57,20 +66,6 @@ class BillingFoxAPI extends BillingFoxUserController
 			return $this->handleCurrentUser();
 		endif;
 	}
-
-	// public function unlock()
-	// {
-	// 	$wallData = get_post_meta( $_POST['pid'], MP_POST_WALL_KEY, true );
-
-	// 	/** Don't do anything. */
-	// 	if ( ! $wallData ) return;
-
-	// 	if ( $this->isAuthUser() ) :
-	// 		return $this->processUnlocking();
-	// 	else:
-	// 		return $this->handleCurrentUser();
-	// 	endif;
-	// }
 
 	private function handleCurrentUser()
 	{

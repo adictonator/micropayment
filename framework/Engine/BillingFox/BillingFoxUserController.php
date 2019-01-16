@@ -18,7 +18,7 @@ abstract class BillingFoxUserController
 		]);
 		if ( is_wp_error( $user ) ) $this->setResponse( 'error', $user->get_error_message() );
 
-		if ( ! $this->isAuthUser() ) $this->setResponse( 'error', 'Register nigga!' );
+		if ( ! $this->isAuthUser() ) $this->setResponse( 'error', 'Register!' );
 
 		return $this->response();
 	}
@@ -30,8 +30,8 @@ abstract class BillingFoxUserController
 		if ( $user ) :
 			$params = build_query(array_filter([
 				'user' => $user['user']['key'],
-				'gte' => $gte?$gte->format('Y-m-d'):null,
-				'lte' => $lte?$lte->format('Y-m-d'):null,
+				'gte' => null,
+				'lte' => null,
 			]));
 			$result = $this->getRequest( 'spend?'. $params );
 		endif;
@@ -60,18 +60,24 @@ abstract class BillingFoxUserController
 	 *
 	 * @return boolean
 	 */
-	protected function isAuthUser()
+	public function isAuthUser()
 	{
 		if ( is_user_logged_in() ) :
-			$user = wp_get_current_user();
-			$bfUserID = $this->getUserBfID( $user->ID );
+			if ( ! empty( $user = mp_get_session( 'bfUser' ) ) ) :
+				$this->setResponse( 'success', $user );
+			else :
+				$user = wp_get_current_user();
+				$bfUserID = $this->getUserBfID( $user->ID );
 
-			if ( $bfUserID ) return $this->validateIdentity( $bfUserID );
-			/** Not a BillingFox member. */
-			else return;
+				if ( $bfUserID ) return $this->validateIdentity( $bfUserID );
+				else $this->setResponse( 'error', 'Not a BF user.' );
+			endif;
+		else:
+			$this->setResponse( 'error', 'Not logged in.' );
 		endif;
 
-		return;
+		if ( isset( $_POST['fromFront'] ) ) echo $this->response();
+		else return $this->response();
 	}
 
 	private function getUserBfID( int $userID )
@@ -82,8 +88,12 @@ abstract class BillingFoxUserController
 	private function validateIdentity( string $bfUserID )
 	{
 		$result = $this->getRequest( 'identify?user=' . $bfUserID );
-		if ( $result && $result['status'] === 'success' ) return mp_set_session( 'bfUser', $result );
-		return;
+		if ( $result && $result['status'] === 'success' ) {
+			$this->setResponse( 'success', $result );
+			mp_set_session( 'bfUser', $result );
+		} else $this->setResponse( 'error', 'Error getting BF user.' );
+
+		return $this->response();
 	}
 
 	/**

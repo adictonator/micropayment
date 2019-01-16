@@ -15,7 +15,6 @@ class MicroPayShortcodeController extends BaseShortcodeController
 
 	public static $args = [
 		'price:req',
-		// 'description'
 	];
 
 	public $assets = [
@@ -24,13 +23,15 @@ class MicroPayShortcodeController extends BaseShortcodeController
 
 	public function function( $attrs, $content = '' )
 	{
-		$uID = $this->uniqueShortcodeID( $content, $attrs );
-		$attrs['uid'] = $uID;
+		$attrs = shortcode_atts( [
+			'price' => isset( $attrs['price'] ) ? $attrs['price'] : null,
+			'uid' => $this->uniqueShortcodeID( $content ),
+		], $attrs, self::$name );
 
 		return $this->validateAttributes( $content, $attrs );
 	}
 
-	private function uniqueShortcodeID( $content, $attrs )
+	private function uniqueShortcodeID( $content )
 	{
 		$uID = md5( $content );
 		update_post_meta( get_the_ID(), MP_SHORTCODE_UID . $uID , $uID );

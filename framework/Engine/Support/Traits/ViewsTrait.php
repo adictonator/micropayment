@@ -18,7 +18,7 @@ trait ViewsTrait
 
 		if ( null !== $filePath ) :
 			$this->enqueueAssets();
-			include_once $filePath;
+			include $filePath;
 		endif;
 	}
 

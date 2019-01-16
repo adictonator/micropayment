@@ -34,3 +34,37 @@ jQuery(function($) {
 		$('div[data-mp-auth-form=' + formID + ']').show().siblings().hide()
 	})
 })
+
+const shortcode = {
+	init(user) {
+		this.getAPICred(user)
+		return this
+	},
+
+	getAPICred(user) {
+		const formData = new FormData()
+		formData.append('mpAction', 'getAPICred')
+		formData.append(mp_helpers.nonce_key, mp_helpers.nonce)
+		formData.append('mpController', 'MPEngine:BillingFox:BillingFoxAPI')
+
+		mp.send(formData).then(resp => {
+			if ( resp.key ) {
+				this.checkContentStatus(resp, user)
+			}
+		})
+	},
+
+	checkContentStatus: function(cred, user) {
+		console.log('sada', cred.key)
+		// console.log('sada', user.message.user.key)
+
+		fetch(cred.url + '/spend?user=' + user.message.user.key, {
+			method: 'GET',
+			headers: new Headers({
+				'Authorization': 'Bearer ' + cred.key,
+				'Content-type': 'application/json',
+			}),
+		}).then(x => x.json())
+			.then(v => console.log('asa', v))
+	}
+}
