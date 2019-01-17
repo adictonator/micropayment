@@ -9,3 +9,12 @@
 </div>
 
 <div class="mp-auth-popup"></div>
+
+<?php
+$user = wp_get_current_user();
+
+if ( $user->ID > 0 ) : ?>
+<script>
+shortcode.init()
+</script>
+<?php endif; ?>

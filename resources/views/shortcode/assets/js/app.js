@@ -6,9 +6,15 @@ jQuery(function($) {
 		const formData = new FormData(form[0])
 
 		mp.send( formData ).then(resp => {
-			switch (type) {
+			switch (resp.type) {
 			case 'unlock':
-				$('.mp-auth-popup').html(resp.html).css('display', 'flex')
+				if ($('[data-mp-sid="'+ resp.message.sid +'"]').length > 0) {
+					$('[data-mp-sid="'+ resp.message.sid +'"]').html(resp.message.content)
+				}
+				break
+
+			case 'auth':
+				$('.mp-auth-popup').html(resp.message).css('display', 'flex')
 				break
 
 			case 'login':
@@ -23,8 +29,6 @@ jQuery(function($) {
 		const formID = $(this).attr('data-mp-auth-form')
 		$('div[data-mp-auth-form=' + formID + ']').show().siblings().hide()
 	})
-
-	shortcode.init()
 })
 
 const shortcode = {

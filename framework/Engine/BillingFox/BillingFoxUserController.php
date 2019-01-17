@@ -17,11 +17,12 @@ abstract class BillingFoxUserController
 			'user_login' => $_POST['mp_user'],
 			'user_password' => $_POST['mp_password'],
 		]);
+
 		if ( is_wp_error( $user ) ) $this->setResponse( 'error', $user->get_error_message() );
 
-		if ( ! $this->isAuthUser() ) $this->setResponse( 'error', 'Register!' );
+		if ( $this->toObj( $this->isAuthUser() )->type === 'error' ) $this->setResponse( 'error', 'Register!' );
 
-		return $this->response();
+		echo $this->response();
 	}
 
 	public function getSpends()
@@ -38,12 +39,12 @@ abstract class BillingFoxUserController
 		endif;
 
 		if ( $result && $result['status'] === 'success' ) {
+			$return = MicroPayShortcodeController::processUnlockResponse( $result['spends'] );
+
 			if ( isset( $_POST['fromFront'] ) ) :
-				$return = MicroPayShortcodeController::processUnlockResponse( $result['spends'] );
-
 				$this->setResponse( 'success', $return );
-				echo $this->response();
 
+				echo $this->response();
 			else:
 				$this->setResponse( 'success', $result );
 

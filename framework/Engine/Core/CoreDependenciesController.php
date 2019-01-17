@@ -24,11 +24,22 @@ class CoreDependenciesController implements HookableInterface
 		if ( ! session_id() ) session_start();
 	}
 
+	/**
+	 * Removes all MicroPayment related sessions.
+	 *
+	 * @return void
+	 */
+	public function clearSessionTraces()
+	{
+		mp_remove_session( MP_SESSION_KEY );
+	}
+
 	public function hook()
 	{
 		add_action( 'init', [$this, 'initSession'] );
 		add_action( 'wp_enqueue_scripts', [$this, 'loadCoreAssets'] );
 		add_action( 'admin_enqueue_scripts', [$this, 'loadCoreAssets'] );
 		add_action( 'admin_init', [$this, 'loadCoreAssets'] );
+		add_action( 'wp_logout', [$this, 'clearSessionTraces'] );
 	}
 }

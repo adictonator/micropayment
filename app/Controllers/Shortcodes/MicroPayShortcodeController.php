@@ -51,27 +51,29 @@ class MicroPayShortcodeController extends BaseShortcodeController
 		// false
 	}
 
-	public function unlockContent()
+	public function unlockContent( $sID = null )
 	{
-		if ( isset( $_POST['sID'] ) ) :
-			$unlocked = mp_get_session( $_POST['sID'] );
+		$sID = $sID ? $sID : $_POST['sID'];
+
+		if ( isset( $sID ) ) :
+			$unlocked = mp_get_session( $sID );
 
 			if ( $unlocked ) {
 				$unlocked->status = 'unlocked';
 
-				mp_set_session( $_POST['sID'], $unlocked );
+				mp_set_session( $sID, $unlocked );
 				// true
 			}
 		endif;
 		// false
 	}
 
-	public static function processUnlockResponse( $data )
+	public static function processUnlockResponse( array $spends )
 	{
 		$return['shortcodeContent'] = [];
 		$return['spends'] = [];
 
-		foreach ( $result['spends'] as $spend ) :
+		foreach ( $spends as $spend ) :
 			if ( mp_get_session( $spend['description'] )->status === 'locked' ) :
 				$return['shortcodeContent'][ $spend['description'] ] = mp_get_session( $spend['description'] )->content;
 				$return['spends'][] = $spend['description'];

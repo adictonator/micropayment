@@ -138,8 +138,15 @@ if ( ! function_exists( 'mp_get_session' ) ) {
 }
 
 if ( ! function_exists( 'mp_remove_session' ) ) {
+	/**
+	 * Removes session.
+	 * @todo fix this. maybe use func_arg to unset array keys
+	 * @param mixed $sessionKey
+	 * @return void
+	 */
 	function mp_remove_session( $sessionKey )
 	{
-		unset( $_SESSION[ MP_SESSION_KEY ][ $sessionKey ] );
+		// unset( $_SESSION[ MP_SESSION_KEY ][ $sessionKey ] );
+		unset( $_SESSION[ $sessionKey ] );
 	}
 }

@@ -6,6 +6,7 @@ defined( 'ABSPATH' ) or die( 'Not allowed!' );
 use MPEngine\Support\Traits\ViewsTrait;
 use MPEngine\Support\Traits\SettingsTrait;
 use MPEngine\Support\Exceptions\BillingFoxAPIException;
+use MicroPay\Controllers\Shortcodes\MicroPayShortcodeController;
 
 class BillingFoxAPI extends BillingFoxUserController
 {
@@ -61,21 +62,34 @@ class BillingFoxAPI extends BillingFoxUserController
 		/** @todo after this, create functions for actually logging in user and checking for bf meta key again and/or registering them for bf and then setting their key for an account and then process the spend */
 		ob_start();
 		$this->setView( 'auth.authForms' );
-		$return['html'] = ob_get_contents();
+		$return = ob_get_contents();
 		ob_end_clean();
 
-		echo json_encode( $return );
+		$this->setResponse( 'auth', $return );
+
+		echo $this->response();
 	}
 
 	private function processUnlocking( $wallData, $billingFoxUser )
 	{
-		$this->postRequest( 'spend', array_filter([
+		$result = $this->postRequest( 'spend', array_filter([
 			'user' => $billingFoxUser['user']['key'],
 			'amount' => (float) $wallData->attrs->price,
 			'description' => $wallData->attrs->uid,
 		]));
 
-		return $this->getSpends();
+		if ( $result['status'] === 'success' ) :
+			$shortcodeController = new MicroPayShortcodeController;
+			$shortcodeController->unlockContent( $wallData->attrs->uid );
+			$return = [
+				'sid' => $wallData->attrs->uid,
+				'content' => $wallData->content,
+			];
+
+			$this->setResponse( 'unlock', $return );
+		endif;
+
+		echo $this->response();
 	}
 
 	protected function postRequest( $path, $payload = [] )
@@ -126,9 +140,9 @@ class BillingFoxAPI extends BillingFoxUserController
                 'failed to decode response'
 			);
 
-            // $e->setResponse($result);
+            $e->msg($result);
 
-            // throw $e;
+            throw $e;
         }
 
         if ($result['response']['code'] > 299) {
@@ -140,7 +154,7 @@ class BillingFoxAPI extends BillingFoxUserController
                     $result['response']['code']
                 );
 
-               // $e->setResponse($body['link']);
+               $e->msg($body['link']);
             } else {
                 $e = new BillingFoxAPIException(
                     $body['message'],
@@ -148,12 +162,9 @@ class BillingFoxAPI extends BillingFoxUserController
                 );
 			}
 
-			echo "<pre>";
-			print_r($e);
-			echo "</pre>";
-            // $e->setResponse($result);
+            $e->msg($result);
 
-            // throw $e;
+            throw $e;
 		}
 
         return $body;
