@@ -37,22 +37,11 @@ class BillingFoxAPI extends BillingFoxUserController
 		] );
 	}
 
-	public function needWall()
+	public function needWall( $sID )
 	{
-		if ( $this->isAuthUser() ) $spends = $this->getSpends();
+		$shortcodeContents = mp_get_session( $sID );
 
-		if ( isset( $spends ) && ! empty( $spends['spends'] ) ) :
-			$postID = get_the_ID();
-
-			foreach ( $spends['spends'] as $spend ) :
-				$uID = $spend['description'];
-				$saveUID = get_post_meta( $postID, MP_SHORTCODE_UID . $uID, true );
-
-				if ( isset( $saveUID ) && $saveUID === $uID ) return false;
-
-			endforeach;
-		endif;
-
+		if ( $shortcodeContents && isset( $shortcodeContents->status ) && $shortcodeContents->status === 'unlocked' ) return false;
 		return true;
 	}
 
@@ -86,9 +75,7 @@ class BillingFoxAPI extends BillingFoxUserController
 			'description' => $wallData->attrs->uid,
 		]));
 
-		echo "<pre>";
-		print_r($this->getSpends());
-		echo "</pre>";
+		return $this->getSpends();
 	}
 
 	protected function postRequest( $path, $payload = [] )

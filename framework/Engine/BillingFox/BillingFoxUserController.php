@@ -4,6 +4,7 @@ namespace MPEngine\BillingFox;
 defined( 'ABSPATH' ) or die( 'Not allowed!' );
 
 use MPEngine\Support\Traits\ResponseTrait;
+use MicroPay\Controllers\Shortcodes\MicroPayShortcodeController;
 
 /** @todo complete reworking */
 abstract class BillingFoxUserController
@@ -36,7 +37,19 @@ abstract class BillingFoxUserController
 			$result = $this->getRequest( 'spend?'. $params );
 		endif;
 
-		if ( $result && $result['status'] === 'success' ) return $result;
+		if ( $result && $result['status'] === 'success' ) {
+			if ( isset( $_POST['fromFront'] ) ) :
+				$return = MicroPayShortcodeController::processUnlockResponse( $result['spends'] );
+
+				$this->setResponse( 'success', $return );
+				echo $this->response();
+
+			else:
+				$this->setResponse( 'success', $result );
+
+				return $this->response();
+			endif;
+		}
 		return;
 	}
 

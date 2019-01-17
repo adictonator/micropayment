@@ -59,7 +59,7 @@ trait ViewsTrait
 				$filePath = mp_path_resolver( $this->path, 'asset' );
 				$assetPath  = MP_VIEWS_URL . $filePath . 'assets/js/' . $asset;
 
-				wp_enqueue_script( 'mp-' . $key, $assetPath, ['jquery'], MP_VER );
+				wp_enqueue_script( 'mp-' . $key, $assetPath, ['jquery'], MP_VER, true );
 			endforeach;
 		endif;
 	}

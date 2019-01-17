@@ -123,15 +123,23 @@ if ( ! function_exists( 'mp_filter_form_data' ) ) {
 }
 
 if ( ! function_exists( 'mp_set_session' ) ) {
-	function mp_set_session( string $sessionKey, $data )
+	function mp_set_session( $sessionKey, $data, $isArray = false )
 	{
-		return $_SESSION[ MP_SESSION_KEY ][ $sessionKey ] = $data;
+		if ( $isArray) return $_SESSION[ MP_SESSION_KEY ][ $sessionKey ][] = $data;
+		else return $_SESSION[ MP_SESSION_KEY ][ $sessionKey ] = $data;
 	}
 }
 
 if ( ! function_exists( 'mp_get_session' ) ) {
-	function mp_get_session( string $sessionKey )
+	function mp_get_session( $sessionKey )
 	{
-		return $_SESSION[ MP_SESSION_KEY ][ $sessionKey ];
+		return isset( $_SESSION[ MP_SESSION_KEY ][ $sessionKey ] ) ? $_SESSION[ MP_SESSION_KEY ][ $sessionKey ] : null;
+	}
+}
+
+if ( ! function_exists( 'mp_remove_session' ) ) {
+	function mp_remove_session( $sessionKey )
+	{
+		unset( $_SESSION[ MP_SESSION_KEY ][ $sessionKey ] );
 	}
 }

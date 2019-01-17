@@ -53,7 +53,7 @@ abstract class BaseShortcodeController
 	{
 		$api = new BillingFoxAPI;
 
-		// $this->wall = $api->needWall();
+		if ( $this->shortcodeContents ) $this->wall = $api->needWall( $this->shortcodeContents->attrs->uid );
 
 		return $this->wall;
 	}
@@ -80,9 +80,12 @@ abstract class BaseShortcodeController
 
 	private function processShortcodeContent( $content, $attrs )
 	{
-		mp_set_session( static::KEY, $this->shortcodeContents = (object) [
+		$checkUnlocked = mp_get_session( $attrs['uid'] );
+
+		mp_set_session( $attrs['uid'], $this->shortcodeContents = (object) [
 			'content' => $content,
-			'attrs' => (object) $attrs,
+			'attrs'   => (object) $attrs,
+			'status'  => $checkUnlocked ? $checkUnlocked->status : 'locked',
 		]);
 
 		return $this->checkWallStatus();
