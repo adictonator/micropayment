@@ -30,7 +30,7 @@ jQuery(function($) {
 
 		mp._validateAPI( key ).then(resp => {
 			if (resp.status === 'error') {
-				alert(resp.message)
+				alert(resp.data)
 				return false
 			}
 

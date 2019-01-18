@@ -11,13 +11,7 @@ class MicroPayMenuController extends BaseMenuController
 
 	public function __construct()
 	{
-		parent::__construct( $this->assets(), 'main' );
-	}
-
-	public function assets()
-	{
-		/** No need for assets as well. */
-		return [];
+		parent::__construct( 'main' );
 	}
 
 	public function view()

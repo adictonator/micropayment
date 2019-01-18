@@ -11,19 +11,6 @@ class APISettingsMenuController extends BaseMenuController
 
 	const TITLE = 'BillingFox API Settings';
 
-	public function __construct()
-	{
-		parent::__construct( $this->assets() );
-	}
-
-	public function assets()
-	{
-		return [
-			'css' => ['app.css'],
-			'js' => [],
-		];
-	}
-
 	public function view()
 	{
 		$generalSettings = $this->getSettings();

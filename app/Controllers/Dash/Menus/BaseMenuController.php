@@ -55,18 +55,17 @@ abstract class BaseMenuController
 
 	/**
 	 *
-	 * @param array $assets
 	 * @param string $menuType
 	 * @param boolean $useMainMenu
 	 */
-	public function __construct( array $assets, string $menuType = 'sub', bool $useMainMenu = false )
+	public function __construct( string $menuType = 'sub', bool $useMainMenu = false )
 	{
 		$this->menuType = $menuType;
 		$this->useMainMenu = $useMainMenu;
 		$this->slug = $this->menuType == 'main' ? $this->slug : (
 			$this->useMainMenu ? $this->slug : mp_menu_slug( static::TITLE )
 		);
-		$this->setAssets( $assets );
+
 		method_exists( $this, 'model' ) ? $this->model() : false;
 	}
 
@@ -77,13 +76,13 @@ abstract class BaseMenuController
 	 */
 	abstract protected function view();
 
-	/**
-	 * Loads assets for the current WP menu/submenu.
-	 *
-	 * @param object $menuInstance
-	 * @return void
-	 */
-    abstract protected function assets();
+	// /**
+	//  * Loads assets for the current WP menu/submenu.
+	//  *
+	//  * @param object $menuInstance
+	//  * @return void
+	//  */
+    // abstract protected function assets();
 
 	/**
 	 * Initializes WP menu page.

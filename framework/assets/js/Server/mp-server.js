@@ -3,8 +3,6 @@ window.mpServer = class MicroPayServerEnvironment {
 		this.app = 'MicroPayment IO'
 		this.ajax = mp_helpers.url
 		this.api = 'https://test.billingfox.com/api/'
-		this.url = null
-		this.cacheData = null
 	}
 
 	_setup( data ) {
@@ -12,6 +10,8 @@ window.mpServer = class MicroPayServerEnvironment {
 	}
 
 	async send( data ) {
+		data.append(mp_helpers.nonce_key, mp_helpers.nonce)
+
 		const resp = await fetch(this.ajax, {
 			method: 'POST',
 			credentials: 'same-origin',

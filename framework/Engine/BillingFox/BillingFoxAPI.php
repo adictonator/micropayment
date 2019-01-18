@@ -48,7 +48,7 @@ class BillingFoxAPI extends BillingFoxUserController
 
 	public function validate( $wallData )
 	{
-		if ( $this->toObj( $this->isAuthUser() )->type === 'success' ) :
+		if ( $this->toObj( $this->isAuthUser() )->success === 'success' ) :
 			$billingFoxUser = mp_get_session( 'bfUser' );
 
 			return $this->processUnlocking( $wallData, $billingFoxUser );

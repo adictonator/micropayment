@@ -3,10 +3,13 @@ namespace MPEngine\Core;
 
 defined( 'ABSPATH' ) or die( 'Not allowed!' );
 
+use MPEngine\Support\Traits\ResponseTrait;
 use MPEngine\Support\Blueprints\HookableInterface;
 
 class RouterController implements HookableInterface
 {
+	use ResponseTrait;
+
 	public function listenAJAX()
 	{
 		if ( $this->validate( $_POST ) ) $this->resolveFormAction( $_POST );
@@ -17,7 +20,12 @@ class RouterController implements HookableInterface
 	{
 		if ( isset( $formData[ MP_FORM_NONCE ] )
 			&& wp_verify_nonce( $formData[ MP_FORM_NONCE ], MP_FORM_NONCE ) ) return true;
-		return false;
+
+		if ( isset( $formData[ MP_FORM_NONCE ] )
+			&& check_ajax_referer( $formData[ MP_FORM_NONCE ], MP_FORM_NONCE ) ) return true;
+
+		$this->httpCode = 403;
+		$this->response();
 	}
 
 	private function resolveFormAction( $actionData )

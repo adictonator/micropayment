@@ -1,25 +1,24 @@
 /* global jQuery, mp, mp_helpers */
 jQuery(function($) {
 	$(document).on('click', '[data-mp-btn]', function(e) {
-		const type = $(this).attr('data-mp-btn')
 		const form = $(this).closest('form')
 		const formData = new FormData(form[0])
 
 		mp.send( formData ).then(resp => {
-			switch (resp.type) {
+			switch (resp.success) {
 			case 'unlock':
-				if ($('[data-mp-sid="'+ resp.message.sid +'"]').length > 0) {
-					$('[data-mp-sid="'+ resp.message.sid +'"]').html(resp.message.content)
+				if ($('[data-mp-sid="'+ resp.data.sid +'"]').length > 0) {
+					$('[data-mp-sid="'+ resp.data.sid +'"]').html(resp.data.content)
 				}
 				break
 
 			case 'auth':
-				$('.mp-auth-popup').html(resp.message).css('display', 'flex')
+				$('.mp-auth-popup').html(resp.data).css('display', 'flex')
 				break
 
 			case 'login':
-				// something
-
+				// shortcode.setBFUserID(resp.data.user.key)
+				shortcode.init()
 			}
 		})
 		e.preventDefault()
@@ -29,6 +28,8 @@ jQuery(function($) {
 		const formID = $(this).attr('data-mp-auth-form')
 		$('div[data-mp-auth-form=' + formID + ']').show().siblings().hide()
 	})
+
+	shortcode.init()
 })
 
 const shortcode = {
@@ -39,53 +40,62 @@ const shortcode = {
 			const data = new FormData()
 			data.append('mpAction', 'isAuthUser')
 			data.append('mpController', 'MPEngine:BillingFox:BillingFoxAPI')
-			data.append(mp_helpers.nonce_key, mp_helpers.nonce)
 			data.append('fromFront', 'true')
 
 			mp.send(data).then(r => {
-				if (r.type === 'success') {
-					localStorage.setItem('bfUID', r.message.user.key)
-
+				if (r.success === 'success') {
+					this.setBFUserID(r.data.user.key)
 					this.getUserSpends()
 				}
 			})
 		} else this.getUserSpends()
 	},
 
-	getBFUserID() {
-		return localStorage.getItem('bfUID')
-	},
-
 	getUserSpends() {
 		const data = new FormData()
 		data.append('mpAction', 'getSpends')
 		data.append('mpController', 'MPEngine:BillingFox:BillingFoxAPI')
-		data.append(mp_helpers.nonce_key, mp_helpers.nonce)
 		data.append('fromFront', 'true')
 
 		mp.send(data).then(r => {
-			if (r.type === 'success') {
-				r.message.spends.map(id => {
-					const shortcodeElm = document.querySelector('div[data-mp-sid="'+ id +'"]')
+			if (r.success === 'success') {
+				let shortcodeIDs = []
 
+				r.data.spends.map(id => {
+					const shortcodeElm = document.querySelector('div[data-mp-sid="'+ id +'"]')
 					if (shortcodeElm) {
-						shortcodeElm.innerHTML = r.message.shortcodeContent[ id ]
-						this.unlockContent(id)
+						shortcodeElm.innerHTML = r.data.shortcodeContent[ id ]
+						shortcodeIDs.push(id)
 					}
 				})
+
+				this.unlockContent(shortcodeIDs)
 			} else {
-				console.error('GETTING SPEND ERROR', 'Cannot get user\'s spends')
+				console.error('GETTING SPEND ERROR', r.data)
+				this.removeBFUserID()
+				this.init()
 			}
 		})
 	},
 
-	unlockContent(sID) {
+	unlockContent(shortcodeIDs) {
 		const data = new FormData()
 		data.append('mpAction', 'unlockContent')
 		data.append('mpController', 'MicroPay:Controllers:Shortcodes:MicroPayShortcodeController')
-		data.append('sID', sID)
-		data.append(mp_helpers.nonce_key, mp_helpers.nonce)
+		data.append('shortcodeIDs', shortcodeIDs)
 
 		mp.send(data)
+	},
+
+	setBFUserID(id) {
+		return localStorage.setItem('bfUID', id)
+	},
+
+	getBFUserID() {
+		return localStorage.getItem('bfUID')
+	},
+
+	removeBFUserID() {
+		return localStorage.removeItem('bfUID')
 	},
 }

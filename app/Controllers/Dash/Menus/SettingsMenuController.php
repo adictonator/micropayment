@@ -9,19 +9,6 @@ class SettingsMenuController extends BaseMenuController
 {
 	const TITLE = 'General Settings';
 
-	public function __construct()
-	{
-		parent::__construct( $this->assets() );
-	}
-
-	public function assets()
-	{
-		return [
-			'css' => ['app.css'],
-			'js' => [],
-		];
-	}
-
 	public function view()
 	{
 		$shortcodes = ShortcodesController::$shortcodes;

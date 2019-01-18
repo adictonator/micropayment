@@ -13,15 +13,7 @@ class OverviewMenuController extends BaseMenuController
 
 	public function __construct()
 	{
-		parent::__construct( $this->assets(), 'sub', true );
-	}
-
-	public function assets()
-	{
-		return [
-			'css' => ['app.css'],
-			'js' => [],
-		];
+		parent::__construct( 'sub', true );
 	}
 
 	public function view()

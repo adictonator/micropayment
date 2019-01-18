@@ -20,7 +20,16 @@ abstract class BillingFoxUserController
 
 		if ( is_wp_error( $user ) ) $this->setResponse( 'error', $user->get_error_message() );
 
-		if ( $this->toObj( $this->isAuthUser() )->type === 'error' ) $this->setResponse( 'error', 'Register!' );
+		if ( $this->toObj( $this->isAuthUser( $user ) )->success === 'error' )
+			$this->setResponse( 'error', 'Register!' );
+
+		if ( $this->toObj( $this->response() )->success === 'success' )
+			$this->setResponse( 'login', $this->toObj( $this->response() )->data );
+
+		else $this->setResponse(
+			$this->toObj( $this->response() )->success,
+			$this->toObj( $this->response() )
+		);
 
 		echo $this->response();
 	}
@@ -38,7 +47,7 @@ abstract class BillingFoxUserController
 			$result = $this->getRequest( 'spend?'. $params );
 		endif;
 
-		if ( $result && $result['status'] === 'success' ) {
+		if ( $result && $result['status'] === 'success' ) :
 			$return = MicroPayShortcodeController::processUnlockResponse( $result['spends'] );
 
 			if ( isset( $_POST['fromFront'] ) ) :
@@ -50,8 +59,13 @@ abstract class BillingFoxUserController
 
 				return $this->response();
 			endif;
-		}
-		return;
+
+		else:
+
+			$this->setResponse( 'error', 'User not in session!' );
+
+			echo $this->response();
+		endif;
 	}
 
 	/**
@@ -74,13 +88,13 @@ abstract class BillingFoxUserController
 	 *
 	 * @return boolean
 	 */
-	public function isAuthUser()
+	public function isAuthUser( \WP_User $user = null )
 	{
-		if ( is_user_logged_in() ) :
-			if ( ! empty( $user = mp_get_session( 'bfUser' ) ) ) :
+		if ( $user || is_user_logged_in() ) :
+			if ( ! $user && ! empty( $user = mp_get_session( 'bfUser' ) ) ) :
 				$this->setResponse( 'success', $user );
 			else :
-				$user = wp_get_current_user();
+				$user = $user ? $user : wp_get_current_user();
 				$bfUserID = $this->getUserBfID( $user->ID );
 
 				if ( $bfUserID ) return $this->validateIdentity( $bfUserID );
@@ -102,6 +116,7 @@ abstract class BillingFoxUserController
 	private function validateIdentity( string $bfUserID )
 	{
 		$result = $this->getRequest( 'identify?user=' . $bfUserID );
+
 		if ( $result && $result['status'] === 'success' ) {
 			$this->setResponse( 'success', $result );
 			mp_set_session( 'bfUser', $result );

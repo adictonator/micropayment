@@ -51,9 +51,7 @@ abstract class BaseShortcodeController
 
 	public function hasWall()
 	{
-		$api = new BillingFoxAPI;
-
-		if ( $this->shortcodeContents ) $this->wall = $api->needWall( $this->shortcodeContents->attrs->uid );
+		if ( $this->shortcodeContents ) $this->wall = ( new BillingFoxAPI )->needWall( $this->shortcodeContents->attrs->uid );
 
 		return $this->wall;
 	}

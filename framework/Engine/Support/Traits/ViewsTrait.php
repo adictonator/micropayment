@@ -63,9 +63,4 @@ trait ViewsTrait
 			endforeach;
 		endif;
 	}
-
-	public function setAssets( $assets )
-	{
-		$this->assets = $assets;
-	}
 }
