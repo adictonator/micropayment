@@ -5,14 +5,13 @@ defined( 'ABSPATH' ) or die( 'Not allowed!' );
 
 trait ResponseTrait
 {
-	private $responseObj = [];
+	private $response;
 
 	public $httpCode = 200;
 
-	public function setResponse( $type, $message )
+	public function setResponse( $message )
 	{
-		$this->responseObj['success'] = $type;
-		$this->responseObj['data'] = $message;
+		$this->response = $message;
 	}
 
 	public function response()
@@ -25,24 +24,21 @@ trait ResponseTrait
 		return ( object ) json_decode( $jsonString, true );
 	}
 
-	private function toJSON()
-	{
-		return json_encode( $this->responseObj );
-	}
-
 	private function getResponse()
 	{
-		if ( $this->httpCode >= 400 && $this->httpCode <= 451 ) return $this->errorResponse( $this->responseObj );
-		if ( $this->httpCode >= 200 && $this->httpCode <= 226 ) return $this->successResponse( $this->responseObj );
+		if ( $this->httpCode >= 400 && $this->httpCode <= 451 ) return $this->errorResponse( $this->response );
+		if ( $this->httpCode >= 200 && $this->httpCode <= 226 ) return $this->successResponse( $this->response );
 	}
 
 	private function errorResponse( $response )
 	{
-		return wp_send_json_error( get_status_header_desc( $this->httpCode ), $this->httpCode );
+		$response = $response ? $response : get_status_header_desc( $this->httpCode );
+
+		return wp_send_json_error( $response, $this->httpCode );
 	}
 
 	private function successResponse( $response )
 	{
-		return $this->toJSON();
+		return wp_send_json_success( $response, $this->httpCode );
 	}
 }

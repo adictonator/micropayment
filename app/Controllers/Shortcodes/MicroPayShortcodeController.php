@@ -4,9 +4,12 @@ namespace MicroPay\Controllers\Shortcodes;
 defined( 'ABSPATH' ) or die( 'Not allowed!' );
 
 use MPEngine\BillingFox\BillingFoxAPI;
+use MPEngine\Support\Traits\ResponseTrait;
 
 class MicroPayShortcodeController extends BaseShortcodeController
 {
+	use ResponseTrait;
+
 	public static $name = 'micropay';
 
 	public static $description = 'Restricts website content';
@@ -63,13 +66,15 @@ class MicroPayShortcodeController extends BaseShortcodeController
 
 				if ( $unlocked ) {
 					$unlocked->status = 'unlocked';
-
 					mp_set_session( $shortcodeID, $unlocked );
-					// true
 				}
 			endforeach;
+		else:
+			$this->httpCode = 400;
+			$this->setResponse( 'Could not unlock content!' );
 		endif;
-		// false
+
+		$this->response();
 	}
 
 	public static function processUnlockResponse( array $spends )

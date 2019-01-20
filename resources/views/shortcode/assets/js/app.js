@@ -5,7 +5,7 @@ jQuery(function($) {
 		const formData = new FormData(form[0])
 
 		mp.send( formData ).then(resp => {
-			switch (resp.success) {
+			switch (resp.data.type) {
 			case 'unlock':
 				if ($('[data-mp-sid="'+ resp.data.sid +'"]').length > 0) {
 					$('[data-mp-sid="'+ resp.data.sid +'"]').html(resp.data.content)
@@ -13,11 +13,11 @@ jQuery(function($) {
 				break
 
 			case 'auth':
-				$('.mp-auth-popup').html(resp.data).css('display', 'flex')
+				$('.mp-auth-popup').html(resp.data.html).css('display', 'flex')
 				break
 
 			case 'login':
-				// shortcode.setBFUserID(resp.data.user.key)
+				shortcode.setBFUserID(resp.data.user.key)
 				shortcode.init()
 			}
 		})
@@ -38,12 +38,12 @@ const shortcode = {
 
 		if ( ! bfUID ) {
 			const data = new FormData()
-			data.append('mpAction', 'isAuthUser')
+			data.append('mpAction', 'getBFUser')
 			data.append('mpController', 'MPEngine:BillingFox:BillingFoxAPI')
-			data.append('fromFront', 'true')
+			data.append(mp_helpers.nonce_key, mp_helpers.nonce)
 
 			mp.send(data).then(r => {
-				if (r.success === 'success') {
+				if (r.success === true) {
 					this.setBFUserID(r.data.user.key)
 					this.getUserSpends()
 				}
@@ -55,10 +55,10 @@ const shortcode = {
 		const data = new FormData()
 		data.append('mpAction', 'getSpends')
 		data.append('mpController', 'MPEngine:BillingFox:BillingFoxAPI')
-		data.append('fromFront', 'true')
+		data.append('userAccess', true)
 
 		mp.send(data).then(r => {
-			if (r.success === 'success') {
+			if (r.success === true) {
 				let shortcodeIDs = []
 
 				r.data.spends.map(id => {
@@ -73,7 +73,7 @@ const shortcode = {
 			} else {
 				console.error('GETTING SPEND ERROR', r.data)
 				this.removeBFUserID()
-				this.init()
+				//this.init()
 			}
 		})
 	},
@@ -83,6 +83,7 @@ const shortcode = {
 		data.append('mpAction', 'unlockContent')
 		data.append('mpController', 'MicroPay:Controllers:Shortcodes:MicroPayShortcodeController')
 		data.append('shortcodeIDs', shortcodeIDs)
+		data.append('userAccess', true)
 
 		mp.send(data)
 	},

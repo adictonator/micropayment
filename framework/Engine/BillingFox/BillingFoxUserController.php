@@ -18,20 +18,29 @@ abstract class BillingFoxUserController
 			'user_password' => $_POST['mp_password'],
 		]);
 
-		if ( is_wp_error( $user ) ) $this->setResponse( 'error', $user->get_error_message() );
+		if ( is_wp_error( $user ) ) $this->setResponse( $user->get_error_message() );
 
-		if ( $this->toObj( $this->isAuthUser( $user ) )->success === 'error' )
-			$this->setResponse( 'error', 'Register!' );
+		wp_set_current_user( $user->ID );
 
-		if ( $this->toObj( $this->response() )->success === 'success' )
-			$this->setResponse( 'login', $this->toObj( $this->response() )->data );
+		if ( ! $this->isAuthUser() ) :
+			$this->httpCode = 401;
+			$this->setResponse( 'Not a valid BillingFox user. Register <a href="#">here</a>' );
+		else:
+			$return['type'] = 'login';
+			$return['user'] = mp_get_session( 'bfUser' )['user'];
 
-		else $this->setResponse(
-			$this->toObj( $this->response() )->success,
-			$this->toObj( $this->response() )
-		);
+			$this->setResponse( $return );
+		endif;
 
-		echo $this->response();
+		$this->response();
+	}
+
+	public function getBFUser()
+	{
+		if ( $bfUser = mp_get_session( 'bfUser' ) ) $this->setResponse( $bfUser );
+		else $this->httpCode = 401;
+
+		$this->response();
 	}
 
 	public function getSpends()
@@ -50,22 +59,13 @@ abstract class BillingFoxUserController
 		if ( $result && $result['status'] === 'success' ) :
 			$return = MicroPayShortcodeController::processUnlockResponse( $result['spends'] );
 
-			if ( isset( $_POST['fromFront'] ) ) :
-				$this->setResponse( 'success', $return );
-
-				echo $this->response();
-			else:
-				$this->setResponse( 'success', $result );
-
-				return $this->response();
-			endif;
-
+			$this->setResponse( $return );
 		else:
-
-			$this->setResponse( 'error', 'User not in session!' );
-
-			echo $this->response();
+			$this->httpCode = 403;
+			$this->setResponse( 'User not in session!' );
 		endif;
+
+		$this->response();
 	}
 
 	/**
@@ -88,24 +88,27 @@ abstract class BillingFoxUserController
 	 *
 	 * @return boolean
 	 */
-	public function isAuthUser( \WP_User $user = null )
+	protected function isAuthUser()
 	{
-		if ( $user || is_user_logged_in() ) :
-			if ( ! $user && ! empty( $user = mp_get_session( 'bfUser' ) ) ) :
-				$this->setResponse( 'success', $user );
+		if ( is_user_logged_in() ) :
+			if ( ! empty( $user = mp_get_session( 'bfUser' ) ) ) :
+				return true;
+				// $this->setResponse( $user );
 			else :
-				$user = $user ? $user : wp_get_current_user();
+				$user = wp_get_current_user();
 				$bfUserID = $this->getUserBfID( $user->ID );
 
 				if ( $bfUserID ) return $this->validateIdentity( $bfUserID );
-				else $this->setResponse( 'error', 'Not a BF user.' );
+				// else $this->httpCode = 401;
+				else return false;
 			endif;
 		else:
-			$this->setResponse( 'error', 'Not logged in.' );
+			return false;
+			// $this->httpCode = 401;
+			// $this->setResponse( 'Not logged in.' );
 		endif;
 
-		if ( isset( $_POST['fromFront'] ) ) echo $this->response();
-		else return $this->response();
+		// $this->response();
 	}
 
 	private function getUserBfID( int $userID )
@@ -117,12 +120,17 @@ abstract class BillingFoxUserController
 	{
 		$result = $this->getRequest( 'identify?user=' . $bfUserID );
 
-		if ( $result && $result['status'] === 'success' ) {
-			$this->setResponse( 'success', $result );
+		if ( $result && $result['status'] === 'success' ) :
 			mp_set_session( 'bfUser', $result );
-		} else $this->setResponse( 'error', 'Error getting BF user.' );
+			return true;
+			// $this->setResponse( $result );
+		else:
+			// $this->httpCode = 401;
+			// $this->setResponse( 'Not a BillingFox user.' );
+			return false;
+		endif;
 
-		return $this->response();
+		// $this->response();
 	}
 
 	/**

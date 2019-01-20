@@ -48,7 +48,7 @@ class BillingFoxAPI extends BillingFoxUserController
 
 	public function validate( $wallData )
 	{
-		if ( $this->toObj( $this->isAuthUser() )->success === 'success' ) :
+		if ( $this->isAuthUser() ) :
 			$billingFoxUser = mp_get_session( 'bfUser' );
 
 			return $this->processUnlocking( $wallData, $billingFoxUser );
@@ -62,12 +62,12 @@ class BillingFoxAPI extends BillingFoxUserController
 		/** @todo after this, create functions for actually logging in user and checking for bf meta key again and/or registering them for bf and then setting their key for an account and then process the spend */
 		ob_start();
 		$this->setView( 'auth.authForms' );
-		$return = ob_get_contents();
+		$return['html'] = ob_get_contents();
 		ob_end_clean();
 
-		$this->setResponse( 'auth', $return );
-
-		echo $this->response();
+		$return['type'] = 'auth';
+		$this->setResponse( $return );
+		$this->response();
 	}
 
 	private function processUnlocking( $wallData, $billingFoxUser )
@@ -82,14 +82,17 @@ class BillingFoxAPI extends BillingFoxUserController
 			$shortcodeController = new MicroPayShortcodeController;
 			$shortcodeController->unlockContent( $wallData->attrs->uid );
 			$return = [
+				'type' => 'unlock',
 				'sid' => $wallData->attrs->uid,
 				'content' => $wallData->content,
 			];
 
-			$this->setResponse( 'unlock', $return );
+			$this->setResponse( $return );
+		else:
+			$this->httpCode = 400;
 		endif;
 
-		echo $this->response();
+		$this->response();
 	}
 
 	protected function postRequest( $path, $payload = [] )

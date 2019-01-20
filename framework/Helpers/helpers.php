@@ -72,7 +72,9 @@ if ( ! function_exists( 'mp_form_fields' ) ) {
 		$formMethod = $callType === 'ajax' ? 'listenAJAX' : 'listenPOST';
 
 		if ( method_exists( $controller, $action ) ) :
-			$fields = "<input type='hidden' value='$action' name='mpAction'>
+			$nonce = wp_create_nonce( MP_FORM_NONCE );
+			$fields = "<input type='hidden' value='$nonce' name='". MP_FORM_NONCE ."'>
+			<input type='hidden' value='$action' name='mpAction'>
 			<input type='hidden' value='$formMethod' name='action'>
 			<input type='hidden' value='". str_replace( '\\', ':', $controllerName ) ."' name='mpController'>";
 			echo $fields;
