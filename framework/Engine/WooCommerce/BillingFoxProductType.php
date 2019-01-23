@@ -13,25 +13,22 @@ class BillingFoxProductType implements HookableInterface
 		add_action( 'woocommerce_init', [$this, 'getBillingFoxProductType'] );
         add_filter( 'woocommerce_product_data_tabs', [$this, 'billingFoxProductTypeTabs'] );
         add_action( 'woocommerce_product_data_panels', [$this, 'billingFoxProductTypeOptions'] );
-		add_action( 'woocommerce_process_product_meta', [$this, 'billingFoxProductTypeUpdate'] );
+		add_action( 'woocommerce_process_product_meta', [$this, 'billingFoxProductTypeUpdate'], 30 );
 		add_action( 'woocommerce_available_payment_gateways', [$this, 'billingFoxLimitGateway'] );
 		add_action( 'woocommerce_billingfox_add_to_cart', [$this, 'addToCart'], 30 );
 		add_action( 'woocommerce_before_single_product_summary', [$this, 'woocommerce_template_single_title'], 5 );
+		remove_action( 'woocommerce_after_shop_loop_item_title', [$this, 'woocommerce_template_loop_price'], 5 );
 		add_action( 'woocommerce_after_shop_loop_item_title', [$this, 'woocommerce_template_loop_price'], 10 );
 		// add_action( 'woocommerce_single_product_summary', [$this, 'title'], 1 );
 	}
 
-	public function woocommerce_template_loop_price($lol)
+	public function woocommerce_template_loop_price()
 	{
+		echo "<span>BillingFox Product</span>";
 	}
 
 	public function woocommerce_template_single_title($lol)
 	{
-		// die('asdasd');
-		echo "<pre>";
-		print_r($lol);
-		echo "</pre>";
-		echo 'lmaoo';
 	}
 
 	/**

@@ -6,6 +6,9 @@ jQuery(function($) {
 
 		mp.send( formData ).then(resp => {
 			switch (resp.data.type) {
+			case 'check-unlock':
+				console.log('okay')
+				break
 			case 'unlock':
 				if ($('[data-mp-sid="'+ resp.data.sid +'"]').length > 0) {
 					$('[data-mp-sid="'+ resp.data.sid +'"]').html(resp.data.content)

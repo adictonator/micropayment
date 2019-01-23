@@ -7,6 +7,8 @@ trait ResponseTrait
 {
 	private $response;
 
+	private $die;
+
 	public $httpCode = 200;
 
 	public function setResponse( $message )
@@ -14,8 +16,9 @@ trait ResponseTrait
 		$this->response = $message;
 	}
 
-	public function response()
+	public function response( $die = false )
 	{
+		$this->die = $die;
 		return $this->getResponse();
 	}
 
@@ -34,11 +37,13 @@ trait ResponseTrait
 	{
 		$response = $response ? $response : get_status_header_desc( $this->httpCode );
 
-		return wp_send_json_error( $response, $this->httpCode );
+		return mp_error_json( $response, $this->httpCode );
+		$this->die ? wp_die() : '';
 	}
 
 	private function successResponse( $response )
 	{
-		return wp_send_json_success( $response, $this->httpCode );
+		return mp_success_json( $response, $this->httpCode );
+		$this->die ? wp_die() : '';
 	}
 }

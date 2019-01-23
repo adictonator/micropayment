@@ -150,3 +150,35 @@ if ( ! function_exists( 'mp_remove_session' ) ) {
 		unset( $_SESSION[ $sessionKey ] );
 	}
 }
+
+if ( ! function_exists( 'mp_error_json' ) ) {
+	/**
+	 * Removes session.
+	 * @todo fix this. maybe use func_arg to unset array keys
+	 * @param mixed $sessionKey
+	 * @return void
+	 */
+	function mp_error_json( $response = null, $code )
+	{
+		$response ? $return['data'] = $response : '';
+		$return['success'] = false;
+
+		return json_encode( $return );
+	}
+}
+
+if ( ! function_exists( 'mp_success_json' ) ) {
+	/**
+	 * Removes session.
+	 * @todo fix this. maybe use func_arg to unset array keys
+	 * @param mixed $sessionKey
+	 * @return void
+	 */
+	function mp_success_json( $response = null, $code )
+	{
+		$response ? $return['data'] = $response : '';
+		$return['success'] = true;
+
+		return json_encode( $return );
+	}
+}

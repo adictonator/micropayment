@@ -51,7 +51,12 @@ class BillingFoxAPI extends BillingFoxUserController
 		if ( $this->isAuthUser() ) :
 			$billingFoxUser = mp_get_session( 'bfUser' );
 
-			return $this->processUnlocking( $wallData, $billingFoxUser );
+			$return['type'] = 'check-unlock';
+			$return['data'] = $this->toObj( $this->getSpends() )->data->spends;
+
+			$this->setResponse( $return );
+			$this->response(1);
+			// return $this->processUnlocking( $wallData, $billingFoxUser );
 		else:
 			return $this->handleCurrentUser();
 		endif;
@@ -72,6 +77,12 @@ class BillingFoxAPI extends BillingFoxUserController
 
 	private function processUnlocking( $wallData, $billingFoxUser )
 	{
+		$allSpends = $this->getSpends();
+
+		echo "<pre>";
+		print_r($allSpends);
+		echo "</pre>";
+
 		$result = $this->postRequest( 'spend', array_filter([
 			'user' => $billingFoxUser['user']['key'],
 			'amount' => (float) $wallData->attrs->price,

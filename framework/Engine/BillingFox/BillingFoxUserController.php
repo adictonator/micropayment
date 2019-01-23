@@ -32,7 +32,7 @@ abstract class BillingFoxUserController
 			$this->setResponse( $return );
 		endif;
 
-		$this->response();
+		$this->response(1);
 	}
 
 	public function getBFUser()
@@ -40,7 +40,7 @@ abstract class BillingFoxUserController
 		if ( $bfUser = mp_get_session( 'bfUser' ) ) $this->setResponse( $bfUser );
 		else $this->httpCode = 401;
 
-		$this->response();
+		$this->response(1);
 	}
 
 	public function getSpends()
@@ -60,12 +60,12 @@ abstract class BillingFoxUserController
 			$return = MicroPayShortcodeController::processUnlockResponse( $result['spends'] );
 
 			$this->setResponse( $return );
+			return $this->response();
 		else:
 			$this->httpCode = 403;
 			$this->setResponse( 'User not in session!' );
+			$this->response(1);
 		endif;
-
-		$this->response();
 	}
 
 	/**
