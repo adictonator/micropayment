@@ -42,7 +42,9 @@ class BillingFoxAPI extends BillingFoxUserController
 	{
 		$shortcodeContents = mp_get_session( $sID );
 
-		if ( $shortcodeContents && isset( $shortcodeContents->status ) && $shortcodeContents->status === 'unlocked' ) return false;
+		if ( $shortcodeContents && isset( $shortcodeContents->status )
+			&& $shortcodeContents->status === 'unlocked' ) return false;
+
 		return true;
 	}
 
@@ -55,7 +57,7 @@ class BillingFoxAPI extends BillingFoxUserController
 			$return['data'] = $this->toObj( $this->getSpends() )->data->spends;
 
 			$this->setResponse( $return );
-			$this->response(1);
+			echo $this->response(1);
 			// return $this->processUnlocking( $wallData, $billingFoxUser );
 		else:
 			return $this->handleCurrentUser();
@@ -106,6 +108,17 @@ class BillingFoxAPI extends BillingFoxUserController
 		$this->response();
 	}
 
+	public function spends( string $userID )
+	{
+		$params = build_query( array_filter( [
+			'user' => $userID,
+			'gte' => null,
+			'lte' => null,
+		] ) );
+
+		return $this->getRequest( 'spend?'. $params );
+	}
+
 	protected function postRequest( $path, $payload = [] )
     {
 		$this->logger('POST '.$this->url.$path.' '.json_encode($payload));
@@ -136,6 +149,13 @@ class BillingFoxAPI extends BillingFoxUserController
         return $this->prepareResult($result);
     }
 
+	/**
+	 * Not sure about this function. Will deprecate.
+	 *
+	 * @deprecated 1.0.0
+	 * @param mixed $result
+	 * @return void
+	 */
 	private function prepareResult( $result )
     {
         if ( is_wp_error( $result ) ) {

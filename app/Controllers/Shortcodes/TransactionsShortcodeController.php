@@ -18,4 +18,32 @@ class TransactionsShortcodeController extends BaseShortcodeController
 	{
 		return $this->validateAttributes( $content, $attrs );
 	}
+
+	protected function processShortcodeContent( $content, $attrs )
+	{
+		$user = mp_get_session( 'bfUser' );
+		$spends = mp_get_session( 'spends');
+
+		if ( $user ) :
+			if ( ! $spends ) $spends = $this->api->spends( $user['user']['key'] )['spends'];
+
+			return $this->getSpendsContent( $spends );
+		else:
+			$this->viewMessage = 'Not a valid BillingFox user!';
+
+			return $this->getErrorContent();
+		endif;
+	}
+
+	private function getSpendsContent( $spends )
+	{
+		isset( $spends['spends'] ) ? mp_set_session( 'spends', $spends['spends'] ) : '';
+
+		ob_start();
+		$this->setView( 'shortcode.spends', compact( 'spends' ) );
+		$errorContent = ob_get_contents();
+		ob_end_clean();
+
+		return $errorContent;
+	}
 }

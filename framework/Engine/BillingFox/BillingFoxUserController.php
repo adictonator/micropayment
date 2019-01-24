@@ -40,31 +40,26 @@ abstract class BillingFoxUserController
 		if ( $bfUser = mp_get_session( 'bfUser' ) ) $this->setResponse( $bfUser );
 		else $this->httpCode = 401;
 
-		$this->response(1);
+		echo $this->response(1);
 	}
 
 	public function getSpends()
 	{
 		$user = mp_get_session( 'bfUser' );
 
-		if ( $user ) :
-			$params = build_query(array_filter([
-				'user' => $user['user']['key'],
-				'gte' => null,
-				'lte' => null,
-			]));
-			$result = $this->getRequest( 'spend?'. $params );
-		endif;
+		if ( $user ) $result = $this->spends( $user['user']['key'] );
 
 		if ( $result && $result['status'] === 'success' ) :
-			$return = MicroPayShortcodeController::processUnlockResponse( $result['spends'] );
+			// $return = MicroPayShortcodeController::processUnlockResponse( $result['spends'] );
 
-			$this->setResponse( $return );
-			return $this->response();
+			// $this->setResponse( $return );
+			$this->setResponse( $result );
+			echo $this->response(1);
+			// return $this->response();
 		else:
 			$this->httpCode = 403;
 			$this->setResponse( 'User not in session!' );
-			$this->response(1);
+			echo $this->response(1);
 		endif;
 	}
 

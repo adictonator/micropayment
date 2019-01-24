@@ -3,12 +3,11 @@ namespace MicroPay\Controllers\Shortcodes;
 
 defined( 'ABSPATH' ) or die( 'Not allowed!' );
 
-use MPEngine\BillingFox\BillingFoxAPI;
-use MPEngine\Support\Traits\ResponseTrait;
-
 class MicroPayShortcodeController extends BaseShortcodeController
 {
-	use ResponseTrait;
+	private $wall = true;
+
+	protected $shortcodeContents;
 
 	public static $name = 'micropay';
 
@@ -48,9 +47,7 @@ class MicroPayShortcodeController extends BaseShortcodeController
 	public function unlock()
 	{
 		$wallData = mp_get_session( $_POST['sid'] );
-		$api = new BillingFoxAPI;
-
-		if ( $wallData ) $api->validate( $wallData );
+		if ( $wallData ) $this->api->validate( $wallData );
 		// false
 	}
 
@@ -74,7 +71,7 @@ class MicroPayShortcodeController extends BaseShortcodeController
 			$this->setResponse( 'Could not unlock content!' );
 		endif;
 
-		$this->response();
+		echo $this->response(1);
 	}
 
 	public static function processUnlockResponse( array $spends )
@@ -90,5 +87,52 @@ class MicroPayShortcodeController extends BaseShortcodeController
 		endforeach;
 
 		return $return;
+	}
+
+	protected function processShortcodeContent( $content, $attrs )
+	{
+		$checkUnlocked = mp_get_session( $attrs['uid'] );
+
+		mp_set_session( $attrs['uid'], $this->shortcodeContents = (object) [
+			'content' => $content,
+			'attrs'   => (object) $attrs,
+			'status'  => $checkUnlocked ? $checkUnlocked->status : 'locked',
+		]);
+
+		return $this->checkWallStatus();
+	}
+
+	private function wall()
+	{
+		$this->viewMessage = self::VIEW_WALL_MESSAGE;
+		return $this->getWallContent();
+	}
+
+	public function hasWall()
+	{
+		if ( $this->shortcodeContents ) $this->wall = $this->api->needWall( $this->shortcodeContents->attrs->uid );
+
+		return $this->wall;
+	}
+
+	private function getWallContent()
+	{
+		ob_start();
+		$this->setView( 'shortcode.wall' );
+		$wallContent = ob_get_contents();
+		ob_end_clean();
+
+		return $wallContent;
+	}
+
+	private function checkWallStatus()
+	{
+		if ( $this->hasWall() ) return $this->wall();
+		else return $this->getShortcodeContent();
+	}
+
+	private function getShortcodeContent()
+	{
+		return $this->shortcodeContents->content;
 	}
 }

@@ -13,4 +13,9 @@ class ProfileShortcodeController extends BaseShortcodeController
 	{
 		return $this->validateAttributes( $content, $attrs );
 	}
+
+	protected function processShortcodeContent( $content, $attr )
+	{
+		# code...
+	}
 }
