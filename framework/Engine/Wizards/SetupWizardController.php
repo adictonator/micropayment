@@ -69,6 +69,9 @@ class SetupWizardController implements WizardsInterface
 	{
 		$generalSettings = is_object( $this->getSettings() ) ? $this->getSettings() : $this->initSettings();
 
+		! isset( $_POST['api']['debug'] ) ? $_POST['api']['debug'] = 'no' : '';
+		! isset( $_POST['api']['mode'] ) ? $_POST['api']['mode'] = 'no' : '';
+
 		foreach ( $_POST as $key => $vals )
 			if ( is_array( $vals ) )
 				foreach ( $vals as $dKey => $val ) $generalSettings->$key->$dKey->value = $val;

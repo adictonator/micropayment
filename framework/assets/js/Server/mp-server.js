@@ -10,9 +10,6 @@ window.mpServer = class MicroPayServerEnvironment {
 	}
 
 	async send( data ) {
-
-		// data.append(mp_helpers.nonce_key, l ? l : mp_helpers.nonce)
-
 		const resp = await fetch(this.ajax, {
 			method: 'POST',
 			credentials: 'same-origin',

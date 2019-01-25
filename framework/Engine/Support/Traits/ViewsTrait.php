@@ -5,10 +5,30 @@ defined( 'ABSPATH' ) or die( 'Not allowed!' );
 
 use MPEngine\Support\Exceptions\ViewErrorException;
 
+/**
+ * Sets view for the different pages/scenarios.
+ *
+ * @throws ViewErrorException
+ * @author Adictonator <adityabhaskarsharma@gmail.com>
+ * @package MicroPayment
+ * @since 1.0.0
+ */
 trait ViewsTrait
 {
+	/**
+	 * Holds the current raw path to the view template.
+	 *
+	 * @var string
+	 */
 	private $path;
 
+	/**
+	 * Sets view for the current screen.
+	 *
+	 * @param string $path
+	 * @param null|mixed $data
+	 * @return void
+	 */
 	public function setView( string $path, $data = null )
 	{
 		if ( null !== $data ) extract( $data );
@@ -18,10 +38,17 @@ trait ViewsTrait
 
 		if ( null !== $filePath ) :
 			$this->enqueueAssets();
-			include $filePath;
+			include $filePath; /** Using `include` to show `errors view` multiple times. */
 		endif;
 	}
 
+	/**
+	 * Resolves given view path and checks for the view template's
+	 * existence.
+	 *
+	 * @param string $path
+	 * @return string Complete file path
+	 */
 	public function resolveViewPath( string $path )
 	{
 		$filePath = mp_path_resolver( $path, 'view' );
@@ -59,7 +86,7 @@ trait ViewsTrait
 				$filePath = mp_path_resolver( $this->path, 'asset' );
 				$assetPath  = MP_VIEWS_URL . $filePath . 'assets/js/' . $asset;
 
-				wp_enqueue_script( 'mp-' . $key, $assetPath, ['jquery'], MP_VER, true );
+				wp_enqueue_script( 'mp-' . $key, $assetPath, ['jquery'], MP_VER );
 			endforeach;
 		endif;
 	}

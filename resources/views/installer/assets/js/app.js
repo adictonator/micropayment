@@ -26,11 +26,11 @@ jQuery(function($) {
 	})
 
 	$('[data-mp-validate-api]').on('click', function() {
-		const key = $('input[name=apiKey]').val()
+		const key = $('input[name="api[key]"]').val()
 
 		mp._validateAPI( key ).then(resp => {
 			if (resp.status === 'error') {
-				alert(resp.data)
+				alert(resp.message)
 				return false
 			}
 
