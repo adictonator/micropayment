@@ -22,7 +22,7 @@ class BillingFoxAPI extends BillingFoxUserController
 	{
 		$credentials = $this->getSettings();
 
-		if ( ! $this->validateSettings( $credentials ) ) throw new BillingFoxAPIException( 'Malformed data!' );
+		if ( ! $this->validateSettings( $credentials ) ) return;
 
 		$this->key = $credentials->api->key->value;
 		$this->url = 'https://' . ($credentials->api->mode->value == 'yes' ? 'test' : 'live') . '.billingfox.com/api';
