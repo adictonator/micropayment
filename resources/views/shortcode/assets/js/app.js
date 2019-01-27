@@ -7,8 +7,24 @@ jQuery(function($) {
 		mp.send( formData ).then(resp => {
 			switch (resp.data.type) {
 			case 'check-unlock':
-				console.log('okay')
+
+				if ( resp.data.data ) {
+					const sid = formData.get( 'sid' )
+					let preIDs = []
+					resp.data.data.map( s => preIDs.push( s.description ) )
+
+					if ( preIDs.indexOf( sid ) > -1 ) {
+						// simply unlock the content
+					}  else {
+						// process the spend
+						formData.set( 'mpController', 'MPEngine:BillingFox:BillingFoxAPI' )
+						formData.set( 'mpAction', 'processUnlocking' )
+						formData.set( 'sid', sid )
+						mp.send( formData ).then( r => console.log('sd',  r))
+					}
+				}
 				break
+
 			case 'unlock':
 				if ($('[data-mp-sid="'+ resp.data.sid +'"]').length > 0) {
 					$('[data-mp-sid="'+ resp.data.sid +'"]').html(resp.data.content)
@@ -38,6 +54,7 @@ jQuery(function($) {
 const shortcode = {
 	init() {
 		const bfUID = this.getBFUserID()
+		const _mpIsDone = this._mpIsDone()
 
 		if ( ! bfUID ) {
 			const data = new FormData()
@@ -47,11 +64,12 @@ const shortcode = {
 
 			mp.send(data).then(r => {
 				if (r.success === true) {
-					this.setBFUserID(r.data.user.key)
+					this.setBFUserID(r.data.key)
 					this.getUserSpends()
 				}
 			})
-		} else this.getUserSpends()
+		}
+		else if ( ! _mpIsDone ) this.getUserSpends()
 	},
 
 	getUserSpends() {
@@ -88,7 +106,11 @@ const shortcode = {
 		data.append('shortcodeIDs', shortcodeIDs)
 		data.append('userAccess', true)
 
-		mp.send(data)
+		mp.send( data ).then( resp => {
+			if ( resp.success === true ) {
+				sessionStorage.setItem( '_mpIsDone', true )
+			}
+		} )
 	},
 
 	setBFUserID(id) {
@@ -101,5 +123,13 @@ const shortcode = {
 
 	removeBFUserID() {
 		return localStorage.removeItem('bfUID')
+	},
+
+	_mpIsDone() {
+		if ( document.cookie.indexOf('wp-settings-time') !== -1 ) {
+			return sessionStorage.getItem( '_mpIsDone' )
+		} else {
+			return sessionStorage.removeItem( '_mpIsDone' )
+		}
 	},
 }

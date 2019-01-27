@@ -51,10 +51,10 @@ class BillingFoxAPI extends BillingFoxUserController
 	public function validate( $wallData )
 	{
 		if ( $this->isAuthUser() ) :
-			$billingFoxUser = mp_get_session( 'bfUser' );
+			$spends = mp_get_session( 'spends' );
 
 			$return['type'] = 'check-unlock';
-			$return['data'] = $this->toObj( $this->getSpends() )->data->spends;
+			$return['data'] = $spends;
 
 			$this->setResponse( $return );
 			echo $this->response(1);
@@ -66,7 +66,6 @@ class BillingFoxAPI extends BillingFoxUserController
 
 	private function handleCurrentUser()
 	{
-		/** @todo after this, create functions for actually logging in user and checking for bf meta key again and/or registering them for bf and then setting their key for an account and then process the spend */
 		ob_start();
 		$this->setView( 'auth.authForms' );
 		$return['html'] = ob_get_contents();
@@ -74,19 +73,16 @@ class BillingFoxAPI extends BillingFoxUserController
 
 		$return['type'] = 'auth';
 		$this->setResponse( $return );
-		$this->response();
+		echo $this->response(1);
 	}
 
-	private function processUnlocking( $wallData, $billingFoxUser )
+	public function processUnlocking()
 	{
-		$allSpends = $this->getSpends();
-
-		echo "<pre>";
-		print_r($allSpends);
-		echo "</pre>";
+		$wallData = mp_get_session( $_POST['sid'] );
+		$billingFoxUser = mp_get_session( 'bfUser' );
 
 		$result = $this->postRequest( 'spend', array_filter([
-			'user' => $billingFoxUser['user']['key'],
+			'user' => $billingFoxUser['key'],
 			'amount' => (float) $wallData->attrs->price,
 			'description' => $wallData->attrs->uid,
 		]));
@@ -101,11 +97,12 @@ class BillingFoxAPI extends BillingFoxUserController
 			];
 
 			$this->setResponse( $return );
+			mp_remove_session( 'spends' );
 		else:
 			$this->httpCode = 400;
 		endif;
 
-		$this->response();
+		echo $this->response(1);
 	}
 
 	public function spends( string $userID )
@@ -160,9 +157,9 @@ class BillingFoxAPI extends BillingFoxUserController
     {
         if ( is_wp_error( $result ) ) {
             $this->logger('WP-ERROR: (%s) %s', [$result->get_error_message(), $result->get_error_code()]);
-            $e = new BillingFoxAPIException($result->get_error_message());
-
-            throw $e;
+            $e = new BillingFoxAPIException( $result->get_error_message() );
+			echo $e->msg();
+			return;
         }
 
 		$body = json_decode( $result['body'], true );

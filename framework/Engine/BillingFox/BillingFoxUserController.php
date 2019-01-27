@@ -27,12 +27,12 @@ abstract class BillingFoxUserController
 			$this->setResponse( 'Not a valid BillingFox user. Register <a href="#">here</a>' );
 		else:
 			$return['type'] = 'login';
-			$return['user'] = mp_get_session( 'bfUser' )['user'];
+			$return['user'] = mp_get_session( 'bfUser' );
 
 			$this->setResponse( $return );
 		endif;
 
-		$this->response(1);
+		echo $this->response(1);
 	}
 
 	public function getBFUser()
@@ -46,21 +46,25 @@ abstract class BillingFoxUserController
 	public function getSpends()
 	{
 		$user = mp_get_session( 'bfUser' );
+		$spends = mp_get_session( 'spends' );
 
-		if ( $user ) $result = $this->spends( $user['user']['key'] );
+		if ( ! $spends ) {
+			if ( $user ) $result = $this->spends( $user['key'] );
 
-		if ( $result && $result['status'] === 'success' ) :
-			// $return = MicroPayShortcodeController::processUnlockResponse( $result['spends'] );
+			if ( ! $result || $result['status'] !== 'success' ) :
+				$this->httpCode = 403;
+				$this->setResponse( 'User not in session!' );
 
-			// $this->setResponse( $return );
-			$this->setResponse( $result );
-			echo $this->response(1);
-			// return $this->response();
-		else:
-			$this->httpCode = 403;
-			$this->setResponse( 'User not in session!' );
-			echo $this->response(1);
-		endif;
+				echo $this->response(1);
+			endif;
+
+			$spends = $result['spends'];
+		}
+
+		$result = MicroPayShortcodeController::processUnlockResponse( $spends );
+		$this->setResponse( $result );
+
+		echo $this->response(1);
 	}
 
 	/**
@@ -83,10 +87,10 @@ abstract class BillingFoxUserController
 	 *
 	 * @return boolean
 	 */
-	protected function isAuthUser()
+	public function isAuthUser()
 	{
 		if ( is_user_logged_in() ) :
-			if ( ! empty( $user = mp_get_session( 'bfUser' ) ) ) :
+			if ( ! empty( mp_get_session( 'bfUser' ) ) ) :
 				return true;
 				// $this->setResponse( $user );
 			else :
@@ -116,7 +120,7 @@ abstract class BillingFoxUserController
 		$result = $this->getRequest( 'identify?user=' . $bfUserID );
 
 		if ( $result && $result['status'] === 'success' ) :
-			mp_set_session( 'bfUser', $result );
+			mp_set_session( 'bfUser', $result['user'] );
 			return true;
 			// $this->setResponse( $result );
 		else:
@@ -145,7 +149,7 @@ abstract class BillingFoxUserController
 	 *
 	 * @param string $id
 	 * @param string $email
-	 * @return mixed|array|null
+	 * @return mixed|null
 	 */
 	private function setBillingFoxUser( string $id, string $email )
 	{

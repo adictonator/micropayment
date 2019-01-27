@@ -7,6 +7,6 @@ class BillingFoxAPIException extends \Exception
 {
 	public function msg()
 	{
-		return 'The view at <strong>' . $this->getMessage() . '</strong> doesn\'t exist!';
+		return '<strong>Error:</strong> ' . $this->getMessage();
 	}
 }

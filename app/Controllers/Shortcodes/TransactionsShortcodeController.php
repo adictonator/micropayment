@@ -25,7 +25,7 @@ class TransactionsShortcodeController extends BaseShortcodeController
 		$spends = mp_get_session( 'spends');
 
 		if ( $user ) :
-			if ( ! $spends ) $spends = $this->api->spends( $user['user']['key'] )['spends'];
+			if ( ! $spends ) $spends = $this->api->spends( $user['key'] )['spends'];
 
 			return $this->getSpendsContent( $spends );
 		else:
@@ -37,7 +37,7 @@ class TransactionsShortcodeController extends BaseShortcodeController
 
 	private function getSpendsContent( $spends )
 	{
-		isset( $spends['spends'] ) ? mp_set_session( 'spends', $spends['spends'] ) : '';
+		! empty( $spends ) ? mp_set_session( 'spends', $spends ) : '';
 
 		ob_start();
 		$this->setView( 'shortcode.spends', compact( 'spends' ) );

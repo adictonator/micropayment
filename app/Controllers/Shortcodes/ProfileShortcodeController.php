@@ -16,6 +16,21 @@ class ProfileShortcodeController extends BaseShortcodeController
 
 	protected function processShortcodeContent( $content, $attr )
 	{
-		# code...
+		if ( mp_get_session( 'bfUser' ) || $this->api->isAuthUser() ) : return $this->getProfileContent( mp_get_session( 'bfUser' ) );
+		else:
+			$this->viewMessage = 'User not logged in!';
+
+			return $this->getErrorContent();
+		endif;
+	}
+
+	private function getProfileContent( $user )
+	{
+		ob_start();
+		$this->setView( 'shortcode.profile', compact( 'user' ) );
+		$errorContent = ob_get_contents();
+		ob_end_clean();
+
+		return $errorContent;
 	}
 }
