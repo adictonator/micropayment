@@ -48,7 +48,7 @@ class BillingFoxAPI extends BillingFoxUserController
 		return true;
 	}
 
-	public function validate( $wallData )
+	public function validate()
 	{
 		if ( $this->isAuthUser() ) :
 			$spends = mp_get_session( 'spends' );
@@ -58,7 +58,6 @@ class BillingFoxAPI extends BillingFoxUserController
 
 			$this->setResponse( $return );
 			echo $this->response(1);
-			// return $this->processUnlocking( $wallData, $billingFoxUser );
 		else:
 			return $this->handleCurrentUser();
 		endif;

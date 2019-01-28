@@ -7,5 +7,3 @@
 		<button type="button" data-mp-btn="unlock">Pay <?php echo $this->shortcodeContents->attrs->price; ?> Credits to Unlock</button>
 	</form>
 </div>
-
-<div class="mp-auth-popup"></div>

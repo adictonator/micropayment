@@ -155,31 +155,3 @@ input[type=checkbox], input[type=radio] {
 .mp-admin-block__link:hover {
 	color: rgba(255, 235, 59, 1);
 }
-
-.mp-block {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-
-.mp-block__error {
-	background: firebrick;
-	color: #FFF;
-	padding: 10px 20px;
-	border: 2px dashed #FFF;
-}
-
-/** Auth popup **/
-.mp-auth-popup {
-	top: 0;
-    left: 0;
-    right: 0;
-    height: 100%;
-    display: none;
-    z-index: 10001;
-	position: fixed;
-    min-width: 100vw;
-    align-items: center;
-    justify-content: center;
-    background: rgba(88, 88, 88, 0.42);
-}

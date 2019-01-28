@@ -16,6 +16,7 @@ class CoreDependenciesController implements HookableInterface
 			'url' => admin_url( 'admin-ajax.php' ) . '?action=listenAJAX',
 			'nonce_key' => MP_FORM_NONCE,
 			'nonce' => wp_create_nonce( MP_FORM_NONCE ),
+			'mp_fw_url' => MP_FW_URL,
 		 ] );
 	}
 

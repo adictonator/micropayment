@@ -28,6 +28,18 @@ window.mpServer = class MicroPayServerEnvironment {
 
 		return await resp.json()
 	}
+
+	mpLoader( display ) {
+		let loaderElm = jQuery( '.mp-loader' )
+
+		if ( loaderElm.length <= 0  ) {
+			loaderElm = jQuery( '<div class="mp-loader" style="position: fixed; left: 0; top: 0;height:100vh;width:100vw;justify-content: center;align-items:center;z-index: 10002; "></div>' )
+			loaderElm.html( '<img src="' + mp_helpers.mp_fw_url + '/assets/images/loader.svg">' )
+			jQuery( 'body' ).append( loaderElm )
+		}
+
+		loaderElm.css( 'display', display )
+	}
 }
 
 const mp = new window.mpServer

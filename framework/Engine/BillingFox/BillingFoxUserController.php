@@ -47,6 +47,7 @@ abstract class BillingFoxUserController
 	{
 		$user = mp_get_session( 'bfUser' );
 		$spends = mp_get_session( 'spends' );
+		$shortcodeID = mp_get_session( 'toUnlock' );
 
 		if ( ! $spends ) {
 			if ( $user ) $result = $this->spends( $user['key'] );
@@ -61,7 +62,11 @@ abstract class BillingFoxUserController
 			$spends = $result['spends'];
 		}
 
+
 		$result = MicroPayShortcodeController::processUnlockResponse( $spends );
+
+		isset( $shortcodeID ) && ! empty( $shortcodeID ) ? $result['sid'] = $shortcodeID : '';
+
 		$this->setResponse( $result );
 
 		echo $this->response(1);

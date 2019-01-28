@@ -18,6 +18,7 @@ class MicroPayShortcodeController extends BaseShortcodeController
 	];
 
 	public $assets = [
+		'css' => ['app.css'],
 		'js' => ['app.js'],
 	];
 
@@ -46,9 +47,9 @@ class MicroPayShortcodeController extends BaseShortcodeController
 	 */
 	public function unlock()
 	{
-		$wallData = mp_get_session( $_POST['sid'] );
-		if ( $wallData ) $this->api->validate( $wallData );
-		// false
+		mp_set_session( 'toUnlock', $_POST['sid'] );
+
+		$this->api->validate( $sid );
 	}
 
 	public function unlockContent( $shortcodeIDs = null )
@@ -66,6 +67,8 @@ class MicroPayShortcodeController extends BaseShortcodeController
 					mp_set_session( $shortcodeID, $unlocked );
 				}
 			endforeach;
+
+			$this->setResponse( [ 'type' => 'unlocking-done' ] );
 		else:
 			$this->httpCode = 400;
 			$this->setResponse( 'Could not unlock content!' );

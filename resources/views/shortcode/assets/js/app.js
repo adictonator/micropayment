@@ -4,6 +4,10 @@ jQuery(function($) {
 		const form = $(this).closest('form')
 		const formData = new FormData(form[0])
 
+		// $( this ).append( '<span class="is-loading"></span>' )
+
+		mp.mpLoader( 'flex' )
+
 		mp.send( formData ).then(resp => {
 			switch (resp.data.type) {
 			case 'check-unlock':
@@ -14,6 +18,7 @@ jQuery(function($) {
 					resp.data.data.map( s => preIDs.push( s.description ) )
 
 					if ( preIDs.indexOf( sid ) > -1 ) {
+						console.log('naaaa trey')
 						// simply unlock the content
 					}  else {
 						// process the spend
@@ -31,22 +36,66 @@ jQuery(function($) {
 				}
 				break
 
-			case 'auth':
-				$('.mp-auth-popup').html(resp.data.html).css('display', 'flex')
-				break
+			/**
+			 * Displays authentication barrier to the user.
+			 * Lets a user login or register to the site.
+			 * Hides the loader.
+			 *
+			 */
+			case 'auth': {
+				let elm = $( '.mp-auth-popup' )
 
+				if ( elm.length <= 0 ) {
+					elm = $('<div class="mp-auth-popup"></div>"')
+					$( 'body' ).append( elm )
+				}
+
+				elm.html( resp.data.html )
+				elm.addClass( 'mp-auth-popup--active' )
+				mp.mpLoader( 'none' )
+				break
+			}
+
+			/**
+			 * Processes login of the user.
+			 * Gets spends if a valid user.
+			 * Unlocks content if the content has already been paid for.
+			 *
+			 */
 			case 'login':
 				shortcode.setBFUserID(resp.data.user.key)
 				shortcode.init()
+				break
+
+			/**
+			 * Marks completion of consecutive API calls.
+			 * Hides the loader.
+			 *
+			 */
+			case 'unlocking-done':
+				mp.mpLoader( 'none' )
+				break
 			}
 		})
+
+		// $( this ).find( '.is-loading' ).remove()
+
 		e.preventDefault()
 	})
 
-	$(document).on('click', 'li[data-mp-auth-form]', function() {
+	/**
+	 * Toggle auth forms in frontend.
+	 *
+	 */
+	$(document).on('click', '[data-mp-auth-form]', function() {
 		const formID = $(this).attr('data-mp-auth-form')
-		$('div[data-mp-auth-form=' + formID + ']').show().siblings().hide()
+		$( this ).addClass( 'mp-form__toggler--active' ).siblings().removeClass( 'mp-form__toggler--active' )
+		$('div[data-mp-auth-form=' + formID + ']').removeClass( 'mp-form__toggle--hidden' ).siblings( '[data-mp-auth-form]' ).addClass( 'mp-form__toggle--hidden' )
 	})
+
+	$( document ).on( 'click', '.mp-auth-popup__close', function() {
+		$( this ).parents( '.mp-auth-popup' ).removeClass( 'mp-auth-popup--active' )
+	} )
 
 	shortcode.init()
 })
@@ -81,16 +130,32 @@ const shortcode = {
 		mp.send(data).then(r => {
 			if (r.success === true) {
 				let shortcodeIDs = []
+				let preIDs = []
 
 				r.data.spends.map(id => {
+					preIDs.push( id )
+
 					const shortcodeElm = document.querySelector('div[data-mp-sid="'+ id +'"]')
 					if (shortcodeElm) {
+						/**
+						 * @todo Maybe remove the wall element and only append the content.
+						 */
 						shortcodeElm.innerHTML = r.data.shortcodeContent[ id ]
+						// jQuery( r.data.shortcodeContent[ id ] ).insertAfter( shortcodeElm )
+						// shortcodeElm.remove()
 						shortcodeIDs.push(id)
 					}
 				})
 
-				this.unlockContent(shortcodeIDs)
+				if ( preIDs.indexOf( r.data.sid ) > -1 ) {
+					this.unlockContent(shortcodeIDs)
+				} else {
+					// 	// process the spend
+					// 	formData.set( 'mpController', 'MPEngine:BillingFox:BillingFoxAPI' )
+					// 	formData.set( 'mpAction', 'processUnlocking' )
+					// 	formData.set( 'sid', sid )
+					// 	mp.send( formData ).then( r => console.log('sd',  r))
+				}
 			} else {
 				console.error('GETTING SPEND ERROR', r.data)
 				this.removeBFUserID()
@@ -109,6 +174,11 @@ const shortcode = {
 		mp.send( data ).then( resp => {
 			if ( resp.success === true ) {
 				sessionStorage.setItem( '_mpIsDone', true )
+
+				if ( jQuery( '.mp-auth-popup--active' ).length > 0 ) {
+					jQuery( '.mp-auth-popup--active' ).find( '.mp-auth-popup__close' ).click()
+					mp.mpLoader( 'none' )
+				}
 			}
 		} )
 	},
