@@ -6,7 +6,6 @@ defined( 'ABSPATH' ) or die( 'Not allowed!' );
 use MPEngine\Support\Traits\ViewsTrait;
 use MPEngine\Support\Traits\SettingsTrait;
 use MPEngine\Support\Exceptions\BillingFoxAPIException;
-use MicroPay\Controllers\Shortcodes\MicroPayShortcodeController;
 
 class BillingFoxAPI extends BillingFoxUserController
 {
@@ -80,25 +79,25 @@ class BillingFoxAPI extends BillingFoxUserController
 		$wallData = mp_get_session( $_POST['sid'] );
 		$billingFoxUser = mp_get_session( 'bfUser' );
 
-		$result = $this->postRequest( 'spend', array_filter([
-			'user' => $billingFoxUser['key'],
-			'amount' => (float) $wallData->attrs->price,
-			'description' => $wallData->attrs->uid,
-		]));
+		if ( $wallData && $wallData->status === 'locked' ) :
 
-		if ( $result['status'] === 'success' ) :
-			$shortcodeController = new MicroPayShortcodeController;
-			$shortcodeController->unlockContent( $wallData->attrs->uid );
-			$return = [
-				'type' => 'unlock',
-				'sid' => $wallData->attrs->uid,
-				'content' => $wallData->content,
-			];
+			$result = $this->postRequest( 'spend', array_filter([
+				'user' => $billingFoxUser['key'],
+				'amount' => (float) $wallData->attrs->price,
+				'description' => $wallData->attrs->uid,
+			]));
 
-			$this->setResponse( $return );
-			mp_remove_session( 'spends' );
+			if ( $result['status'] === 'success' ) :
+				$this->setResponse( $result );
+				mp_remove_session( 'spends' );
+			else:
+				$this->httpCode = 400;
+				$this->setResponse( $result );
+			endif;
+
 		else:
 			$this->httpCode = 400;
+			$this->setResponse( 'The content is already unlocked!' );
 		endif;
 
 		echo $this->response(1);
@@ -115,9 +114,20 @@ class BillingFoxAPI extends BillingFoxUserController
 		return $this->getRequest( 'spend?'. $params );
 	}
 
+	public function recharge( string $userID )
+	{
+		$data = [
+			'user' => $userID,
+			'amount' => 200,
+			'description' => 'recharge',
+		];
+
+		return $this->postRequest( 'recharge', $data );
+	}
+
 	protected function postRequest( $path, $payload = [] )
     {
-		$this->logger('POST '.$this->url.$path.' '.json_encode($payload));
+		$this->logger( "POST: $this->url/$path " . json_encode( $payload ) );
 
 		$result = wp_remote_post( "$this->url/$path", [
 				'headers' => [

@@ -32,7 +32,7 @@ class CoreDependenciesController implements HookableInterface
 	 */
 	public function clearSessionTraces()
 	{
-		mp_remove_session( MP_SESSION_KEY );
+		mp_remove_session();
 	}
 
 	public function hook()

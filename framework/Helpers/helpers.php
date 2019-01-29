@@ -144,10 +144,10 @@ if ( ! function_exists( 'mp_remove_session' ) ) {
 	 * @param mixed $sessionKey
 	 * @return void
 	 */
-	function mp_remove_session( $sessionKey )
+	function mp_remove_session( $sessionKey = null )
 	{
-		// unset( $_SESSION[ MP_SESSION_KEY ][ $sessionKey ] );
-		unset( $_SESSION[ $sessionKey ] );
+		if ( $sessionKey === null ) unset( $_SESSION[ MP_SESSION_KEY ] );
+		else unset( $_SESSION[ MP_SESSION_KEY ][ $sessionKey ] );
 	}
 }
 

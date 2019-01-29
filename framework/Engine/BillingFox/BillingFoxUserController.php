@@ -67,6 +67,8 @@ abstract class BillingFoxUserController
 
 		isset( $shortcodeID ) && ! empty( $shortcodeID ) ? $result['sid'] = $shortcodeID : '';
 
+		mp_remove_session( 'toUnlock' );
+
 		$this->setResponse( $result );
 
 		echo $this->response(1);

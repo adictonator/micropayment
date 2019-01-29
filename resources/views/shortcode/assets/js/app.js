@@ -77,9 +77,6 @@ jQuery(function($) {
 				break
 			}
 		})
-
-		// $( this ).find( '.is-loading' ).remove()
-
 		e.preventDefault()
 	})
 
@@ -93,11 +90,17 @@ jQuery(function($) {
 		$('div[data-mp-auth-form=' + formID + ']').removeClass( 'mp-form__toggle--hidden' ).siblings( '[data-mp-auth-form]' ).addClass( 'mp-form__toggle--hidden' )
 	})
 
+	/**
+	 * Close auth popup.
+	 *
+	 */
 	$( document ).on( 'click', '.mp-auth-popup__close', function() {
 		$( this ).parents( '.mp-auth-popup' ).removeClass( 'mp-auth-popup--active' )
 	} )
 
 	shortcode.init()
+
+	// shortcode.recharge()
 })
 
 const shortcode = {
@@ -137,25 +140,23 @@ const shortcode = {
 
 					const shortcodeElm = document.querySelector('div[data-mp-sid="'+ id +'"]')
 					if (shortcodeElm) {
-						/**
-						 * @todo Maybe remove the wall element and only append the content.
-						 */
-						shortcodeElm.innerHTML = r.data.shortcodeContent[ id ]
-						// jQuery( r.data.shortcodeContent[ id ] ).insertAfter( shortcodeElm )
-						// shortcodeElm.remove()
+						const contNode = document.createTextNode( r.data.shortcodeContent[ id ] )
+						shortcodeElm.parentNode.insertBefore( contNode, shortcodeElm )
+						shortcodeElm.remove()
 						shortcodeIDs.push(id)
 					}
 				})
 
-				if ( preIDs.indexOf( r.data.sid ) > -1 ) {
-					this.unlockContent(shortcodeIDs)
+				if ( typeof r.data.sid !== 'undefined' ) {
+					if ( preIDs.indexOf( r.data.sid ) > -1 ) {
+						this.unlockContent( shortcodeIDs )
+					} else {
+						this.makeSpend( r.data.sid )
+					}
 				} else {
-					// 	// process the spend
-					// 	formData.set( 'mpController', 'MPEngine:BillingFox:BillingFoxAPI' )
-					// 	formData.set( 'mpAction', 'processUnlocking' )
-					// 	formData.set( 'sid', sid )
-					// 	mp.send( formData ).then( r => console.log('sd',  r))
+					this.unlockContent( shortcodeIDs )
 				}
+
 			} else {
 				console.error('GETTING SPEND ERROR', r.data)
 				this.removeBFUserID()
@@ -164,7 +165,25 @@ const shortcode = {
 		})
 	},
 
-	unlockContent(shortcodeIDs) {
+	makeSpend( shortcodeID ) {
+		const data = new FormData()
+		data.append( 'mpAction', 'processUnlocking' )
+		data.append( 'mpController', 'MPEngine:BillingFox:BillingFoxAPI' )
+
+		if ( typeof shortcodeID !== 'undefined' ) {
+			data.append('sid', shortcodeID)
+		}
+
+		data.append( 'userAccess', true )
+
+		mp.send( data ).then( resp => {
+			if ( resp.success === true ) {
+				this.unlockContent( shortcodeID )
+			}
+		} )
+	},
+
+	unlockContent( shortcodeIDs ) {
 		const data = new FormData()
 		data.append('mpAction', 'unlockContent')
 		data.append('mpController', 'MicroPay:Controllers:Shortcodes:MicroPayShortcodeController')
@@ -182,6 +201,11 @@ const shortcode = {
 			}
 		} )
 	},
+
+	// recharge( userID ) {
+	// 	const dat
+	// 	mp.send( )
+	// },
 
 	setBFUserID(id) {
 		return localStorage.setItem('bfUID', id)
