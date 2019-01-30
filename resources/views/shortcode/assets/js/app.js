@@ -144,8 +144,9 @@ const shortcode = {
 
 					const shortcodeElm = document.querySelector('div[data-mp-sid="'+ id +'"]')
 					if (shortcodeElm) {
-						const contNode = document.createTextNode( r.data.shortcodeContent[ id ] )
-						shortcodeElm.parentNode.insertBefore( contNode, shortcodeElm )
+						// const contNode = document.createTextNode( r.data.shortcodeContent[ id ] )
+						jQuery( '<span>'+ r.data.shortcodeContent[ id ] +'</span>' ).insertBefore( shortcodeElm )
+						// shortcodeElm.parentNode.insertBefore( contNode, shortcodeElm )
 						shortcodeElm.remove()
 						shortcodeIDs.push(id)
 					}
@@ -198,12 +199,23 @@ const shortcode = {
 			if ( resp.success === true ) {
 				sessionStorage.setItem( '_mpIsDone', true )
 
+				/**
+				 * Close the auth popup.
+				 *
+				 */
 				if ( jQuery( '.mp-auth-popup--active' ).length > 0 ) {
 					jQuery( '.mp-auth-popup--active' ).find( '.mp-auth-popup__close' ).click()
-					mp.mpLoader( 'none' )
 				}
 			}
 		} )
+	},
+
+	unlockSpendsShortcode() {
+		const elm = jQuery( '[data-mp-error="micropay_transactions"]' )
+
+		if ( elm.length > 0 ) {
+			// do magic here
+		}
 	},
 
 	// recharge( userID ) {

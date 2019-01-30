@@ -37,13 +37,13 @@ trait ResponseTrait
 	{
 		$response = $response ? $response : get_status_header_desc( $this->httpCode );
 
-		return mp_error_json( $response, $this->httpCode );
+		echo mp_error_json( $response, $this->httpCode );
 		$this->die ? wp_die() : '';
 	}
 
 	private function successResponse( $response )
 	{
-		return mp_success_json( $response, $this->httpCode );
+		echo mp_success_json( $response, $this->httpCode );
 		$this->die ? wp_die() : '';
 	}
 }

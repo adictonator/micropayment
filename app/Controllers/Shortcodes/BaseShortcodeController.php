@@ -12,9 +12,11 @@ abstract class BaseShortcodeController
 {
 	use ViewsTrait, ResponseTrait;
 
-	protected $viewMessage;
-
 	protected $api;
+
+	protected $errorType;
+
+	protected $viewMessage;
 
 	const VIEW_ERROR_MESSAGE = 'Some attributes are missing!';
 
@@ -23,6 +25,7 @@ abstract class BaseShortcodeController
 	public function __construct()
 	{
 		$this->api = new BillingFoxAPI;
+		$this->errorType = static::$name;
 	}
 
 	abstract function function( $attr, $content = '' );

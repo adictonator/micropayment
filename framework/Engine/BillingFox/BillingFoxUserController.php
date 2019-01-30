@@ -52,14 +52,14 @@ abstract class BillingFoxUserController
 		if ( ! $spends ) {
 			if ( $user ) $result = $this->spends( $user['key'] );
 
+			$spends = isset( $result['spends'] ) ? $result['spends'] : [];
+
 			if ( ! $result || $result['status'] !== 'success' ) :
 				$this->httpCode = 403;
 				$this->setResponse( 'User not in session!' );
 
 				echo $this->response(1);
 			endif;
-
-			$spends = $result['spends'];
 		}
 
 
