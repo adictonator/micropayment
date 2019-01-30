@@ -1,3 +1,29 @@
+/** Buttons **/
+.mp-front-button {
+	display: flex;
+	align-items: center;
+	background: #CCC;
+	color: #000;
+	margin: 0;
+	transition: all 150ms ease-in-out;
+    border: none;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 0.88889em;
+    font-weight: 700;
+    line-height: 1.2;
+    outline: none;
+    padding: 0.76rem 1rem;
+    text-decoration: none;
+    vertical-align: bottom;
+}
+.mp-front-button:hover,
+.mp-front-button:focus {
+	background: rgba(0,0,0,0.5);
+	color: #CCC;
+}
+
+/** Wall Blocks **/
 .mp-block {
 	display: flex;
 	align-items: center;

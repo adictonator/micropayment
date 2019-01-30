@@ -4,9 +4,9 @@ jQuery(function($) {
 		const form = $(this).closest('form')
 		const formData = new FormData(form[0])
 
-		// $( this ).append( '<span class="is-loading"></span>' )
+		$( this ).append( '<span class="is-loading"></span>' )
 
-		mp.mpLoader( 'flex' )
+		// mp.mpLoader( 'flex' )
 
 		mp.send( formData ).then(resp => {
 			switch (resp.data.type) {
@@ -84,10 +84,13 @@ jQuery(function($) {
 	 * Toggle auth forms in frontend.
 	 *
 	 */
-	$(document).on('click', '[data-mp-auth-form]', function() {
-		const formID = $(this).attr('data-mp-auth-form')
+	$( document ).on('click', '[data-mp-auth-form]', function() {
+		const formID = $( this ).attr( 'data-mp-auth-form' )
 		$( this ).addClass( 'mp-form__toggler--active' ).siblings().removeClass( 'mp-form__toggler--active' )
-		$('div[data-mp-auth-form=' + formID + ']').removeClass( 'mp-form__toggle--hidden' ).siblings( '[data-mp-auth-form]' ).addClass( 'mp-form__toggle--hidden' )
+		$( 'div[data-mp-auth-form=' + formID + ']' )
+			.removeClass( 'mp-form__toggle--hidden' )
+			.siblings( '[data-mp-auth-form]' )
+			.addClass( 'mp-form__toggle--hidden' )
 	})
 
 	/**
@@ -96,6 +99,7 @@ jQuery(function($) {
 	 */
 	$( document ).on( 'click', '.mp-auth-popup__close', function() {
 		$( this ).parents( '.mp-auth-popup' ).removeClass( 'mp-auth-popup--active' )
+		$( '.is-loading' ).remove()
 	} )
 
 	shortcode.init()

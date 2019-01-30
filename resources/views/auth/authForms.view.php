@@ -16,7 +16,7 @@
 					<input type="password" name="mp_password" placeholder="Password">
 				</div>
 				<div class="mp-form__group">
-					<button type="button" class="mp-form__button mp-form__button--primary" data-mp-btn="login">Login</button>
+					<button type="button" class="mp-front-button" data-mp-btn="login">Login</button>
 				</div>
 			</form>
 		</div>
@@ -33,7 +33,7 @@
 				<input type="password" name="mp_password" placeholder="Password">
 			</div>
 			<div class="mp-form__group">
-				<button type="button" class="mp-form__button mp-form__button--primary" data-mp-btn="register">Register</button>
+				<button type="button" class="mp-front-button" data-mp-btn="register">Register</button>
 			</div>
 		</form>
 	</div>
