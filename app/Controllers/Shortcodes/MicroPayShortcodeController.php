@@ -17,11 +17,6 @@ class MicroPayShortcodeController extends BaseShortcodeController
 		'price:req',
 	];
 
-	public $assets = [
-		'css' => ['app.css'],
-		'js' => ['app.js'],
-	];
-
 	public function function( $attrs, $content = '' )
 	{
 		$attrs = shortcode_atts( [

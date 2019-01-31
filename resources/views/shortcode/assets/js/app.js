@@ -1,12 +1,10 @@
 /* global jQuery, mp, mp_helpers */
 jQuery(function($) {
 	$(document).on('click', '[data-mp-btn]', function(e) {
-		const form = $(this).closest('form')
-		const formData = new FormData(form[0])
-
-		$( this ).append( '<span class="is-loading"></span>' )
-
-		// mp.mpLoader( 'flex' )
+		const _this = $( this )
+		const form = _this.closest('form')
+		const formData = new FormData( form[0] )
+		mp.loader( 'show', _this )
 
 		mp.send( formData ).then(resp => {
 			switch (resp.data.type) {
@@ -17,8 +15,8 @@ jQuery(function($) {
 					let preIDs = []
 					resp.data.data.map( s => preIDs.push( s.description ) )
 
+					/** @todo Fix this */
 					if ( preIDs.indexOf( sid ) > -1 ) {
-						console.log('naaaa trey')
 						// simply unlock the content
 					}  else {
 						// process the spend
@@ -52,7 +50,6 @@ jQuery(function($) {
 
 				elm.html( resp.data.html )
 				elm.addClass( 'mp-auth-popup--active' )
-				mp.mpLoader( 'none' )
 				break
 			}
 
@@ -73,7 +70,7 @@ jQuery(function($) {
 			 *
 			 */
 			case 'unlocking-done':
-				mp.mpLoader( 'none' )
+				mp.loader( 'hide' )
 				break
 			}
 		})
@@ -99,12 +96,14 @@ jQuery(function($) {
 	 */
 	$( document ).on( 'click', '.mp-auth-popup__close', function() {
 		$( this ).parents( '.mp-auth-popup' ).removeClass( 'mp-auth-popup--active' )
-		$( '.is-loading' ).remove()
+		mp.loader( 'hide' )
 	} )
 
+	/**
+	 * Check if shortcode contents need to be unlocked by default.
+	 *
+	 */
 	shortcode.init()
-
-	// shortcode.recharge()
 })
 
 const shortcode = {
@@ -218,11 +217,6 @@ const shortcode = {
 		}
 	},
 
-	// recharge( userID ) {
-	// 	const dat
-	// 	mp.send( )
-	// },
-
 	setBFUserID(id) {
 		return localStorage.setItem('bfUID', id)
 	},
@@ -236,7 +230,7 @@ const shortcode = {
 	},
 
 	_mpIsDone() {
-		if ( document.cookie.indexOf('wp-settings-time') !== -1 ) {
+		if ( document.cookie.indexOf( 'wp-settings-time' ) !== -1 ) {
 			return sessionStorage.getItem( '_mpIsDone' )
 		} else {
 			return sessionStorage.removeItem( '_mpIsDone' )

@@ -14,6 +14,13 @@ class ProfileShortcodeController extends BaseShortcodeController
 		return $this->validateAttributes( $content, $attrs );
 	}
 
+	public function recharge()
+	{
+		$bfUser = mp_get_session( 'bfUser' );
+
+		if ( $bfUser ) return $this->api->recharge( $bfUser['key'] );
+	}
+
 	protected function processShortcodeContent( $content, $attr )
 	{
 		if ( mp_get_session( 'bfUser' ) || $this->api->isAuthUser() ) : return $this->getProfileContent( mp_get_session( 'bfUser' ) );

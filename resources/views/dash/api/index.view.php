@@ -14,6 +14,18 @@
 					</td>
 				</tr>
 				<tr>
+					<th>Stripe Test API Key</th>
+					<td>
+						<input type="text" name="stripeTest" value="<?php echo $apiSettings->key->value; ?>">
+					</td>
+				</tr>
+				<tr>
+					<th>Stripe Live API Key</th>
+					<td>
+						<input type="text" name="stripeLive" value="<?php echo $apiSettings->key->value; ?>">
+					</td>
+				</tr>
+				<tr>
 					<th>Enable Debug Mode</th>
 					<td>
 						<div class="mp-checkbox-wrap">

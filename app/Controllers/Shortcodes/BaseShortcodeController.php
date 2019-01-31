@@ -18,6 +18,11 @@ abstract class BaseShortcodeController
 
 	protected $viewMessage;
 
+	public $assets = [
+		'css' => ['app.css'],
+		'js' => ['app.js'],
+	];
+
 	const VIEW_ERROR_MESSAGE = 'Some attributes are missing!';
 
 	const VIEW_WALL_MESSAGE = 'Pay Money to Unlock!';

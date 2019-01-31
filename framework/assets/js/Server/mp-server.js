@@ -29,16 +29,14 @@ window.mpServer = class MicroPayServerEnvironment {
 		return await resp.json()
 	}
 
-	mpLoader( display ) {
-		let loaderElm = jQuery( '.mp-loader' )
-
-		if ( loaderElm.length <= 0  ) {
-			loaderElm = jQuery( '<div class="mp-loader" style="position: fixed; left: 0; top: 0;height:100vh;width:100vw;justify-content: center;align-items:center;z-index: 10002; "></div>' )
-			loaderElm.html( '<img src="' + mp_helpers.mp_fw_url + '/assets/images/loader.svg">' )
-			jQuery( 'body' ).append( loaderElm )
+	loader( display, elm = null ) {
+		if ( display === 'show' ) {
+			elm.append( '<span class="is-loading"></span>' )
+			elm.prop( 'disabled', true )
+		} else {
+			jQuery( '.is-loading' ).parent().prop( 'disabled', false )
+			jQuery( '.is-loading' ).remove()
 		}
-
-		loaderElm.css( 'display', display )
 	}
 }
 

@@ -11,6 +11,7 @@ class CoreDependenciesController implements HookableInterface
 	{
 		wp_enqueue_script( 'mp-js', MP_FW_ASSETS_URL .'js/Server/mp-server.js', [], MP_VER );
 		wp_enqueue_script( 'mp-js-app', MP_FW_ASSETS_URL .'js/app.js', ['jquery'], MP_VER );
+		wp_enqueue_script( 'mp-js-stripe', 'https://js.stripe.com/v3/', null, MP_VER );
 		wp_enqueue_style( 'mp-css', MP_FW_ASSETS_URL .'css/app.css');
 		wp_localize_script( 'mp-js', 'mp_helpers', [
 			'url' => admin_url( 'admin-ajax.php' ) . '?action=listenAJAX',
