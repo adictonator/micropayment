@@ -16,9 +16,18 @@ class ProfileShortcodeController extends BaseShortcodeController
 
 	public function recharge()
 	{
-		$bfUser = mp_get_session( 'bfUser' );
+		ob_start();
+		$this->setView( 'shortcode.recharge' );
+		$return['html'] = ob_get_contents();
+		ob_end_clean();
 
-		if ( $bfUser ) return $this->api->recharge( $bfUser['key'] );
+		$return['type'] = 'recharge';
+		$this->setResponse( $return );
+		echo $this->response(1);
+
+		// $bfUser = mp_get_session( 'bfUser' );
+
+		// if ( $bfUser ) return $this->api->recharge( $bfUser['key'] );
 	}
 
 	protected function processShortcodeContent( $content, $attr )
