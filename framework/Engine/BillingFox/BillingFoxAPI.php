@@ -114,8 +114,15 @@ class BillingFoxAPI extends BillingFoxUserController
 		return $this->getRequest( 'spend?'. $params );
 	}
 
-	public function recharge( string $userID )
+	public function recharge()
 	{
+		if ( ! isset( $_POST['tokenID'] ) || empty( $_POST['tokenID'] ) || $bfUser = mp_get_session( 'bfUser' ) ) :
+			$this->httpCode = 403;
+			echo $this->response( 1 );
+		endif;
+
+		// check for BF user here.
+
 		$data = [
 			'user' => $userID,
 			'amount' => 200,

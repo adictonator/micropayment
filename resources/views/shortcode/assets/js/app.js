@@ -41,15 +41,15 @@ jQuery(function($) {
 			 *
 			 */
 			case 'auth': {
-				let elm = $( '.mp-auth-popup' )
+				let elm = $( '.mp-popup' )
 
 				if ( elm.length <= 0 ) {
-					elm = $('<div class="mp-auth-popup"></div>"')
+					elm = $('<div class="mp-popup"></div>"')
 					$( 'body' ).append( elm )
 				}
 
 				elm.html( resp.data.html )
-				elm.addClass( 'mp-auth-popup--active' )
+				elm.addClass( 'mp-popup--active' )
 				break
 			}
 
@@ -60,25 +60,30 @@ jQuery(function($) {
 			 *
 			 */
 			case 'login':
-				window.mpStripe.setBFUserID(resp.data.user.key)
-				window.mpStripe.init()
+				window.mpShortcode.setBFUserID(resp.data.user.key)
+				window.mpShortcode.init()
 				break
 
 			case 'recharge': {
-				let elm = $( '.mp-auth-popup' )
+				let elm = $( '.mp-popup' )
 
 				if ( elm.length <= 0 ) {
-					elm = $('<div class="mp-auth-popup"></div>"')
+					elm = $('<div class="mp-popup"></div>"')
 					$( 'body' ).append( elm )
 				}
 
 				elm.html( resp.data.html )
-				elm.addClass( 'mp-auth-popup--active' )
+				elm.addClass( 'mp-popup--active' )
 
 				/** Load Stripe form. */
 				window.mpStripe.init( 'form[data-mp-stripe-form]' )
 				break
 			}
+
+			case 'process-recharge':
+
+				console.log('asdad', formData)
+				break
 
 			/**
 			 * Marks completion of consecutive API calls.
@@ -107,12 +112,16 @@ jQuery(function($) {
 	})
 
 	/**
-	 * Close auth popup.
+	 * Close popup.
 	 *
 	 */
-	$( document ).on( 'click', '.mp-auth-popup__close', function() {
-		$( this ).parents( '.mp-auth-popup' ).removeClass( 'mp-auth-popup--active' )
+	$( document ).on( 'click', '.mp-popup__close', function() {
+		$( this ).parents( '.mp-popup' ).removeClass( 'mp-popup--active' )
 		mp.loader( 'hide' )
+	} )
+
+	$( document ).on( 'click', '[data-mp-btn-recharge]', function() {
+		window.mpStripe.process()
 	} )
 
 	/**

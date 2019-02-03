@@ -38,5 +38,5 @@
 		</form>
 	</div>
 
-	<span class="mp-auth-popup__close">&times;</span>
+	<span class="mp-popup__close">&times;</span>
 </div>
