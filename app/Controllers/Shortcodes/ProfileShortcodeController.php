@@ -24,10 +24,21 @@ class ProfileShortcodeController extends BaseShortcodeController
 		$return['type'] = 'recharge';
 		$this->setResponse( $return );
 		echo $this->response(1);
+	}
 
-		// $bfUser = mp_get_session( 'bfUser' );
+	public function processRecharge()
+	{
+		if ( ! isset( $_POST['tokenID'] ) || empty( $_POST['tokenID'] ) || $bfUser = mp_get_session( 'bfUser' ) ) :
+			$this->httpCode = 403;
+			echo $this->response( 1 );
+		endif;
 
-		// if ( $bfUser ) return $this->api->recharge( $bfUser['key'] );
+		$rechargeData = [
+			'user' => $bfUser,
+			'amount' => $_POST['rechargeAmount'],
+		];
+
+		return $this->api->recharge( $rechargeData );
 	}
 
 	protected function processShortcodeContent( $content, $attr )

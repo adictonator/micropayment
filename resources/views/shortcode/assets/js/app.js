@@ -91,6 +91,7 @@ jQuery(function($) {
 			 *
 			 */
 			case 'unlocking-done':
+				console.log('aayay')
 				mp.loader( 'hide' )
 				break
 			}
@@ -120,8 +121,11 @@ jQuery(function($) {
 		mp.loader( 'hide' )
 	} )
 
-	$( document ).on( 'click', '[data-mp-btn-recharge]', function() {
-		window.mpStripe.process()
+	$( document ).on( 'click', '[data-mp-process-recharge]', function() {
+		const form = $(this).closest( 'form' )
+		const formData = new FormData( form[0] )
+
+		window.mpStripe.process( formData )
 	} )
 
 	/**

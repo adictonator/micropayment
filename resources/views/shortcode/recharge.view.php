@@ -2,6 +2,7 @@
 	<h3>Recharge your Account!</h3>
 	<div class="mp-form">
 		<form data-mp-stripe-form>
+			<?php mp_form_fields( 'ajax', 'processRecharge', $this ); ?>
 			<div class="mp-form__group">
 				<input id="amount" name="rechargeAmount" type="text" class="input empty" onfocus="this.classList.add('focused')" onblur="this.classList.remove('focused')" onkeyup="this.value.length > 0 ? this.classList.remove('empty') : this.classList.add('empty')">
 				<label for="amount">Amount to Credit</label>
@@ -25,7 +26,7 @@
 				</div>
 			</div>
 			<div class="mp-form__group">
-				<button type="button" data-mp-btn="process-recharge" class="mp-front-button mp-front-button--primary">Process Payment</button>
+				<button type="button" data-mp-process-recharge class="mp-front-button mp-front-button--primary">Process Payment</button>
 			</div>
 
 			<div class="error" role="alert">
