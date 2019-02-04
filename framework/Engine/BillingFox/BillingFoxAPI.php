@@ -122,7 +122,7 @@ class BillingFoxAPI extends BillingFoxUserController
 	public function recharge( $rechargeData )
 	{
 		$data = [
-			'user' => $rechargeData['user']['key'],
+			'user' => $rechargeData['user'],
 			'amount' => $rechargeData['amount'],
 			'description' => 'recharge',
 		];

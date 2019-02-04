@@ -28,14 +28,14 @@ class ProfileShortcodeController extends BaseShortcodeController
 
 	public function processRecharge()
 	{
-		if ( ! isset( $_POST['tokenID'] ) || empty( $_POST['tokenID'] ) || $bfUser = mp_get_session( 'bfUser' ) ) :
+		if ( ! isset( $_POST['tokenID'] ) || empty( $_POST['tokenID'] ) || ! $bfUser = mp_get_session( 'bfUser' ) ) :
 			$this->httpCode = 403;
 			echo $this->response( 1 );
 		endif;
 
 		$rechargeData = [
-			'user' => $bfUser,
-			'amount' => $_POST['rechargeAmount'],
+			'user' => $bfUser['key'],
+			'amount' => ( float ) $_POST['rechargeAmount'],
 		];
 
 		return $this->api->recharge( $rechargeData );
