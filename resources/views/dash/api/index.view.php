@@ -1,9 +1,9 @@
 <h1><?php echo static::TITLE; ?></h1>
 <hr />
 
-<div class="mp-wrap">
-	<form action="<?php echo mp_form_post(); ?>" method="POST">
-		<?php mp_form_fields('ajax', 'update', $this); ?>
+<div class="wrap mp-wrap">
+	<form>
+		<?php mp_form_fields( 'ajax', 'update', $this ); ?>
 
 		<table class="widefat striped">
 			<tbody>

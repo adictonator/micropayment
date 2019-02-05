@@ -40,6 +40,5 @@ class APISettingsMenuController extends BaseMenuController
 
 			echo json_encode( $return );
 		endif;
-
 	}
 }

@@ -59,6 +59,12 @@ if ( ! function_exists( 'mp_menu_title' ) ) {
 }
 
 if ( ! function_exists( 'mp_form_post' ) ) {
+	/**
+	 * Return POST URL form submissions.
+	 *
+	 * @deprecated 1.0.0 might not be required
+	 * @return string
+	 */
 	function mp_form_post()
 	{
 		return admin_url( 'admin-post.php?action=mp_post' );
@@ -69,6 +75,7 @@ if ( ! function_exists( 'mp_form_fields' ) ) {
 	function mp_form_fields( $callType, $action, $controller )
 	{
 		$controllerName = is_string( $controller ) ? $controller : get_class( $controller );
+		/** @todo Do we need the 'post' calls request? */
 		$formMethod = $callType === 'ajax' ? 'listenAJAX' : 'listenPOST';
 
 		if ( method_exists( $controller, $action ) ) :

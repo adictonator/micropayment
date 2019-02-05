@@ -2,8 +2,9 @@
 
 /** General Constants. */
 define( 'MP_DS', DIRECTORY_SEPARATOR );
-define( 'MP_VER', '1.0' );
+define( 'MP_VER', '1.0.0' );
 define( 'MP_DB_VER', MP_VER );
+define( 'MP_BF_PRICE', 0.01 );
 
 /** Files and directories. */
 define( 'MP_ROOT_DIR', plugin_dir_path( MP_ROOT ) );

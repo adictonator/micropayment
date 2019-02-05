@@ -23,10 +23,10 @@
 					<?php mp_form_fields( 'ajax', 'setup', $this ); ?>
 					<div class="mp-setup__content" data-mp-step="intro">
 						<h1>Welcome</h1>
-						<h3>And Thanks For installing Micropayment.io</h3>
+						<h3>And Thanks For installing <?php echo MP_PLUGIN_LONG_NAME; ?></h3>
 
-						<p>Micropayment.io is an account credits service built to make microtransactions on the WordPress platform simple, and seamless. Protect articles, audio & video players, and use virtual credits in your WooCommerce store if you like.</p>
-						<p>What does a BillingFox cost? <strong>1 Credit = $0.01</strong></p>
+						<p><?php echo MP_PLUGIN_LONG_NAME; ?> is an account credits service built to make micro-transactions on the WordPress platform simple, and seamless. Protect articles, audio & video players, and use virtual credits in your WooCommerce store if you like.</p>
+						<p>What does a BillingFox cost? <strong>1 Credit = $<?php echo MP_BF_PRICE; ?></strong></p>
 						<p>So let's get started!</p>
 					</div>
 

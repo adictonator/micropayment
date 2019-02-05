@@ -9,9 +9,9 @@ use MPEngine\Support\Traits\ViewsTrait;
 /**
  * Base functions for WP Admin Dashboard Menu.
  *
- * @package MicroPay
  * @author Adictonator <adityabhaskarsharma@gmail.com>
- * @since 1.0
+ * @package MicroPayment
+ * @since 1.0.0
  * @abstract
  */
 abstract class BaseMenuController

@@ -50,9 +50,9 @@ class MPPaymentGateway extends \WC_Payment_Gateway
                 'desc_tip'    => true,
             ],
             'custom_exchange_currencies' => [
-                'title'       => __( 'Currencies with custom coin value (default is 0.01 per Credit)' ),
+                'title'       => __( 'Currencies with custom coin value (default is '. MP_BF_PRICE .' per Credit)' ),
                 'type'        => 'multiselect',
-				'description' => __( 'Currency codes that deviate from 1 Credit = 0.01.' ),
+				'description' => __( 'Currency codes that deviate from 1 Credit = '. MP_BF_PRICE .'.' ),
 				'class'		  => 'mp-has-select2',
                 'options'     => $availableCurrencies,
                 'desc_tip'    => true,
@@ -67,11 +67,11 @@ class MPPaymentGateway extends \WC_Payment_Gateway
             $fields['custom_exchange_rate_' . strtolower( $currency ) ] = [
                 'title'       => __( '1 Credit in ' . $availableCurrencies[ $currency ] ) . ' (' . $currency . ') ',
                 'type'        => 'number',
-                'description' => __( 'Currency codes that deviate from 1 Credit = 0.01.' ),
-                'default'     => '0.01',
+                'description' => __( 'Currency codes that deviate from 1 Credit = '. MP_BF_PRICE .'.' ),
+                'default'     => MP_BF_PRICE,
                 'desc_tip'    => true,
                 'custom_attributes' => [
-                    'step' => '0.01',
+                    'step' => MP_BF_PRICE,
                 ],
             ];
         endforeach;
@@ -140,7 +140,7 @@ class MPPaymentGateway extends \WC_Payment_Gateway
     {
         $exchange = (float) $this->get_option( 'custom_exchange_rate_'.strtolower( $currency ) );
 
-        if ( $exchange <= 0 ) return 0.01;
+        if ( $exchange <= 0 ) return MP_BF_PRICE;
 
         return $exchange;
     }
