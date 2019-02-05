@@ -18,7 +18,10 @@ abstract class BillingFoxUserController
 			'user_password' => $_POST['mp_password'],
 		]);
 
-		if ( is_wp_error( $user ) ) $this->setResponse( $user->get_error_message() );
+		if ( is_wp_error( $user ) ) :
+			$this->setResponse( $user->get_error_message() );
+			echo $this->response( 1 );
+		endif;
 
 		wp_set_current_user( $user->ID );
 
@@ -80,13 +83,33 @@ abstract class BillingFoxUserController
 	 * @param \WP_User $user
 	 * @return void
 	 */
-	public function register( \WP_User $user )
+	public function register()
 	{
-		if ( $user->ID > 0 ) $bfUserID = $this->generateBillingFoxUserID( $user->ID );
+		if ( username_exists( $_POST['mp_user'] ) || email_exists( $_POST['mp_user'] ) ) :
+			$this->setResponse( 'User email already exists!' );
+			echo $this->response( 1 );
+		endif;
 
-		if ( $bfUserID ) $response = $this->setBillingFoxUser( $bfUserID, $user->user_email );
+		$userData = [
+			'user_login' => $_POST['mp_user'],
+			'user_email' => $_POST['mp_user'],
+			'user_pass' => $_POST['mp_password'],
+		];
 
-		if ( $response && $response['status'] === 'success' ) update_user_meta( $user->ID, BF_UID, $bfUserID );
+		$userID = wp_insert_user( $userData );
+
+		if ( is_wp_error( $userID ) ) :
+			$this->setResponse( $userID->get_error_message() );
+			echo $this->response( 1 );
+		endif;
+
+		$bfUserID = $this->generateBillingFoxUserID( $userID );
+
+		if ( $bfUserID ) $response = $this->setBillingFoxUser( $bfUserID, $_POST['mp_user'] );
+
+		if ( $response && $response['status'] === 'success' ) update_user_meta( $userID, BF_UID, $bfUserID );
+
+		echo $this->response( 1 );
 	}
 
 	/**
