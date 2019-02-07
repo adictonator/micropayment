@@ -50,7 +50,7 @@ class BillingFoxProductType implements HookableInterface
 	 */
 	public function billingFoxLimitGateway( array $gateways )
 	{
-		if ( isset( $gateways['billingfox'] ) && $this->disableGateway() ) unset( $gateways['billingfox'] );
+		if ( isset( $gateways[ MP_PLUGIN_SLUG . '_gateway' ] ) && $this->disableGateway() ) unset( $gateways[ MP_PLUGIN_SLUG . '_gateway' ] );
 
 		return $gateways;
 	}
@@ -63,9 +63,19 @@ class BillingFoxProductType implements HookableInterface
 	public function disableGateway()
 	{
 		if ( ! is_user_logged_in() ) return true;
+		if ( ! $user = mp_get_session( 'bfUser' ) ) return true;
         if ( ! WC()->cart ) return false;
 
-        foreach ( WC()->cart->get_cart() as $item ) if ( $item['data'] instanceof WC_Product_BillingFox ) return true;
+		$totalPrice = 0;
+
+		foreach ( WC()->cart->get_cart() as $item ) :
+			if ( $item['data'] instanceof \WC_Product_BillingFox ) return true;
+
+			$totalPrice += $item['data']->get_price();
+		endforeach;
+
+		/** @todo Remove the gateway if cart total is more than available balance. */
+		if ( $totalPrice > $user['balances']['available'] ) return true;
 
         return false;
 	}

@@ -6,7 +6,7 @@ class MPPaymentGateway extends \WC_Payment_Gateway
 	public function __construct()
 	{
 		$this->id                 = MP_PLUGIN_SLUG . '_gateway';
-        $this->icon               = MP_FW_ASSETS_URL . '/images/billingfox.png';
+        $this->icon               = MP_FW_ASSETS_URL . '/images/logo.png';
         $this->has_fields         = false;
         $this->method_title       = __( 'BillingFox' );
         $this->method_description = __( 'Metered billing for busy developers. Requires users to be logged in.' );

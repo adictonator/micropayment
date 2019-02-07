@@ -160,12 +160,14 @@ if ( ! function_exists( 'mp_remove_session' ) ) {
 
 if ( ! function_exists( 'mp_error_json' ) ) {
 	/**
-	 * Removes session.
-	 * @todo fix this. maybe use func_arg to unset array keys
-	 * @param mixed $sessionKey
-	 * @return void
+	 * Sets JSON response for error
+	 *
+	 * @uses WP response styling.
+	 * @param mixed|array $response
+	 * @param integer $code
+	 * @return string
 	 */
-	function mp_error_json( $response = null, $code )
+	function mp_error_json( $response = null, int $code )
 	{
 		$response ? $return['data'] = $response : '';
 		$return['success'] = false;
@@ -176,12 +178,14 @@ if ( ! function_exists( 'mp_error_json' ) ) {
 
 if ( ! function_exists( 'mp_success_json' ) ) {
 	/**
-	 * Removes session.
-	 * @todo fix this. maybe use func_arg to unset array keys
-	 * @param mixed $sessionKey
-	 * @return void
+	 * Sets JSON response for success.
+	 *
+	 * @uses WP response styling.
+	 * @param mixed|array $response
+	 * @param integer $code
+	 * @return string
 	 */
-	function mp_success_json( $response = null, $code )
+	function mp_success_json( $response = null, int $code )
 	{
 		$response ? $return['data'] = $response : '';
 		$return['success'] = true;
