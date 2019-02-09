@@ -66,7 +66,12 @@ class BillingFoxProductType implements HookableInterface
 		if ( ! $user = mp_get_session( 'bfUser' ) ) return true;
         if ( ! WC()->cart ) return false;
 
-		$totalPrice = 0;
+		$totalPrice = 0.00;
+
+		mp_remove_session( 'spends' );
+		echo "<pre>";
+		print_r($_SESSION);
+		echo "</pre>";
 
 		foreach ( WC()->cart->get_cart() as $item ) :
 			if ( $item['data'] instanceof \WC_Product_BillingFox ) return true;
@@ -74,8 +79,8 @@ class BillingFoxProductType implements HookableInterface
 			$totalPrice += $item['data']->get_price();
 		endforeach;
 
-		/** @todo Remove the gateway if cart total is more than available balance. */
-		if ( $totalPrice > $user['balances']['available'] ) return true;
+		/** Check if the cart total is more than BF credits. */
+		if ( $user['balances']['available'] < ( $totalPrice / MP_BF_PRICE ) ) return true;
 
         return false;
 	}

@@ -1,16 +1,19 @@
 <?php
 namespace MPEngine\WooCommerce;
 
+use MPEngine\BillingFox\BillingFoxAPI;
+use MPEngine\BillingFox\BillingFoxUserController;
+
 class MPPaymentGateway extends \WC_Payment_Gateway
 {
 	public function __construct()
 	{
-		$this->id                 = MP_PLUGIN_SLUG . '_gateway';
-        $this->icon               = MP_FW_ASSETS_URL . '/images/logo.png';
-        $this->has_fields         = false;
-        $this->method_title       = __( 'BillingFox' );
+		$this->id = MP_PLUGIN_SLUG . '_gateway';
+		$this->api = new BillingFoxAPI;
+        $this->icon = MP_FW_ASSETS_URL . '/images/logo.png';
+        $this->has_fields = false;
+        $this->method_title = __( 'BillingFox' );
         $this->method_description = __( 'Metered billing for busy developers. Requires users to be logged in.' );
-
         $this->supports = [];
 
         $this->init_settings();
@@ -64,7 +67,7 @@ class MPPaymentGateway extends \WC_Payment_Gateway
 		foreach ( $currencies as $currency ) :
             if ( empty( $availableCurrencies[ $currency ] ) ) continue;
 
-            $fields['custom_exchange_rate_' . strtolower( $currency ) ] = [
+            $fields[ 'custom_exchange_rate_' . strtolower( $currency ) ] = [
                 'title'       => __( '1 Credit in ' . $availableCurrencies[ $currency ] ) . ' (' . $currency . ') ',
                 'type'        => 'number',
                 'description' => __( 'Currency codes that deviate from 1 Credit = '. MP_BF_PRICE .'.' ),
@@ -79,33 +82,36 @@ class MPPaymentGateway extends \WC_Payment_Gateway
         $this->form_fields = apply_filters( 'billingfox_form_fields', $fields );
     }
 
-    public function process_payment( $order_id ) {
+	public function process_payment( $orderID )
+	{
+        $order = wc_get_order( $orderID );
 
-        $order = wc_get_order( $order_id );
-
-        /** @var WC_Order_Item_Product $item */
-        foreach($order->get_items() as $item) {
-            if ($item->get_product()->is_type('billingfox')) {
+		/** @var object WC_Order_Item_Product $item */
+        foreach ( $order->get_items() as $item ) :
+            if ( $item->get_product()->is_type( 'billingfox' ) ) :
                 throw new RuntimeException(__('Cannot buy Credits with Credits'));
-            }
-        }
+			endif;
+        endforeach;
 
-        $description = 'Order: '.$order->get_order_number();
-        $exchangeRate = $this->getExchangeRateFor($order->get_currency('raw'));
-        $coins = $this->normalizer->normalizeCoins($order->get_total('raw') / $exchangeRate);
+        $description = 'Order: #'. $order->get_order_number();
+        $exchangeRate = $this->getExchangeRateFor( $order->get_currency( 'raw' ) );
+		$coins = ceil( $order->get_total( 'raw' ) / $exchangeRate );
+        $userID = BillingFoxUserController::getUserBfID( $order->get_user()->ID );
 
-        $user_id = $this->normalizer->normalizeUser($order->get_user());
-
-
-        if (false === $user_id) {
+        if ( false === $userID ) {
             error_log('could not generate user id for billingfox');
 
             throw new RuntimeException('API Error');
         }
 
         try {
-            $result = $this->api->spend($user_id, $coins, $description);
-        } catch (BillingFox_Api_InsufficientCoins $e) {
+			$result = $this->api->spend( $userID, $coins, $description );
+
+			echo "<pre>";
+			print_r($result);
+			echo "</pre>";
+			mp_remove_session( 'spends' );
+        } catch ( BillingFox_Api_InsufficientCoins $e) {
             // present link for payment!
             error_log('insufficient funds of user');
 
@@ -117,16 +123,14 @@ class MPPaymentGateway extends \WC_Payment_Gateway
             throw new RuntimeException('API Error [billingfox:'.$e->getCode().']');
         }
 
-
-        // Mark as on-hold (we're awaiting the payment)
         $order->update_status( 'completed', $result['message'] );
 
-        wc_reduce_stock_levels( $order_id );
+        wc_reduce_stock_levels( $orderID );
         WC()->cart->empty_cart();
 
         return [
-            'result'    => 'success',
-            'redirect'  => $this->get_return_url( $order )
+            'result' => 'success',
+            'redirect' => $this->get_return_url( $order ),
         ];
     }
 

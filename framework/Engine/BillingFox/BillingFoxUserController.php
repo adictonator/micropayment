@@ -120,31 +120,51 @@ abstract class BillingFoxUserController
 	public function isAuthUser()
 	{
 		if ( is_user_logged_in() ) :
-			if ( ! empty( mp_get_session( 'bfUser' ) ) ) :
-				return true;
-				// $this->setResponse( $user );
+			if ( ! empty( mp_get_session( 'bfUser' ) ) ) : return true;
 			else :
 				$user = wp_get_current_user();
-				$bfUserID = $this->getUserBfID( $user->ID );
+				$bfUserID = self::getUserBfID( $user->ID );
 
 				if ( $bfUserID ) return $this->validateIdentity( $bfUserID );
-				// else $this->httpCode = 401;
 				else return false;
 			endif;
-		else:
-			return false;
-			// $this->httpCode = 401;
-			// $this->setResponse( 'Not logged in.' );
+		else : return false;
 		endif;
-
-		// $this->response();
 	}
 
-	private function getUserBfID( int $userID )
+	/**
+	 * Retrieves BillingFox ID of the user.
+	 *
+	 * @param integer $userID
+	 * @return string|boolean BillingFox ID
+	 */
+	public static function getUserBfID( int $userID )
 	{
 		return get_user_meta( $userID, BF_UID, true );
 	}
 
+	public function getUserBalances( string $bfUserID )
+	{
+		$user = $this->user();
+
+		if ( ! $user ) // get user;
+
+		return $user['balances'];
+	}
+
+	public function user()
+	{
+		$user = mp_get_session( 'bfUser' );
+
+		if ( ! $user ) $result = $this->getRequest( 'identify?user=' . $bfUserID );
+	}
+
+	/**
+	 * Checks if the id given is a valid BillingFox user.
+	 *
+	 * @param string $bfUserID
+	 * @return boolean
+	 */
 	private function validateIdentity( string $bfUserID )
 	{
 		$result = $this->getRequest( 'identify?user=' . $bfUserID );
@@ -152,14 +172,8 @@ abstract class BillingFoxUserController
 		if ( $result && $result['status'] === 'success' ) :
 			mp_set_session( 'bfUser', $result['user'] );
 			return true;
-			// $this->setResponse( $result );
-		else:
-			// $this->httpCode = 401;
-			// $this->setResponse( 'Not a BillingFox user.' );
-			return false;
+		else : return false;
 		endif;
-
-		// $this->response();
 	}
 
 	/**

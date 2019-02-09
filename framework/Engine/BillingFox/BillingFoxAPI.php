@@ -86,11 +86,7 @@ class BillingFoxAPI extends BillingFoxUserController
 
 		if ( $wallData && $wallData->status === 'locked' ) :
 
-			$result = $this->postRequest( 'spend', array_filter([
-				'user' => $billingFoxUser['key'],
-				'amount' => (float) $wallData->attrs->price,
-				'description' => $wallData->attrs->uid,
-			]));
+			$result = $this->spend( $billingFoxUser['key'], $wallData->attrs->price, $wallData->attrs->uid );
 
 			if ( $result['status'] === 'success' ) :
 				$this->setResponse( $result );
@@ -108,18 +104,30 @@ class BillingFoxAPI extends BillingFoxUserController
 		echo $this->response(1);
 	}
 
-	public function spends( string $userID )
+	/**
+	 * Make the spend.
+	 *
+	 * @param string $userID
+	 * @param integer $amount
+	 * @param string $description
+	 * @return array Response array
+	 */
+	public function spend( string $userID, int $amount, string $description = 'spend' )
 	{
-		$params = build_query( array_filter( [
+		return $this->postRequest( 'spend', array_filter( [
 			'user' => $userID,
-			'gte' => null,
-			'lte' => null,
+			'amount' => $amount,
+			'description' => $description,
 		] ) );
-
-		return $this->getRequest( 'spend?'. $params );
 	}
 
-	public function recharge( $rechargeData )
+	/**
+	 * Recharge credits of the given BillingFox user.
+	 *
+	 * @param array $rechargeData
+	 * @return array Response array
+	 */
+	public function recharge( array $rechargeData )
 	{
 		$data = [
 			'user' => $rechargeData['user'],
@@ -130,8 +138,33 @@ class BillingFoxAPI extends BillingFoxUserController
 		return $this->postRequest( 'recharge', $data );
 	}
 
-	protected function postRequest( $path, $payload = [] )
+	/**
+	 * List all the spends of the user.
+	 *
+	 * @param string $userID
+	 * @return array Response array
+	 */
+	public function spends( string $userID, $gte = null, $lte = null )
+	{
+		$params = build_query( array_filter( [
+			'user' => $userID,
+			'gte' => $gte,
+			'lte' => $lte,
+		] ) );
+
+		return $this->getRequest( 'spend?'. $params );
+	}
+
+	/**
+	 * Makes the POST call to the API endpoints.
+	 *
+	 * @param string $path
+	 * @param array $payload
+	 * @return array Response array
+	 */
+	protected function postRequest( string $path, array $payload = [] )
     {
+		/** Log the response. */
 		$this->logger( "POST: $this->url/$path " . json_encode( $payload ) );
 
 		$result = wp_remote_post( "$this->url/$path", [
@@ -146,8 +179,15 @@ class BillingFoxAPI extends BillingFoxUserController
         return $this->prepareResult( $result );
 	}
 
-	protected function getRequest($path)
+	/**
+	 * Makes the GET call to the API endpoints.
+	 *
+	 * @param string $path
+	 * @return array Response array
+	 */
+	protected function getRequest( string $path )
     {
+		/** Log the response. */
         $this->logger( 'GET ' . "$this->url/$path" );
 
         $result = wp_remote_get( "$this->url/$path", [
