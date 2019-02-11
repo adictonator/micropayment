@@ -68,11 +68,6 @@ class BillingFoxProductType implements HookableInterface
 
 		$totalPrice = 0.00;
 
-		mp_remove_session( 'spends' );
-		echo "<pre>";
-		print_r($_SESSION);
-		echo "</pre>";
-
 		foreach ( WC()->cart->get_cart() as $item ) :
 			if ( $item['data'] instanceof \WC_Product_BillingFox ) return true;
 

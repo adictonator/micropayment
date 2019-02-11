@@ -164,21 +164,12 @@ abstract class BillingFoxUserController
 		return get_user_meta( $userID, BF_UID, true );
 	}
 
-	public function getUserBalances( string $bfUserID )
-	{
-		$user = $this->user();
+	// public function user()
+	// {
+	// 	$user = mp_get_session( 'bfUser' );
 
-		if ( ! $user ) // get user;
-
-		return $user['balances'];
-	}
-
-	public function user()
-	{
-		$user = mp_get_session( 'bfUser' );
-
-		if ( ! $user ) $result = $this->getRequest( 'identify?user=' . $bfUserID );
-	}
+	// 	if ( ! $user ) $result = $this->getRequest( 'identify?user=' . $bfUserID );
+	// }
 
 	/**
 	 * Checks if the id given is a valid BillingFox user.

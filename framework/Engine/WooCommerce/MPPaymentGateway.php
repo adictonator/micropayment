@@ -107,10 +107,10 @@ class MPPaymentGateway extends \WC_Payment_Gateway
         try {
 			$result = $this->api->spend( $userID, $coins, $description );
 
-			echo "<pre>";
-			print_r($result);
-			echo "</pre>";
+			/** Removing cached data to fetch latest one. */
 			mp_remove_session( 'spends' );
+			mp_remove_session( 'bfUser' );
+
         } catch ( BillingFox_Api_InsufficientCoins $e) {
             // present link for payment!
             error_log('insufficient funds of user');

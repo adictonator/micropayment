@@ -38,7 +38,17 @@ class ProfileShortcodeController extends BaseShortcodeController
 			'amount' => ( float ) $_POST['rechargeAmount'],
 		];
 
-		return $this->api->recharge( $rechargeData );
+		$response = $this->api->recharge( $rechargeData );
+
+		if ( $response && $response['status'] === 'success' ) :
+			$return['msg'] = $response['message'];
+			mp_remove_session( 'bfUser' );
+		else : $return['msg'] = 'Could not credit account!';
+		endif;
+
+		$this->setResponse( $return );
+		echo $this->response( 1 );
+
 	}
 
 	protected function processShortcodeContent( $content, $attr )

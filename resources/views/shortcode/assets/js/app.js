@@ -1,4 +1,4 @@
-/* global jQuery, mp */
+/* global jQuery, mp, mp_helpers, mpStripe */
 jQuery(function($) {
 	$(document).on('click', '[data-mp-btn]', function(e) {
 		const _this = $( this )
@@ -65,7 +65,6 @@ jQuery(function($) {
 
 			case 'register':
 				if ( resp.data.bfUID ) {
-					console.log('okkk', resp.data.bfUID)
 					window.mpShortcode.setBFUserID( resp.data.bfUID )
 					window.mpShortcode.init()
 				}
@@ -84,14 +83,9 @@ jQuery(function($) {
 				elm.addClass( 'mp-popup--active' )
 
 				/** Load Stripe form. */
-				window.mpStripe.init( 'form[data-mp-stripe-form]' )
+				mpStripe.init( 'form[data-mp-stripe-form]' )
 				break
 			}
-
-			case 'process-recharge':
-
-				console.log('asdad', formData)
-				break
 			}
 		})
 		e.preventDefault()
@@ -120,10 +114,28 @@ jQuery(function($) {
 	} )
 
 	$( document ).on( 'click', '[data-mp-process-recharge]', function() {
+		mp.loader( 'show', $( this ) )
 		const form = $(this).closest( 'form' )
 		const formData = new FormData( form[0] )
 
-		window.mpStripe.process( formData )
+		mpStripe.process( formData )
+	} )
+
+	/**
+	 * Calculate actual amount to be paid via Stripe.
+	 *
+	 */
+	$( document ).on( 'blur', '.mp-form #amount', function() {
+		const amount = $(this).val()
+		const toPay = amount * mp_helpers.mp_bf_price
+		const amountElm = $( '<span data-mp-stripe-amount style="margin-left: 10px; font-weight: 600">$'+ toPay +'</span>')
+		const btnElm = $( '[data-mp-process-recharge]' )
+
+		if ( btnElm.find( 'span' ).length <= 0 ) {
+			btnElm.append( amountElm )
+		} else {
+			btnElm.find( 'span' ).html( '$' + toPay )
+		}
 	} )
 
 	/**

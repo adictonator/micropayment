@@ -17,6 +17,7 @@ class CoreDependenciesController implements HookableInterface
 			'nonce_key' => MP_FORM_NONCE,
 			'nonce' => wp_create_nonce( MP_FORM_NONCE ),
 			'mp_fw_url' => MP_FW_URL,
+			'mp_bf_price' => MP_BF_PRICE,
 		 ] );
 	}
 

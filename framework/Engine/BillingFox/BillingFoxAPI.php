@@ -11,11 +11,18 @@ class BillingFoxAPI extends BillingFoxUserController
 {
 	use ViewsTrait, SettingsTrait;
 
+
 	private $key;
 
 	private $url;
 
 	private $debug;
+
+	private $testMode;
+
+	private $stripeTestKey;
+
+	private $stripeLiveKey;
 
 	public function __construct()
 	{
@@ -23,18 +30,32 @@ class BillingFoxAPI extends BillingFoxUserController
 
 		if ( ! $this->validateSettings( $credentials ) ) return;
 
+		$this->testMode = $credentials->api->mode->value;
 		$this->key = $credentials->api->key->value;
-		$this->url = 'https://' . ($credentials->api->mode->value == 'yes' ? 'test' : 'live') . '.billingfox.com/api';
+		$this->url = 'https://' . ($credentials->api->mode->value === 'yes' ? 'test' : 'live') . '.billingfox.com/api';
 		$this->debug = $credentials->api->debug->value;
+		$this->stripeTestKey = isset( $credentials->stripe ) ? $credentials->stripe->test->value : null;
+		$this->stripeLiveKey = isset( $credentials->stripe ) ? $credentials->stripe->live->value : null;
 	}
 
 	public function getAPICred()
 	{
-		echo json_encode( [
+		$this->setResponse( [
 			'key' => $this->key,
 			'url' => $this->url,
 			'debug' => $this->debug,
+			'testMode' => $this->testMode,
 		] );
+
+		echo $this->response( 1 );
+	}
+
+	public function getStripeKeys()
+	{
+		$this->testMode === 'yes' ? $return['key'] = $this->stripeTestKey : $return['key'] = $this->stripeLiveKey;
+
+		$this->setResponse( $return );
+		echo $this->response( 1 );
 	}
 
 	public function needWall( $sID )
