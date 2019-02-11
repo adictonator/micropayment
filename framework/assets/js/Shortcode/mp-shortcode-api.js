@@ -1,10 +1,7 @@
 /* global jQuery, mp, mp_helpers */
 window.mpShortcode = {
 	init() {
-		const bfUID = this.getBFUserID()
-		const _mpIsDone = this._mpIsDone()
-
-		if ( ! bfUID ) {
+		if ( ! this.getBFUserID() ) {
 			const data = new FormData()
 			data.append('mpAction', 'getBFUser')
 			data.append('mpController', 'MPEngine:BillingFox:BillingFoxAPI')
@@ -17,29 +14,25 @@ window.mpShortcode = {
 				}
 			})
 		}
-		else if ( ! _mpIsDone ) this.getUserSpends()
+		else if ( ! this._mpIsDone() ) this.getUserSpends()
 	},
 
 	getUserSpends() {
 		const data = new FormData()
-		data.append('mpAction', 'getSpends')
-		data.append('mpController', 'MPEngine:BillingFox:BillingFoxAPI')
-		data.append('userAccess', true)
+		data.append( 'mpAction', 'getSpends' )
+		data.append( 'mpController', 'MPEngine:BillingFox:BillingFoxAPI' )
+		data.append( 'userAccess', true )
 
-		mp.send(data).then(r => {
-			if (r.success === true) {
+		mp.send( data ).then( r => {
+			if ( r.success === true ) {
 				let shortcodeIDs = []
 				let preIDs = []
 
-				r.data.spends.map(id => {
+				r.data.spends.map( id => {
 					preIDs.push( id )
 
-					const shortcodeElm = document.querySelector('div[data-mp-sid="'+ id +'"]')
-					if (shortcodeElm) {
-						jQuery( '<span>'+ r.data.shortcodeContent[ id ] +'</span>' ).insertBefore( shortcodeElm )
-						shortcodeElm.remove()
-						shortcodeIDs.push(id)
-					}
+					this.setShortcodeContent( id, r.data.shortcodeContent )
+					shortcodeIDs.push( id )
 				})
 
 				if ( typeof r.data.sid !== 'undefined' ) {
@@ -51,12 +44,20 @@ window.mpShortcode = {
 				} else {
 					this.unlockContent( shortcodeIDs )
 				}
-
 			} else {
-				console.error('GETTING SPEND ERROR', r.data)
+				console.error( 'GETTING SPEND ERROR', r.data )
 				this.removeBFUserID()
 			}
 		})
+	},
+
+	setShortcodeContent( id, contents ) {
+		const shortcodeElm = document.querySelector( 'div[data-mp-sid="'+ id +'"]' )
+
+		if ( shortcodeElm ) {
+			jQuery( '<span>'+ contents[ id ] +'</span>' ).insertBefore( shortcodeElm )
+			shortcodeElm.remove()
+		}
 	},
 
 	makeSpend( shortcodeID ) {
@@ -65,7 +66,7 @@ window.mpShortcode = {
 		data.append( 'mpController', 'MPEngine:BillingFox:BillingFoxAPI' )
 
 		if ( typeof shortcodeID !== 'undefined' ) {
-			data.append('sid', shortcodeID)
+			data.append( 'sid', shortcodeID )
 		}
 
 		data.append( 'userAccess', true )
@@ -79,21 +80,24 @@ window.mpShortcode = {
 
 	unlockContent( shortcodeIDs ) {
 		const data = new FormData()
-		data.append('mpAction', 'unlockContent')
-		data.append('mpController', 'MicroPay:Controllers:Shortcodes:MicroPayShortcodeController')
-		data.append('shortcodeIDs', shortcodeIDs)
-		data.append('userAccess', true)
+		data.append( 'mpAction', 'unlockContent' )
+		data.append( 'mpController', 'MicroPay:Controllers:Shortcodes:MicroPayShortcodeController' )
+		data.append( 'shortcodeIDs', shortcodeIDs )
+		data.append( 'userAccess', true )
 
 		mp.send( data ).then( resp => {
 			if ( resp.success === true ) {
 				sessionStorage.setItem( '_mpIsDone', true )
 
+				this.setShortcodeContent( shortcodeIDs, resp.data.shortcodeContent )
 				/**
 				 * Close the auth popup.
 				 *
 				 */
-				if ( jQuery( '.mp-auth-popup--active' ).length > 0 ) {
-					jQuery( '.mp-auth-popup--active' ).find( '.mp-auth-popup__close' ).click()
+				if ( jQuery( '.mp-popup--active' ).length > 0 ) {
+					jQuery( '.mp-popup--active' ).find( '.mp-popup__close' ).click()
+				} else {
+					mp.loader( 'hide' )
 				}
 			}
 		} )
@@ -107,16 +111,16 @@ window.mpShortcode = {
 		}
 	},
 
-	setBFUserID(id) {
-		return localStorage.setItem('bfUID', id)
+	setBFUserID( id ) {
+		return localStorage.setItem( 'bfUID', id )
 	},
 
 	getBFUserID() {
-		return localStorage.getItem('bfUID')
+		return localStorage.getItem( 'bfUID' )
 	},
 
 	removeBFUserID() {
-		return localStorage.removeItem('bfUID')
+		return localStorage.removeItem( 'bfUID' )
 	},
 
 	_mpIsDone() {

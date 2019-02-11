@@ -44,7 +44,7 @@ class MicroPayShortcodeController extends BaseShortcodeController
 	{
 		mp_set_session( 'toUnlock', $_POST['sid'] );
 
-		$this->api->validate( $sid );
+		$this->api->validate();
 	}
 
 	public function unlockContent( $shortcodeIDs = null )
@@ -63,7 +63,10 @@ class MicroPayShortcodeController extends BaseShortcodeController
 				}
 			endforeach;
 
-			$this->setResponse( [ 'type' => 'unlocking-done' ] );
+			$return['type'] = 'unlocking-done';
+			$return['shortcodeContent'][ $shortcodeID ] = $unlocked->content;
+
+			$this->setResponse( $return );
 		else:
 			$this->httpCode = 400;
 			$this->setResponse( 'Could not unlock content!' );

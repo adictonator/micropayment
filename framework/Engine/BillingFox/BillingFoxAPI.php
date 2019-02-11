@@ -55,6 +55,16 @@ class BillingFoxAPI extends BillingFoxUserController
 			$return['type'] = 'check-unlock';
 			$return['data'] = $spends;
 
+			if ( $spends ) :
+				foreach ( $spends as $spend ) :
+					if ( mp_get_session( $spend['description'] ) ) :
+
+						$return['shortcodeContent'][ $spend['description'] ] = mp_get_session( $spend['description'] );
+
+					endif;
+				endforeach;
+			endif;
+
 			$this->setResponse( $return );
 			echo $this->response(1);
 		else:

@@ -6,8 +6,8 @@ jQuery(function($) {
 		const formData = new FormData( form[0] )
 		mp.loader( 'show', _this )
 
-		mp.send( formData ).then(resp => {
-			switch (resp.data.type) {
+		mp.send( formData ).then( resp => {
+			switch ( resp.data.type ) {
 			case 'check-unlock':
 
 				if ( resp.data.data ) {
@@ -19,12 +19,11 @@ jQuery(function($) {
 					if ( preIDs.indexOf( sid ) > -1 ) {
 						// simply unlock the content
 					}  else {
-						// process the spend
-						formData.set( 'mpController', 'MPEngine:BillingFox:BillingFoxAPI' )
-						formData.set( 'mpAction', 'processUnlocking' )
-						formData.set( 'sid', sid )
-						mp.send( formData ).then( r => console.log('sd',  r))
+						window.mpShortcode.makeSpend( sid )
 					}
+				} else if ( resp.data === null ) {
+					const sid = formData.get( 'sid' )
+					window.mpShortcode.makeSpend( sid )
 				}
 				break
 
@@ -60,8 +59,17 @@ jQuery(function($) {
 			 *
 			 */
 			case 'login':
-				window.mpShortcode.setBFUserID(resp.data.user.key)
+				window.mpShortcode.setBFUserID( resp.data.user.key )
 				window.mpShortcode.init()
+				break
+
+			case 'register':
+				if ( resp.data.bfUID ) {
+					console.log('okkk', resp.data.bfUID)
+					window.mpShortcode.setBFUserID( resp.data.bfUID )
+					window.mpShortcode.init()
+				}
+				mp.loader( 'hide' )
 				break
 
 			case 'recharge': {
@@ -83,16 +91,6 @@ jQuery(function($) {
 			case 'process-recharge':
 
 				console.log('asdad', formData)
-				break
-
-			/**
-			 * Marks completion of consecutive API calls.
-			 * Hides the loader.
-			 *
-			 */
-			case 'unlocking-done':
-				console.log('aayay')
-				mp.loader( 'hide' )
 				break
 			}
 		})

@@ -13,17 +13,7 @@ abstract class BillingFoxUserController
 
 	public function login()
 	{
-		$user = wp_signon([
-			'user_login' => $_POST['mp_user'],
-			'user_password' => $_POST['mp_password'],
-		]);
-
-		if ( is_wp_error( $user ) ) :
-			$this->setResponse( $user->get_error_message() );
-			echo $this->response( 1 );
-		endif;
-
-		wp_set_current_user( $user->ID );
+		$this->setUserSession( $_POST['mp_user'], $_POST['mp_password'] );
 
 		if ( ! $this->isAuthUser() ) :
 			$this->httpCode = 401;
@@ -38,6 +28,21 @@ abstract class BillingFoxUserController
 		echo $this->response(1);
 	}
 
+	private function setUserSession( $userEmail, $userPassword )
+	{
+		$user = wp_signon( [
+			'user_login' => $userEmail,
+			'user_password' => $userPassword,
+		] );
+
+		if ( is_wp_error( $user ) ) :
+			$this->setResponse( $user->get_error_message() );
+			echo $this->response( 1 );
+		endif;
+
+		wp_set_current_user( $user->ID );
+	}
+
 	public function getBFUser()
 	{
 		if ( $bfUser = mp_get_session( 'bfUser' ) ) $this->setResponse( $bfUser );
@@ -48,6 +53,11 @@ abstract class BillingFoxUserController
 
 	public function getSpends()
 	{
+		if ( ! $this->isAuthUser() ) :
+			$this->httpCode = 401;
+			echo $this->response( 1 );
+		endif;
+
 		$user = mp_get_session( 'bfUser' );
 		$spends = mp_get_session( 'spends' );
 		$shortcodeID = mp_get_session( 'toUnlock' );
@@ -85,8 +95,10 @@ abstract class BillingFoxUserController
 	 */
 	public function register()
 	{
+		$return['type'] = 'register';
 		if ( username_exists( $_POST['mp_user'] ) || email_exists( $_POST['mp_user'] ) ) :
-			$this->setResponse( 'User email already exists!' );
+			$return['msg'] = 'User email already exists!';
+			$this->setResponse( $return );
 			echo $this->response( 1 );
 		endif;
 
@@ -99,15 +111,24 @@ abstract class BillingFoxUserController
 		$userID = wp_insert_user( $userData );
 
 		if ( is_wp_error( $userID ) ) :
-			$this->setResponse( $userID->get_error_message() );
+			$return['msg'] = $userID->get_error_message();
+			$this->setResponse( $return );
 			echo $this->response( 1 );
 		endif;
 
 		$bfUserID = $this->generateBillingFoxUserID( $userID );
+		$response = $this->setBillingFoxUser( $bfUserID, $_POST['mp_user'] );
 
-		if ( $bfUserID ) $response = $this->setBillingFoxUser( $bfUserID, $_POST['mp_user'] );
+		if ( $response && $response['status'] === 'success' ) :
+			update_user_meta( $userID, BF_UID, $bfUserID );
+			$this->setUserSession( $_POST['mp_user'], $_POST['mp_password'] );
 
-		if ( $response && $response['status'] === 'success' ) update_user_meta( $userID, BF_UID, $bfUserID );
+			$return['bfUID'] = $bfUserID;
+		else:
+			$return['msg'] = 'Something went wrong!';
+		endif;
+
+		$this->setResponse( $return );
 
 		echo $this->response( 1 );
 	}
@@ -185,7 +206,7 @@ abstract class BillingFoxUserController
 	 */
 	private function generateBillingFoxUserID( int $userID )
 	{
-		return substr(str_shuffle( md5( $userID . microtime() ) ), 0, 13 );
+		return substr( str_shuffle( md5( $userID . microtime() ) ), 0, 13 );
 	}
 
 	/**
