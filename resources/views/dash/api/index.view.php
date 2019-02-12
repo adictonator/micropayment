@@ -1,32 +1,27 @@
-<h1><?php echo static::TITLE; ?></h1>
-<hr />
-
 <div class="wrap mp-wrap">
+	<?php $this->getNotice(); ?>
+
+	<h1><?php echo static::TITLE; ?></h1>
+	<hr />
+
 	<form>
 		<?php mp_form_fields( 'ajax', 'update', $this ); ?>
 
 		<table class="widefat striped">
 			<tbody>
 				<tr>
-					<th>BillingFox API Key</th>
+					<th>Use Test Mode</th>
 					<td>
-						<input type="text" name="key" value="<?php echo $apiSettings->key->value; ?>">
+						<div class="mp-checkbox-wrap">
+							<input type="checkbox" value="yes" name="mode" <?php echo $apiSettings->mode->value === 'yes' ? 'checked' : ''; ?>>
+							<div class="mp-checkbox-toggler">
+								<label>Test Mode</label>
+							</div>
+						</div>
 					</td>
 				</tr>
 				<tr>
-					<th>Stripe Test API Key</th>
-					<td>
-						<input type="text" name="stripeTest" value="<?php echo $apiSettings->key->value; ?>">
-					</td>
-				</tr>
-				<tr>
-					<th>Stripe Live API Key</th>
-					<td>
-						<input type="text" name="stripeLive" value="<?php echo $apiSettings->key->value; ?>">
-					</td>
-				</tr>
-				<tr>
-					<th>Enable Debug Mode</th>
+				<th>Enable Debug Mode</th>
 					<td>
 						<div class="mp-checkbox-wrap">
 							<input type="checkbox" value="yes" name="debug" <?php echo $apiSettings->debug->value === 'yes' ? 'checked' : ''; ?>>
@@ -37,14 +32,33 @@
 					</td>
 				</tr>
 				<tr>
-					<th>Use Test Mode</th>
+					<th>BillingFox API Key</th>
 					<td>
-						<div class="mp-checkbox-wrap">
-							<input type="checkbox" value="yes" name="mode" <?php echo $apiSettings->mode->value === 'yes' ? 'checked' : ''; ?>>
-							<div class="mp-checkbox-toggler">
-								<label>Test Mode</label>
-							</div>
-						</div>
+						<input type="text" name="key" value="<?php echo $apiSettings->key->value; ?>">
+					</td>
+				</tr>
+				<tr data-mp-stripe-keys="test">
+					<th>Stripe Test Publisher Key</th>
+					<td>
+						<input type="text" name="stripe[test][publisher]" value="<?php echo $apiSettings->key->value; ?>">
+					</td>
+				</tr>
+				<tr data-mp-stripe-keys="test">
+					<th>Stripe Test Secret Key</th>
+					<td>
+						<input type="text" name="stripe[test][secret]" value="<?php echo $apiSettings->key->value; ?>">
+					</td>
+				</tr>
+				<tr data-mp-stripe-keys="live" style="display: none">
+					<th>Stripe Live Publisher Key</th>
+					<td>
+						<input type="text" name="stripe[live][publisher]" value="<?php echo $apiSettings->key->value; ?>">
+					</td>
+				</tr>
+				<tr data-mp-stripe-keys="live" style="display: none">
+					<th>Stripe Live Secret Key</th>
+					<td>
+						<input type="text" name="stripe[live][secret]" value="<?php echo $apiSettings->key->value; ?>">
 					</td>
 				</tr>
 			</tbody>

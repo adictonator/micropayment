@@ -12,7 +12,9 @@ class SettingsMenuController extends BaseMenuController
 	public function view()
 	{
 		$shortcodes = ShortcodesController::$shortcodes;
+		$menuData = $this->getSettings();
 
-		$this->setView( 'dash.settings.index', compact( 'shortcodes' ) );
+		if ( $this->validateSettings( $menuData ) ) $this->setView( 'dash.settings.index', compact( 'shortcodes' ) );
+		else $this->setView( 'error.settings' );
 	}
 }

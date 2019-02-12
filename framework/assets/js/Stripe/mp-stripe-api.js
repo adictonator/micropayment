@@ -13,7 +13,7 @@ const mpStripe = function() {
 
 		mp.send( data ).then( r => {
 			if ( r.success === true && r.data.key !== null ) {
-				this.stripe = Stripe( r.data.testMode )
+				this.stripe = Stripe( r.data.key )
 
 				this.elements = this.stripe.elements( {
 					fonts: [

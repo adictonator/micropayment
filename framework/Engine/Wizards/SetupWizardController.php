@@ -74,7 +74,12 @@ class SetupWizardController implements WizardsInterface
 
 		foreach ( $_POST as $key => $vals )
 			if ( is_array( $vals ) )
-				foreach ( $vals as $dKey => $val ) $generalSettings->$key->$dKey->value = $val;
+				foreach ( $vals as $dKey => $val ) $generalSettings->$key->$dKey = $val;
+
+		echo "<pre>";
+		print_r($generalSettings);
+		echo "</pre>";
+		die();
 
 		$this->setSettings( $generalSettings );
 	}

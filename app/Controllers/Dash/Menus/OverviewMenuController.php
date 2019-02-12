@@ -7,8 +7,6 @@ use MPEngine\Support\Traits\SettingsTrait;
 
 class OverviewMenuController extends BaseMenuController
 {
-	use SettingsTrait;
-
 	const TITLE = 'Overview';
 
 	public function __construct()

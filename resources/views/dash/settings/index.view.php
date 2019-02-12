@@ -1,7 +1,6 @@
-<h1><?php echo static::TITLE; ?></h1>
-<hr />
-
 <div class="wrap mp-wrap">
+	<h1><?php echo static::TITLE; ?></h1>
+	<hr />
 	<div class="mp-section">
 		<h3>Shortcodes</h3>
 		<table class="widefat striped">

@@ -11,8 +11,10 @@ class WCSettingsMenuController extends BaseMenuController
 	{
 		$settings = get_option( 'woocommerce_' . MP_PLUGIN_SLUG . '_gateway_settings', false );
 		$products = $this->getBFProducts();
+		$menuData = $this->getSettings();
 
-		$this->setView( 'dash.wc.index', compact( 'settings', 'products' ) );
+		if ( $this->validateSettings( $menuData ) ) $this->setView( 'dash.wc.index', compact( 'settings', 'products' ) );
+		else $this->setView( 'error.settings' );
 	}
 
 	public function update()

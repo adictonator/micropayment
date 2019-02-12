@@ -17,11 +17,17 @@ trait NoticesTrait
 		$this->msg = $msg;
 		$this->dismissible = $type === 'error' ? false : $this->dismissible;
 
-		add_action( 'admin_notices', [$this, 'getNotice'] );
+		/** Prevent showing notices multiple times. */
+		if ( ! get_transient( 'mp-malformed-settings' ) ) :
+			add_action( 'admin_notices', [$this, 'getNotice'] );
+			delete_transient( 'mp-malformed-settings' );
+		endif;
 	}
 
 	public function getNotice()
 	{
-		echo "<div class='notice {$this->class}{$this->dismissible}'><p>{$this->msg}</p></div>";
+		/** Prevent showing blank notices. */
+		if ( $this->msg )
+			echo "<div class='notice {$this->class}{$this->dismissible}'><p>{$this->msg}</p></div>";
 	}
 }

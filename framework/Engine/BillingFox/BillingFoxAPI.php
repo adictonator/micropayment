@@ -38,18 +38,6 @@ class BillingFoxAPI extends BillingFoxUserController
 		$this->stripeLiveKey = isset( $credentials->stripe ) ? $credentials->stripe->live->value : null;
 	}
 
-	public function getAPICred()
-	{
-		$this->setResponse( [
-			'key' => $this->key,
-			'url' => $this->url,
-			'debug' => $this->debug,
-			'testMode' => $this->testMode,
-		] );
-
-		echo $this->response( 1 );
-	}
-
 	public function getStripeKeys()
 	{
 		$this->testMode === 'yes' ? $return['key'] = $this->stripeTestKey : $return['key'] = $this->stripeLiveKey;

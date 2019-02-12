@@ -3,8 +3,9 @@ namespace MicroPay\Controllers\Dash\Menus;
 
 defined( 'ABSPATH' ) or die( 'Not allowed!' );
 
-use MicroPay\Controllers\BaseController;
 use MPEngine\Support\Traits\ViewsTrait;
+use MicroPay\Controllers\BaseController;
+use MPEngine\Support\Traits\SettingsTrait;
 
 /**
  * Base functions for WP Admin Dashboard Menu.
@@ -16,7 +17,7 @@ use MPEngine\Support\Traits\ViewsTrait;
  */
 abstract class BaseMenuController
 {
-	use ViewsTrait;
+	use ViewsTrait, SettingsTrait;
 
 	/**
 	 * Access level to the plugin.

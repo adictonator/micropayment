@@ -45,25 +45,22 @@ trait SettingsTrait
 	{
 		$settings = ( object ) [
 			'api' => ( object ) [
-				'mode' => ( object ) [
-					'label' => __( 'API Test Mode' ),
-					'value' => 'yes',
+				'testMode' => 'yes',
+				'debug' => 'no',
+				'key' => null,
+			],
+			'stripe' => ( object ) [
+				'test' => ( object ) [
+					'publisher' => null,
+					'secret' => null,
 				],
-				'debug' => ( object ) [
-					'label' => __( 'Debugging Mode' ),
-					'value' => 'no',
+				'live' => ( object ) [
+					'publisher' => null,
+					'secret' => null,
 				],
-				'key' => ( object ) [
-					'label' => __( 'BillingFox API Key' ),
-					'value' => null,
-				]
 			],
-			'woo' => ( object ) [
-
-			],
-			'general' => ( object ) [
-
-			],
+			'woo' => ( object ) [],
+			'general' => ( object ) [],
 		];
 
 		$this->setSettings( $settings );
@@ -80,7 +77,13 @@ trait SettingsTrait
 	public function validateSettings( $data )
 	{
 		/** Only checking for the type of data stored. */
-		if ( ! is_object( $data ) ) $this->setNotice( 'error', 'Something is wrong!' );
-		else return true;
+		if ( ! is_object( $data ) ) :
+			$this->setNotice( 'error', 'Something is wrong!' );
+			set_transient( 'mp-malformed-settings', 1, 1 );
+
+			return;
+		endif;
+
+		return true;
 	}
 }
