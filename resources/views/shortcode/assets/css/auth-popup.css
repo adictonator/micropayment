@@ -39,17 +39,15 @@
 .mp-form__toggler-wrap .mp-form__toggler {
 	cursor: pointer;
 	user-select: none;
-    border-radius: 3px;
 	text-transform: uppercase;
-	border: 1px solid palevioletred;
+	border: 1px solid transparent;
 	transition: all 250ms linear;
 }
 .mp-form__toggler-wrap .mp-form__toggler:hover {
-	border-bottom: 1px solid red;
+	border-bottom: 1px solid #8e24aa;
 }
 .mp-form__toggler.mp-form__toggler--active {
-	background: lightpink;
-	border-bottom-color: red;
+	border-bottom-color: #8e24aa;
 }
 .mp-form__toggle {
 	width: 100%;

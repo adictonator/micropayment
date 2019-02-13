@@ -40,7 +40,7 @@
 
 						<div class="mp-setup-group mp-setup-group--hidden">
 							<div class="mp-checkbox-wrap">
-								<input type="checkbox" name="api[mode]" value="yes" checked>
+								<input type="checkbox" name="api[testMode]" value="yes" checked>
 								<div class="mp-checkbox-toggler">
 									<label>API Test Mode</label>
 								</div>

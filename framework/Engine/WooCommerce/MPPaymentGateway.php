@@ -110,13 +110,7 @@ class MPPaymentGateway extends \WC_Payment_Gateway
 			/** Removing cached data to fetch latest one. */
 			mp_remove_session( 'spends' );
 			mp_remove_session( 'bfUser' );
-
-        } catch ( BillingFox_Api_InsufficientCoins $e) {
-            // present link for payment!
-            error_log('insufficient funds of user');
-
-            throw new RuntimeException(__('Insufficient funds on Micropayment.io'), 0, $e);
-        } catch (BillingFox_Api_Exception $e) {
+        } catch (RuntimeException $e) {
             // payment failed... sry :(
             error_log('api error: '.$e->getMessage());
 

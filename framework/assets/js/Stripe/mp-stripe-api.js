@@ -3,6 +3,15 @@
 const mpStripe = function() {
 	const _this = this
 	const stripe = {}
+	let _cardCode
+	let _stripeObj
+	let _cardNumber
+	let _cardExpiry
+	let _stripeElmObj
+	let _cardNumberHolder
+	let _cardExpiryHolder
+	let _cardCodeHolder
+	let _errorHolder
 
 	_this.__setupStripe = function() {
 		const data = new FormData()
@@ -12,10 +21,11 @@ const mpStripe = function() {
 		data.append( 'userAccess', true )
 
 		mp.send( data ).then( r => {
-			if ( r.success === true && r.data.key !== null ) {
-				this.stripe = Stripe( r.data.key )
+			if ( r.success === true && r.data.keys !== null ) {
+				console.log('ss', r)
+				_stripeObj = Stripe( r.data.keys.publisher )
 
-				this.elements = this.stripe.elements( {
+				_stripeElmObj = _stripeObj.elements( {
 					fonts: [
 						{
 							cssSrc: 'https://fonts.googleapis.com/css?family=Source+Code+Pro',
@@ -61,23 +71,23 @@ const mpStripe = function() {
 			invalid: 'invalid',
 		}
 
-		this.cardNumber = this.elements.create( 'cardNumber', {
+		_cardNumber = _stripeElmObj.create( 'cardNumber', {
 			style: _this.__style(),
 			classes: elementClasses,
 		})
-		this.cardNumber.mount( this.cardNumberHolder )
+		_cardNumber.mount( _cardNumberHolder )
 
-		this.cardExpiry = this.elements.create( 'cardExpiry', {
+		_cardExpiry = _stripeElmObj.create( 'cardExpiry', {
 			style: _this.__style(),
 			classes: elementClasses,
 		})
-		this.cardExpiry.mount( this.cardExpiryHolder )
+		_cardExpiry.mount( _cardExpiryHolder )
 
-		this.cardCode = this.elements.create( 'cardCvc', {
+		_cardCode = _stripeElmObj.create( 'cardCvc', {
 			style: _this.__style(),
 			classes: elementClasses,
 		})
-		this.cardCode.mount( this.cardCodeHolder )
+		_cardCode.mount( _cardCodeHolder )
 	}
 
 	_this.__handleToken = function( token, formData ) {
@@ -107,10 +117,10 @@ const mpStripe = function() {
 		if ( document.querySelector( elm ) !== null && document.querySelector( elm ).length > 0 ) {
 			this.form = document.querySelector( elm )
 			// this.cardHolder = this.form.querySelector( '[data-mp-stripe-cc]' )
-			this.cardNumberHolder = this.form.querySelector( '[data-mp-stripe-cn]' )
-			this.cardExpiryHolder = this.form.querySelector( '[data-mp-stripe-ce]' )
-			this.cardCodeHolder = this.form.querySelector( '[data-mp-stripe-cc]' )
-			this.errorHolder = this.form.querySelector( '[data-mp-stripe-errors]' )
+			_cardNumberHolder = this.form.querySelector( '[data-mp-stripe-cn]' )
+			_cardExpiryHolder = this.form.querySelector( '[data-mp-stripe-ce]' )
+			_cardCodeHolder = this.form.querySelector( '[data-mp-stripe-cc]' )
+			_errorHolder = this.form.querySelector( '[data-mp-stripe-errors]' )
 			return true
 		} else return false
 	}
@@ -125,7 +135,7 @@ const mpStripe = function() {
 	}
 
 	stripe.process = function( formData ) {
-		this.stripe.createToken( this.cardNumber ).then( result => {
+		_stripeObj.createToken( _cardNumber ).then( result => {
 			if ( result.error ) _this.__handleError( result.error )
 			else _this.__handleToken( result.token, formData )
 		})

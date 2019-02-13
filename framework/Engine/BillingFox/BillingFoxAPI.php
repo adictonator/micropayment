@@ -20,9 +20,9 @@ class BillingFoxAPI extends BillingFoxUserController
 
 	private $testMode;
 
-	private $stripeTestKey;
+	private $stripeTestKeys;
 
-	private $stripeLiveKey;
+	private $stripeLiveKeys;
 
 	public function __construct()
 	{
@@ -30,17 +30,17 @@ class BillingFoxAPI extends BillingFoxUserController
 
 		if ( ! $this->validateSettings( $credentials ) ) return;
 
-		$this->testMode = $credentials->api->mode->value;
-		$this->key = $credentials->api->key->value;
-		$this->url = 'https://' . ($credentials->api->mode->value === 'yes' ? 'test' : 'live') . '.billingfox.com/api';
-		$this->debug = $credentials->api->debug->value;
-		$this->stripeTestKey = isset( $credentials->stripe ) ? $credentials->stripe->test->value : null;
-		$this->stripeLiveKey = isset( $credentials->stripe ) ? $credentials->stripe->live->value : null;
+		$this->testMode = $credentials->api->testMode;
+		$this->key = $credentials->api->key;
+		$this->url = 'https://' . ($this->testMode === 'yes' ? 'test' : 'live') . '.billingfox.com/api';
+		$this->debug = $credentials->api->debug;
+		$this->stripeTestKeys = $credentials->stripe->test;
+		$this->stripeLiveKeys = $credentials->stripe->live;
 	}
 
 	public function getStripeKeys()
 	{
-		$this->testMode === 'yes' ? $return['key'] = $this->stripeTestKey : $return['key'] = $this->stripeLiveKey;
+		$this->testMode === 'yes' ? $return['keys'] = $this->stripeTestKeys : $return['keys'] = $this->stripeLiveKeys;
 
 		$this->setResponse( $return );
 		echo $this->response( 1 );

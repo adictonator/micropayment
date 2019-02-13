@@ -17,12 +17,13 @@ class APISettingsMenuController extends BaseMenuController
 
 		if ( true === $this->validateSettings( $generalSettings ) ) :
 			$apiSettings = $generalSettings->api;
+			$stripeSettings = $generalSettings->stripe;
 
-			if ( empty( $apiSettings->stripe->test->secret->value )
-				|| empty( $apiSettings->stripe->test->secret->value ) )
+			if ( empty( $stripeSettings->test->secret )
+				|| empty( $stripeSettings->test->secret ) )
 				$this->setNotice( 'warning', 'Please setup Stripe details!' );
 
-			$this->setView( 'dash.api.index', compact( 'apiSettings' ) );
+			$this->setView( 'dash.api.index', compact( 'apiSettings', 'stripeSettings' ) );
 		else:
 			$this->setView( 'error.settings' );
 		endif;
@@ -34,17 +35,12 @@ class APISettingsMenuController extends BaseMenuController
 
 		if ( ! $menuData ) throw new \Exception( 'Malformed data!' );
 
-		foreach ( $menuData->api as $dKey => $val ) :
-			$menuData->api->$dKey = $_POST[ $dKey ];
-		endforeach;
+		! isset( $_POST['api']['debug'] ) ? $_POST['api']['debug'] = 'no' : '';
 
-		// $apiData = json_decode(json_encode($_POST));
-		// $menuData->api = $apiData;
-		echo "<pre>";
-		print_r($_POST);
-		print_r($menuData);
-		echo "</pre>";
-			die();
+		$apiData = json_decode( json_encode( $_POST ) );
+		$menuData->api = $apiData->api;
+		$menuData->stripe = $apiData->stripe;
+
 		if ( $this->setSettings( $menuData ) ) :
 			$return['type'] = 'success';
 			$return['msg'] = 'API Settings saved successfully!';
