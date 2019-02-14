@@ -53,7 +53,7 @@ class ProfileShortcodeController extends BaseShortcodeController
 
 	protected function processShortcodeContent( $content, $attr )
 	{
-		if ( mp_get_session( 'bfUser' ) || $this->api->isAuthUser() ) : return $this->getProfileContent( mp_get_session( 'bfUser' ) );
+		if ( mp_get_session( 'bfUser' ) || $this->api->isAuthUser() ) : return $this->getProfileContent();
 		else:
 			$this->viewMessage = 'User not logged in!';
 
@@ -61,13 +61,16 @@ class ProfileShortcodeController extends BaseShortcodeController
 		endif;
 	}
 
-	private function getProfileContent( $user )
+	public function getProfileContent()
 	{
+		$user =  mp_get_session( 'bfUser' );
+
 		ob_start();
 		$this->setView( 'shortcode.profile', compact( 'user' ) );
-		$errorContent = ob_get_contents();
+		$viewContent = ob_get_contents();
 		ob_end_clean();
 
-		return $errorContent;
+		if ( wp_doing_ajax() ) echo $viewContent;
+		else return $viewContent;
 	}
 }

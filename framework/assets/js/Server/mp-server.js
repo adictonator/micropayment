@@ -1,21 +1,22 @@
 window.mpServer = class MicroPayServerEnvironment {
 	constructor() {
-		this.app = 'MicroPayment IO'
 		this.ajax = mp_helpers.url
 		this.api = 'https://test.billingfox.com/api/'
 	}
 
-	_setup( data ) {
-		this.send( data ).then(r => console.log('ee', r))
-	}
-
-	async send( data ) {
-		const resp = await fetch(this.ajax, {
+	async send( data, respType = 'json' ) {
+		const resp = await fetch( this.ajax, {
 			method: 'POST',
 			credentials: 'same-origin',
 			body: data
 		});
-		return await resp.json();
+
+		switch ( respType ) {
+			case 'text':
+				return await resp.text()
+			default:
+				return await resp.json()
+		}
 	}
 
 	async _validateAPI( apiKey ) {

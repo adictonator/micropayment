@@ -31,7 +31,9 @@
 	background: rgba(0,0,0,0.5);
 	color: #CCC;
 }
-
+.mp-front-button[disabled] {
+	cursor: not-allowed;
+}
 .mp-front-button.mp-front-button--primary:hover,
 .mp-front-button.mp-front-button--primary:active {
 	background: linear-gradient(60deg,#8e24aa, #ab47bc);

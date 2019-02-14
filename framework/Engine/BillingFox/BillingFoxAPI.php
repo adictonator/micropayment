@@ -284,7 +284,7 @@ class BillingFoxAPI extends BillingFoxUserController
 	 */
 	private function logger( $message, $args = [] )
     {
-        if ( ! $this->debug ) return;
+        if ( $this->debug !== 'yes' ) return;
 
         array_unshift($args, "<p><code><mark>$message</mark></code></p>\n");
 

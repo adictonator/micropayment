@@ -14,7 +14,7 @@ jQuery(function($) {
 				window.location.href = $('input[name=redirect]').val()
 			})
 
-			mp._setup( formData )
+			mp.send( formData )
 		}
 	})
 

@@ -1,4 +1,4 @@
-/* global jQuery, mp, mp_helpers, mpStripe */
+/* global jQuery, mpShortcode, mp, mp_helpers, mpStripe */
 jQuery(function($) {
 	$(document).on('click', '[data-mp-btn]', function(e) {
 		const _this = $( this )
@@ -19,11 +19,11 @@ jQuery(function($) {
 					if ( preIDs.indexOf( sid ) > -1 ) {
 						// simply unlock the content
 					}  else {
-						window.mpShortcode.makeSpend( sid )
+						mpShortcode.makeSpend( sid )
 					}
 				} else if ( resp.data === null ) {
 					const sid = formData.get( 'sid' )
-					window.mpShortcode.makeSpend( sid )
+					mpShortcode.makeSpend( sid )
 				}
 				break
 
@@ -59,14 +59,14 @@ jQuery(function($) {
 			 *
 			 */
 			case 'login':
-				window.mpShortcode.setBFUserID( resp.data.user.key )
-				window.mpShortcode.init()
+				mpShortcode.setBFUserID( resp.data.user.key )
+				mpShortcode.init()
 				break
 
 			case 'register':
 				if ( resp.data.bfUID ) {
-					window.mpShortcode.setBFUserID( resp.data.bfUID )
-					window.mpShortcode.init()
+					mpShortcode.setBFUserID( resp.data.bfUID )
+					mpShortcode.init()
 				}
 				mp.loader( 'hide' )
 				break
@@ -142,5 +142,5 @@ jQuery(function($) {
 	 * Check if shortcode contents need to be unlocked by default.
 	 *
 	 */
-	window.mpShortcode.init()
+	mpShortcode.init()
 })
