@@ -18,11 +18,6 @@ abstract class BaseShortcodeController
 
 	protected $viewMessage;
 
-	public $assets = [
-		'css' => ['app.css'],
-		'js' => ['app.js'],
-	];
-
 	const VIEW_ERROR_MESSAGE = 'Some attributes are missing!';
 
 	const VIEW_WALL_MESSAGE = 'Pay Money to Unlock!';
@@ -48,13 +43,21 @@ abstract class BaseShortcodeController
 
 		if ( ! empty( static::$args ) ) :
 			foreach ( static::$args as $arg ) :
-				if ( strpos( $arg, ':req' ) !== false && ( ! array_key_exists( str_replace( ':req', '', $arg ), $attrs ) || is_null( $attrs[ str_replace( ':req', '', $arg ) ] ) ) ) :
+				if ( strpos( $arg, ':req' ) !== false &&
+					( ! array_key_exists( str_replace( ':req', '', $arg ), $attrs ) ||
+					is_null( $attrs[ str_replace( ':req', '', $arg ) ] ) ||
+					! $this->metaPaywallPrice() ) ) :
 					return $this->incompleteShortcode();
 				endif;
 			endforeach;
 		endif;
 
 		return $this->processShortcodeContent( $content, $attrs );
+	}
+
+	public function metaPaywallPrice()
+	{
+		return get_post_meta( get_the_ID(), '__mp_paywall_price', true );
 	}
 
 	protected function getErrorContent()

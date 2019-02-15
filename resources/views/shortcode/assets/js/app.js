@@ -1,8 +1,8 @@
 /* global jQuery, mpShortcode, mp, mp_helpers, mpStripe */
-jQuery(function($) {
-	$(document).on('click', '[data-mp-btn]', function(e) {
+jQuery( function( $ ) {
+	$( document ).on( 'click', '[data-mp-btn]', function( e ) {
 		const _this = $( this )
-		const form = _this.closest('form')
+		const form = _this.closest( 'form' )
 		const formData = new FormData( form[0] )
 		mp.loader( 'show', _this )
 
