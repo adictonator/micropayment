@@ -45,19 +45,13 @@ abstract class BaseShortcodeController
 			foreach ( static::$args as $arg ) :
 				if ( strpos( $arg, ':req' ) !== false &&
 					( ! array_key_exists( str_replace( ':req', '', $arg ), $attrs ) ||
-					is_null( $attrs[ str_replace( ':req', '', $arg ) ] ) ||
-					! $this->metaPaywallPrice() ) ) :
+					is_null( $attrs[ str_replace( ':req', '', $arg ) ] ) ) ) :
 					return $this->incompleteShortcode();
 				endif;
 			endforeach;
 		endif;
 
 		return $this->processShortcodeContent( $content, $attrs );
-	}
-
-	public function metaPaywallPrice()
-	{
-		return get_post_meta( get_the_ID(), '__mp_paywall_price', true );
 	}
 
 	protected function getErrorContent()

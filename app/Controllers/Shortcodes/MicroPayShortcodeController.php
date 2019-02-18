@@ -74,7 +74,7 @@ class MicroPayShortcodeController extends BaseShortcodeController
 	public function function( $attrs, $content = '' )
 	{
 		$attrs = shortcode_atts( [
-			'price' => isset( $attrs['price'] ) ? $attrs['price'] : null,
+			'price' => isset( $attrs['price'] ) ? $attrs['price'] : $this->getGlobalPrice(),
 			'uid' => $this->uniqueShortcodeID( $content ),
 		], $attrs, self::$name );
 
@@ -192,6 +192,13 @@ class MicroPayShortcodeController extends BaseShortcodeController
 		]);
 
 		return $this->checkWallStatus();
+	}
+
+	private function getGlobalPrice()
+	{
+		$globalPrice = get_post_meta( get_the_ID(), '__mp_paywall_price', true );
+
+		return ! empty( $globalPrice ) ? $globalPrice : null;
 	}
 
 	/**
