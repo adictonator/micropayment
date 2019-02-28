@@ -1,6 +1,4 @@
 <div class="mp-wall" data-mp-sid="<?php echo $this->shortcodeContents->attrs->uid; ?>">
-<?php echo $this->viewMessage; ?>
-
 	<form>
 		<?php mp_form_fields( 'ajax', 'unlock', $this ); ?>
 		<input type="hidden" value="<?php echo $this->shortcodeContents->attrs->uid; ?>" name="sid">

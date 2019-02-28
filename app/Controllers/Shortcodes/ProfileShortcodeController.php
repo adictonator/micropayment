@@ -55,9 +55,9 @@ class ProfileShortcodeController extends BaseShortcodeController
 	{
 		if ( mp_get_session( 'bfUser' ) || $this->api->isAuthUser() ) : return $this->getProfileContent();
 		else:
-			$this->viewMessage = 'User not logged in!';
+			$this->viewMessage = 'Get 50 credits upon signup!';
 
-			return $this->getErrorContent();
+			return $this->getErrorContent( 'shortcode.profile-error' );
 		endif;
 	}
 
@@ -72,5 +72,10 @@ class ProfileShortcodeController extends BaseShortcodeController
 
 		if ( wp_doing_ajax() ) echo $viewContent;
 		else return $viewContent;
+	}
+
+	public function processAuth()
+	{
+		$this->api->handleCurrentUser();
 	}
 }

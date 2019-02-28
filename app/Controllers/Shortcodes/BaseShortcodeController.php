@@ -16,12 +16,6 @@ abstract class BaseShortcodeController
 
 	protected $errorType;
 
-	protected $viewMessage;
-
-	const VIEW_ERROR_MESSAGE = 'Some attributes are missing!';
-
-	const VIEW_WALL_MESSAGE = 'Pay Money to Unlock!';
-
 	public function __construct()
 	{
 		$this->api = new BillingFoxAPI;
@@ -54,10 +48,12 @@ abstract class BaseShortcodeController
 		return $this->processShortcodeContent( $content, $attrs );
 	}
 
-	protected function getErrorContent()
+	protected function getErrorContent( $errorViewPath = null )
 	{
+		$errorViewPath = ! is_null( $errorViewPath ) ? $errorViewPath : 'shortcode.error';
+
 		ob_start();
-		$this->setView( 'shortcode.error' );
+		$this->setView( $errorViewPath );
 		$errorContent = ob_get_contents();
 		ob_end_clean();
 
@@ -66,7 +62,7 @@ abstract class BaseShortcodeController
 
 	private function incompleteShortcode()
 	{
-		$this->viewMessage = self::VIEW_ERROR_MESSAGE;
+		$this->viewMessage = 'Some attributes are missing!';
 
 		return $this->getErrorContent();
 	}

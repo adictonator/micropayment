@@ -86,7 +86,7 @@ class BillingFoxAPI extends BillingFoxUserController
 	 *
 	 * @return void
 	 */
-	private function handleCurrentUser()
+	public function handleCurrentUser()
 	{
 		ob_start();
 		$this->setView( 'auth.authForms' );

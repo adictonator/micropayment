@@ -238,23 +238,7 @@ class MicroPayShortcodeController extends BaseShortcodeController
 	 */
 	private function wall()
 	{
-		$this->viewMessage = self::VIEW_WALL_MESSAGE;
-		return $this->getWallContent();
-	}
-
-	/**
-	 * Fetches the paywall HTML content.
-	 *
-	 * @return string|mixed Paywall HTML
-	 */
-	private function getWallContent()
-	{
-		ob_start();
-		$this->setView( 'shortcode.wall' );
-		$wallContent = ob_get_contents();
-		ob_end_clean();
-
-		return $wallContent;
+		return $this->getErrorContent( 'shortcode.wall' );
 	}
 
 	/**
